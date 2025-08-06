@@ -133,7 +133,9 @@ shinyUI(fluidPage(theme = shinytheme("united"),
                        helpText(HTML("...  ...  ...")),
                        helpText(" "),
                        helpText("Finally, this chatbot can suggest an interpretation of your results via two LLMs, such as: Gemma and Llama."),
-                       fileInput('file3', "Please, upload your edgeR result file in a tab separetad format",accept=c('text/csv','text/comma-separated-values,text/plain','.csv')),   
+                       fileInput('file3', "Please, upload your edgeR result file in a tab separetad format",accept=c('text/csv','text/comma-separated-values,text/plain','.csv')), 
+                       textInput('text7', "Write your request for the LLMs: ","Explain these results produced from the comparison of...",width="2000px"),
+                       
                        actionButton("run3", "Enrich!"),
                        
                        width = 26,
