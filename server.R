@@ -111,7 +111,7 @@ shinyServer(function(input, output, session) {
         url <- "https://api.together.xyz/v1/chat/completions"
         
         body <- list(
-          model = "google/gemma-2-27b-it",
+          model = "google/gemma-3n-E4B-it",
           #model = "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free",
           messages = list(
             list(role = "system", content = "Respond only in JSON format. The JSON must have this structure: 
@@ -187,7 +187,7 @@ shinyServer(function(input, output, session) {
             #  }
             }else if (func_name == "cluster" || func_name == "dendro") {
              # if (check_rnaseq_counts(counts)){
-                print("Clustering!")
+                #print("Clustering!")
                 x = counts
                 x = log10(x+1)
                 #x = normalize.quantiles(as.matrix(x),copy=TRUE)
@@ -410,15 +410,15 @@ shinyServer(function(input, output, session) {
     if (is.null(inDataFile) || (prompt=="")){return(NULL)}else{
       my_data <- read_and_clean_colnames(inDataFile$datapath, sep = "\t", header = TRUE, rownames = 1 )
       #   my_data <- read.table("C:/Users/f.russo.ENGIBBC/Desktop/REDAC_submission/expression_file.txt", header = TRUE, sep = "\t", row.names = 1)
-      #   prompt = "Can you perform a de analysis of treated 1,2,5 against wt 3,7,8 ?"
+      #   prompt = "Example: perform an rnaseq analysis between treated 3,4 and wt 1,2 samples, up regulated"
       api_key <- Sys.getenv("API_KEY")
       if (api_key == "") stop("NO API key found!")
       #api_key <-   # Replace with your API key
       url <- "https://api.together.xyz/v1/chat/completions"
       
       body <- list(
-        model = "google/gemma-2-27b-it",
-        #model = "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free",
+        #model = "google/gemma-3n-E4B-it", 
+        model = "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free",
         messages = list(
           list(role = "system", content = "Respond only in JSON format. The JSON must have this structure: 
                {\"functiontoberun\":[\"analysis\"],
@@ -446,7 +446,8 @@ shinyServer(function(input, output, session) {
       # parsed$choices$message$content = "```json\n{\"function to be run\": [\"violin\"], \"columns to use\": [[\"1\", \"2\", \"3\"]]}\n```"
       # but it should be in this format:
       # parsed$choices$message$content = '{\"function to be run\": [\"violin\"], \"columns to use\": [[\"col1\"], [\"col2\"], [\"col3\"]]}'
-      content = strsplit(parsed$choices$message$content,"\n" )[[1]][2] ## questa linea solo se usi Gemma LLM
+      #content = strsplit(parsed$choices$message$content,"\n" )[[1]][2] ## questa linea solo se usi Gemma LLM
+      content = parsed$choices$message$content
       #print(content)
       #[1] "{\"function to be run\": [\"violin\"], \"columns\": [[\"1\"], [\"2\"], [\"3\"]]}"
       parsed <- fromJSON(content)
@@ -468,9 +469,9 @@ shinyServer(function(input, output, session) {
           wt_samples      <- unlist(str_replace_all(parsed$wt, c("col" = "")))
           regulated       <- parsed$regulated[i]
           #scegli qui le funzioni da usare
-          if (func_name == "analysis") {
-            print("rnaseqanalysis")
-            final_result  = de_analysis(counts,colnames(counts)[as.numeric(treated_samples)],colnames(counts)[as.numeric(wt_samples)],regulated)
+          if (func_name == "rnaseq_analysis") {
+            print("HERE! rnaseqanalysis")
+            final_result  = de_analysis(counts,treated_samples,wt_samples,regulated)
           } else if (func_name == "enrichment") {
             final_result = gene_pathway_enrichment(as.character(rownames(counts)))
           }
@@ -511,7 +512,7 @@ shinyServer(function(input, output, session) {
       #api_key <-   # Replace with your API key
       url <- "https://api.together.xyz/v1/chat/completions"
       body <- list(
-        #model = "google/gemma-2-27b-it",
+        #model = "google/gemma-3n-E4B-it",
         model = "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free",
         messages = list(
           list(role = "system", content = "use a Chain of Thought and Act as an expert data analyst in R programming language"),
@@ -548,7 +549,7 @@ shinyServer(function(input, output, session) {
       #api_key <-   # Replace with your API key
       url <- "https://api.together.xyz/v1/chat/completions"
       body <- list(
-        model = "google/gemma-2-27b-it",
+        model = "google/gemma-3n-E4B-it",
         #model = "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free",
         messages = list(
           list(role = "system", content = "Act as an expert data analyst suggesting a general way to perform the request. Do not write code."),
@@ -585,7 +586,7 @@ shinyServer(function(input, output, session) {
       #api_key <-   # Replace with your API key
       url <- "https://api.together.xyz/v1/chat/completions"
       body <- list(
-        model = "google/gemma-2-27b-it",
+        model = "google/gemma-3n-E4B-it",
         messages = list(
           list(role = "system", content = "Interpret data by giving possible explanations of the biological processes involved as an expert biologist"),
           list(role = "user", content = paste("Suggest some plausible cellular mechanistic explanations for these pathways by grouping them for category. At the end suggest future investigations.", data_text)
@@ -846,7 +847,7 @@ shinyServer(function(input, output, session) {
       #api_key <-   # Replace with your API key
       url <- "https://api.together.xyz/v1/chat/completions"
       body <- list(
-        #model = "google/gemma-2-27b-it",
+        #model = "google/gemma-3n-E4B-it",
         model = "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free",
         messages = list(
           list(role = "system", content = "use a Chain of Thought and Act as an expert data analyst in R programming language that uses DESEQ2 package"),
@@ -884,7 +885,7 @@ shinyServer(function(input, output, session) {
       #api_key <-   # Replace with your API key
       url <- "https://api.together.xyz/v1/chat/completions"
       body <- list(
-        model = "google/gemma-2-27b-it",
+        model = "google/gemma-3n-E4B-it",
         #model = "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free",
         messages = list(
           list(role = "system", content = "Act as an expert rnaseq data analyst suggesting a general way to perform the request (suggesting the use of DESEQ2, EdgeR, limma, for de genes identification) 
@@ -1327,7 +1328,7 @@ shinyServer(function(input, output, session) {
     x =  read_and_clean_colnames(inDataFile$datapath, sep = "\t", header = TRUE, rownames = 1 )
     x = log10(x+1)
     counts <- x
-    print("Clustering!")
+    #print("Clustering!")
     #x <- normalize.quantiles(as.matrix(x), copy = TRUE)
     colnames(x) <- colnames(counts)
     rownames(x) <- rownames(counts)
@@ -1538,7 +1539,7 @@ shinyServer(function(input, output, session) {
       #api_key <-   # Replace with your API key
       url <- "https://api.together.xyz/v1/chat/completions"
       body <- list(
-        model = "google/gemma-2-27b-it",
+        model = "google/gemma-3n-E4B-it",
         #model = "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free",
         messages = list(
           list(role = "system", content = "Respond only in JSON format. The JSON must have this structure: 
@@ -1870,7 +1871,7 @@ shinyServer(function(input, output, session) {
           else if ((func_name == "cluster") || (func_name == "dendro")){
             x = counts
             x = log10(x+1)
-            print("Clustering!")
+            #print("Clustering!")
             #x <- normalize.quantiles(as.matrix(x), copy = TRUE)
             colnames(x) <- colnames(counts)
             rownames(x) <- rownames(counts)
@@ -2825,7 +2826,7 @@ shinyServer(function(input, output, session) {
        #api_key <-   # Replace with your API key
        url <- "https://api.together.xyz/v1/chat/completions"
        body <- list(
-         model = "google/gemma-2-27b-it",
+         model = "google/gemma-3n-E4B-it",
          messages = list(
            list(role = "system", content = "Respond only in JSON format. The JSON must have this structure: 
                {\"functiontoberun\":[\"analysis\"],
