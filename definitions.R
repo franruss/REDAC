@@ -237,17 +237,22 @@ de_analysis_old_2 <- function (counts,treated_samples,wt_samples,which_results) 
 
 de_analysis <- function (counts,treated_samples,wt_samples,which_results) {
   DEres <- NULL
-  
 # Build metadata,
+  treated_samples = as.numeric(gsub("\\D", "", treated_samples))
+  wt_samples      = as.numeric(gsub("\\D", "", wt_samples))
 treated_condition <- data.frame(patients = treated_samples, condition = 'treated')
+print(treated_condition)
 wt_condition <- data.frame(patients = wt_samples, condition = 'wt')
 samples <- rbind(wt_condition, treated_condition)
+print("samples")
+print(samples)
 rownames(samples) <- samples$patients
 
 # Subset and order count matrix,
 dataset <- counts[, samples$patients]
 samples$condition <- factor(samples$condition, levels = c('wt', 'treated'))
-
+print("dataset")
+print(head(dataset))
 # Create DGEList,
 dge <- DGEList(counts = dataset, group = samples$condition)
 
