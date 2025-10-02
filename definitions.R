@@ -1,9 +1,9 @@
-#function definitions
+# Function definitions
 distToSim  <- function(x) {1-2*x^2}
 simToDist <- function(x) {sqrt(1/2*(1-(x)))}
-simFun <- function(x, y) {corCosine(x, y)} #Calculates the cosine correlation(s) between two vectors or conformable matrices.
-#For centered data the cosine and Pearson's correlation coefficients are equivalent.  
-#cosine similarity is defined as similarity: cos(??)=(??? XY) \div (???(??? X^2)\times ???(??? Y^2))
+simFun <- function(x, y) {corCosine(x, y)} # Cosine similarity between two vectors or conformable matrices.
+# For centered data, cosine similarity equals Pearson correlation.
+# Definition: cos(theta) = (X · Y) / ( ||X|| * ||Y|| )
 
 ntp_mine <- function (emat, templates, nPerm = 1000, distance = "cosine", 
                       nCores = 1, seed = NULL, verbose = getOption("verbose"), 
@@ -48,7 +48,7 @@ ntp_mine <- function (emat, templates, nPerm = 1000, distance = "cosine",
   S <- nrow(templates)
   P <- nrow(emat)
   class.names <- levels(templates$class)
-  templates$class <- as.numeric(templates$class) #qui trasformo tamplate_class in numeri per costruire dopo twat
+  templates$class <- as.numeric(templates$class) # Convert class factor to numeric (needed to build tmat design matrix)
   emat.mean <- round(mean(emat), 2)
   if (abs(emat.mean) > 1) {
     isnorm <- " <- check feature centering!"
@@ -57,7 +57,7 @@ ntp_mine <- function (emat, templates, nPerm = 1000, distance = "cosine",
                    emat.sd, isnorm), call. = FALSE)
   }
   feat.class <- paste(range(table(templates$class)), collapse = "-")
-  mm <- match(templates$probe, rownames(emat), nomatch = 0) # prendi gli indici dei predittori da qui
+  mm <- match(templates$probe, rownames(emat), nomatch = 0) # Indices of predictor (template) probes in expression matrix
   if (!all(rownames(emat)[mm] == templates$probe)) {stop("error matching probes, check rownames(emat) and templates$probe")}
   pReplace <- length(templates$probe) > length(unique(templates$probe))
   tmat <- matrix(rep(templates$class, K), ncol = K)
@@ -67,13 +67,12 @@ ntp_mine <- function (emat, templates, nPerm = 1000, distance = "cosine",
   res=NULL
   #ntpFUN <- function(n) { # n corre su tutti i campioni
   for (n in (1:N)){
-    n.sim <- as.vector(simFun( emat[mm, n, drop = FALSE] ,tmat)) #Perch? calcolare la correlazione contro una design matrix? 
-    #Per sapere in quali campioni i geni upregolati sono pi? vicini a 1 e quelli down regolati pi? vicini a zero.
-    #plot(emat[mm, n, drop = FALSE] ,tmat[,1])
-    n.sim.perm.max <- apply(simFun(matrix(emat[, n][sample.int(P, S * nPerm, replace = TRUE)], ncol = nPerm), tmat), 1, max) 
-    # adesso fai delle permutazioni e crea una matrice di valori random partendo da quelli osservati
-    #e prendi il massimo per ogni riga
-    n.ntp <- which.max(n.sim) #seleziona la classe che ha ottenuto il massimo score come similitudine nei valori reali
+  n.sim <- as.vector(simFun( emat[mm, n, drop = FALSE] ,tmat)) # Correlate sample with design matrix columns (class templates)
+  # Rationale: identifies which class template (up genes close to 1, down genes close to 0 or -1) best matches the sample.
+  # plot(emat[mm, n, drop = FALSE] , tmat[,1])  # (Optional exploratory plot)
+  n.sim.perm.max <- apply(simFun(matrix(emat[, n][sample.int(P, S * nPerm, replace = TRUE)], ncol = nPerm), tmat), 1, max) 
+  # Permutation: build random expression matrices (sampling with replacement) and compute class similarities; take per-class maxima.
+  n.ntp <- which.max(n.sim) # Selected class with the highest observed similarity score
     n.sim.ranks <- rank(-c(n.sim[n.ntp], (n.sim.perm.max)))
     n.pval <- n.sim.ranks[1]/length(n.sim.ranks)
     res[[n]] <- (c(n.ntp, simToDist(n.sim), n.pval))
@@ -102,7 +101,7 @@ de_analysis_old <- function (counts,treated_samples,wt_samples,which_results) {
   treated_samples_condition = cbind( treated_samples, condition)
   condition = rep("wt_samples",length(wt_samples))
   wt_samples_condition = cbind(wt_samples, condition)
-  # costruiamo la variabile samples che conterra' tutte le info dei campioni da comparare
+  # Build the samples metadata table containing comparison info
   samples = rbind(wt_samples_condition, treated_samples_condition)
   colnames(samples) = c("patients","condition")
   rownames(samples) = samples[,1]
@@ -113,17 +112,17 @@ de_analysis_old <- function (counts,treated_samples,wt_samples,which_results) {
   ### CONTROLLA che deve essere TRUE
   if(dim(dataset)[2] == dim(samples)[1]){
     samples = as.data.frame(samples)
-    dataset3 = dataset[,samples[,1]] #riordina le colonne di dataset secondo le righe di samples
+  dataset3 = dataset[,samples[,1]] # Reorder dataset columns to match sample ordering
     dataset3[1:3,]
-    if(all(colnames(dataset3)==rownames(samples))){ #controllo 
+    if(all(colnames(dataset3)==rownames(samples))){ # Sanity check: column order must match metadata rownames
       ###################################
-      #### Controlla BENE se Sono TUTTI TRUE !!!
+      #### Ensure ALL values above are TRUE
       ##################################
       name = paste("comparison_",unique(samples[,2])[1],"_vs_",unique(samples[,2])[2],sep="")
       print(name)
       samples$condition <- factor(samples$condition, levels = unique(samples$condition))
 
-      #IMPORTANTE RISPETTARE LE DIMENSIONI tra i due
+  # IMPORTANT: ensure matching dimensions between metadata and count matrix
       nrow(samples) == ncol(dataset3)
 
       dataset3 = as.matrix(dataset3)
@@ -133,19 +132,18 @@ de_analysis_old <- function (counts,treated_samples,wt_samples,which_results) {
       dds <- DESeqDataSetFromMatrix(countData=dataset3, colData=samples, design=~condition, tidy = FALSE)
       # Tidy = TRUE. For matrix input: whether the first column of countData is the rownames for the count matrix
 
-      #Adesso elimino i conteggi nulli o quelli inferiori a dim(counts(dds))[2] su tutti i campioni
+  # Remove genes with total counts < number of samples (low-information features)
       keep <- rowSums(counts(dds)) >= dim(counts(dds))[2]
       dds <- dds[keep,]
 
-      #Faccio Girare DESeq2
-      #ci vuole un po' di tempo qui
+  # Run DESeq2 (may take some time)
       dds <- DESeq(dds)
       #counts are divided by those:
       sizeFactors(dds)
       normalized_counts = counts(dds, normalized=TRUE)
       dim(normalized_counts)
 
-      #ci vuole un BEL po' di tempo qui. Forse minuti!
+  # Potentially time-consuming step (minutes on larger datasets)
       res = results(dds, tidy=TRUE)
       head(res)
 
@@ -157,7 +155,7 @@ de_analysis_old <- function (counts,treated_samples,wt_samples,which_results) {
       #write.table(res[,c(1,3,7)],file = paste("global_results_on_filtered_",name,".txt",sep=""), quote = FALSE,row.names = FALSE,col.names = TRUE,sep = "\t")
       DEres = res
       if(which_results=="down"){DEres=DEres[DEres$log2FoldChange<0,]}else if(which_results=="up"){DEres=DEres[DEres$log2FoldChange>0,]}
-      DEres = na.omit(DEres) #elimina le righe coi <NA>\
+  DEres = na.omit(DEres) # Remove rows with NA
       #print(DEres)
     }else{print("check the columns!")}
   }else{print("check the columns in the question you wrote!")}
@@ -237,7 +235,7 @@ de_analysis_old_2 <- function (counts,treated_samples,wt_samples,which_results) 
 
 de_analysis <- function (counts,treated_samples,wt_samples,which_results) {
   DEres <- NULL
-# Build metadata,
+# Build metadata
   treated_samples = as.numeric(gsub("\\D", "", treated_samples))
   wt_samples      = as.numeric(gsub("\\D", "", wt_samples))
 treated_condition <- data.frame(patients = treated_samples, condition = 'treated')
@@ -248,30 +246,30 @@ print("samples")
 print(samples)
 rownames(samples) <- samples$patients
 
-# Subset and order count matrix,
+# Subset and order count matrix
 dataset <- counts[, samples$patients]
 samples$condition <- factor(samples$condition, levels = c('wt', 'treated'))
 print("dataset")
 print(head(dataset))
-# Create DGEList,
+# Create DGEList object
 dge <- DGEList(counts = dataset, group = samples$condition)
 
-# Filter low counts,
+# Filter low-count genes
 keep <- rowSums(counts) >= dim(counts)[2]
 dge <- dge[keep, , keep.lib.sizes = FALSE]
 
-# Normalize and estimate dispersion,
+# Normalize and estimate dispersion
 dge <- calcNormFactors(dge)
 dge <- estimateDisp(dge)
 
-# Differential expression,
+# Differential expression testing
 et <- exactTest(dge, pair = c('wt', 'treated'))
 res <- topTags(et, n = nrow(dge))$table
 res <- res[order(res$FDR), ]
 res$log2FoldChange <- round(res$logFC, 4)
 res$logFC <- NULL
 
-# Filter DE results,
+# Filter DE results according to which_results parameter
 if (which_results == 'down') {
   DEres <- res[res$log2FoldChange < 0, ]
 } else if (which_results == 'up') {
@@ -319,18 +317,18 @@ read_and_clean_colnames <- function(file_path, sep = sep, header = header, rowna
 }
 
 calculate_correlation <- function (counts,treated_samples,wt_samples,which_results) {
-#calcola pearson correlation per tutti i geni e salva i risultati
-patientlist <- read.table(file="coadread_data_bcr_clinical_data_patient.txt",header=TRUE,sep="\t") #global gene list
-coadread_expression <- read.table(file="coadread_data_RNA_Seq_v2_expression_median.txt",header=TRUE,sep="\t") #global gene list
+# Compute Pearson correlation for all genes versus patient overall survival (OS) and return indices above a threshold.
+patientlist <- read.table(file="coadread_data_bcr_clinical_data_patient.txt",header=TRUE,sep="\t") # Clinical metadata
+coadread_expression <- read.table(file="coadread_data_RNA_Seq_v2_expression_median.txt",header=TRUE,sep="\t") # Expression data
 coad_expr = (coadread_expression[,c(-1,-2)])
-#myfqua = normalize.quantiles(as.matrix(coad_expr),copy=TRUE)
+# Optional: quantile normalization step was considered but is commented out.
 myfqua = coad_expr
 colnames(myfqua) = colnames(coadread_expression)[3:length((coadread_expression))]
 rownames(myfqua) = coadread_expression[,1]
 patients = patientlist$PATIENT_ID
 patients = strsplit(as.character(patients),"-")
 patientnames=NULL
-# scrivi i nomi col punto . invece che col -
+# Build patient identifiers using dots instead of hyphens (TCGA.xx.yy.01)
 for (p in 1:length(patients)){
   patientnames[p] = paste("TCGA",patients[[p]][2],patients[[p]][3],"01",sep=".")
 }
@@ -339,7 +337,7 @@ patientlist3=NULL
 list_absent_patients=NULL
 k=0
 for (i in 1:length(colnames(myfqua))){
-  temp = subset(patientlist2,patientlist2$patientnames==colnames(myfqua)[i]) #vedi se c'è questo paziente che è presente nel file di espressione
+  temp = subset(patientlist2,patientlist2$patientnames==colnames(myfqua)[i]) # Check if patient exists in clinical file
   if (dim(temp)[1]>0 && as.character(temp$OS_MONTHS)!="[Not Available]") {
     patientlist3 = rbind(patientlist3,temp)
   }else{
@@ -349,7 +347,7 @@ for (i in 1:length(colnames(myfqua))){
   }
 }
 list_absent_patients
-# eliminare questi pazienti dal dataframe gene_expression
+# Remove patients lacking clinical data from expression matrix
 patients_to_be_eliminated = which(colnames(myfqua) %in% list_absent_patients) 
 gene_expression2 = myfqua[,-patients_to_be_eliminated]
 dim(patientlist3)
