@@ -142,7 +142,10 @@ bioc_packages <- c(
   
   # Additional annotation packages
   "GO.db",
-  "KEGG.db"
+  "KEGG.db",
+
+  # Other
+  "rmdHelpers"
 )
 
 # Install Bioconductor packages

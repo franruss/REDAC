@@ -43,6 +43,10 @@ source("definitions.R")
 options(shiny.maxRequestSize=100*2048^2)
 options(repos = BiocManager::repositories())
 
+TOGETHER_MODELS <- list("meta-llama/Llama-3.3-70B-Instruct-Turbo-Free", "google/gemma-3n-E4B-it", "meta-llama/Llama-4-Scout-17B-16E-Instruct", "openai/gpt-oss-120b")
+GROQ_MODELS <- list("llama-3.3-70b-versatile", "openai/gpt-oss-120b")
+MODEL_CHOICE <- TOGETHER_MODELS
+
 # Define UI 
 shinyUI(fluidPage(theme = shinytheme("united"),
                   tagList(
@@ -91,8 +95,16 @@ shinyUI(fluidPage(theme = shinytheme("united"),
               helpText(" "),
               helpText("If you need help using REDAC or if there is an error with the data you entered, please send an email to: francesco.russo AT cnr.it"),
               helpText(" "),
-              fileInput('file2', "Please, upload your bulk RNA-seq raw count data (positive integers) in a tab separated format",accept=c('text/csv','text/comma-separated-values,text/plain','.csv')),
-              textInput('text2', "Please, write your request (by Gemma)","Example: perform an rnaseq analysis between treated 3,4 and wt 1,2 samples, up regulated",width="800px"),
+
+              # fileInput('file2', "Please, upload your bulk RNA-seq raw count data (positive integers) in a tab separated format",accept=c('text/csv','text/comma-separated-values,text/plain','.csv')),
+
+              fluidRow(
+                column(8, fileInput('file2', "Upload your bulk RNA-seq raw count data (positive integers) in a tab separated format",accept=c('text/csv','text/comma-separated-values,text/plain','.csv'))),
+                column(4, selectInput('selected_model', "Select the AI model to use:",
+                              choices = MODEL_CHOICE,
+                              selected = MODEL_CHOICE[1]))
+              ),
+              textInput('text2', "Please, write your request","Example: perform an rnaseq analysis between treated 3,4 and wt 1,2 samples, up regulated",width="800px"),
               width = 30,
             ),
             # Show a tabset
@@ -121,7 +133,7 @@ shinyUI(fluidPage(theme = shinytheme("united"),
               helpText("__________________________________________________________________________________________________________________________"),
               helpText("<< ANSWER >>"),
               tabsetPanel(
-                tabPanel("Llama's answer", verbatimTextOutput("resultsTable6"))
+                tabPanel("LLM answer", verbatimTextOutput("resultsTable6"))
               ),
               helpText(" "),
               helpText("__________________________________________________________________________________________________________________________"),
@@ -135,9 +147,9 @@ shinyUI(fluidPage(theme = shinytheme("united"),
               helpText("<< RESULT INSPECTION PLOTS, DISCUSSION AND ALTERNATIVE CODE>>"),
               tabsetPanel(tabPanel("Volcano Plot", plotlyOutput("volcanoPlot2",height = '600', width = '1200')),
                           tabPanel("MA Plot", plotlyOutput("foldchangePlot2",height = '600', width = '1200')),
-                          tabPanel("Code for Python developers (by Llama)", uiOutput("chat_output3")),
-                          tabPanel("Alternative code for R developers (by Llama)", uiOutput("chat_output2")),
-                          tabPanel("Analysis discussion (by Gemma)", uiOutput('chat_output_short_advice2'))
+                          tabPanel("Code for Python developers", uiOutput("chat_output3")),
+                          tabPanel("Alternative code for R developers", uiOutput("chat_output2")),
+                          tabPanel("Analysis discussion", uiOutput('chat_output_short_advice2'))
               ),
               helpText(" "),
               # helpText("__________________________________________________________________________________________________________________________"),
@@ -171,13 +183,21 @@ shinyUI(fluidPage(theme = shinytheme("united"),
                        helpText(HTML("A1CF&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;6.07&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1.1e-10&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;...")),
                        helpText(HTML("...  ...  ...")),
                        helpText(" "),
-                       helpText("Finally, this chatbot can suggest an interpretation of your results via two LLMs: Gemma and Llama."),
+                       helpText("Finally, the chatbot suggests an interpretation of your results using the selected LLM."),
                        helpText(" "),
                        helpText("You can find the user manual for local installation and a complete user guide here: https://github.com/franruss/REDAC/blob/main/docs/REDAC_user_manual.pdf"),
                        helpText(" "),
                        helpText("If you need help using REDAC or if there is an error with the data you entered, please send an email to: francesco.russo AT cnr.it"),
                        helpText(" "),
-                       fileInput('file3', "Please, upload your edgeR result file in a tab separated format",accept=c('text/csv','text/comma-separated-values,text/plain','.csv')), 
+                      #  fileInput('file3', "Please, upload your edgeR result file in a tab separated format",accept=c('text/csv','text/comma-separated-values,text/plain','.csv')),
+
+                       fluidRow(
+                            column(8, fileInput('file3', "Please, upload your edgeR result file in a tab separated format",accept=c('text/csv','text/comma-separated-values,text/plain','.csv'))),
+                            column(4, selectInput('selected_model', "Select the AI model to use:",
+                                                  choices = MODEL_CHOICE,
+                                                  selected = MODEL_CHOICE[1]))
+                          ),
+
                        textInput('text7', "Write your request for the LLMs: ","Explain these results produced from the comparison of...",width="2000px"),
                        
                        actionButton("run3", "Enrich!"),
@@ -192,8 +212,8 @@ shinyUI(fluidPage(theme = shinytheme("united"),
                          tabPanel("Your Input",DT::DTOutput('inputTableEnrich')),
                          tabPanel("Enrichment Results", DT::DTOutput("resultsTableEnrich")),
                          tabPanel("Dot Plot", plotlyOutput("generate_dotplot", height = '1800', width = '1300')),
-                         tabPanel("A possible interpretation (Gemma):", uiOutput('chat_output_interpretationGemma')),
-                         tabPanel("Another possible interpretation (Llama):", uiOutput('chat_output_interpretationLlama'))
+                         tabPanel("A possible interpretation:", uiOutput('chat_output_interpretation')),
+                        #  tabPanel("Another possible interpretation:", uiOutput('chat_output_interpretationLlama'))
                        ),
                        downloadButton("download_results3", "Download Enrichment Results"),
                        helpText(" "),
@@ -221,7 +241,15 @@ shinyUI(fluidPage(theme = shinytheme("united"),
                    helpText(" "),
                    helpText("If you need help using REDAC or if there is an error with the data you entered, please send an email to: francesco.russo AT cnr.it"),
                    helpText(" "),
-                   fileInput('file6', "Please, upload a file",accept=c('text/csv','text/comma-separated-values,text/plain','.csv')),
+                  #  fileInput('file6', "Please, upload a file",accept=c('text/csv','text/comma-separated-values,text/plain','.csv')),
+                    fluidRow(
+                        column(8, fileInput('file6', "Please, upload a file",accept=c('text/csv','text/comma-separated-values,text/plain','.csv'))),
+                        column(4, selectInput('selected_model', "Select the AI model to use:",
+                                      choices = MODEL_CHOICE,
+                                      selected = MODEL_CHOICE[1]))
+                      ),
+
+
                    textInput('text6', "Please, write your request:","Example: create a heatmap",width="800px"),
                    helpText(" "),
                    actionButton("run6", "Create Plot!"),
@@ -238,7 +266,7 @@ shinyUI(fluidPage(theme = shinytheme("united"),
                      ),
                      helpText(" "),
                      helpText("__________________________________________________________________________________________________________________________"),
-                     tabsetPanel(tabPanel("Alternative code for R developers (Llama)", uiOutput("chat_output"))),
+                     tabsetPanel(tabPanel("Alternative code for R developers", uiOutput("chat_output"))),
                    tags$head(tags$style( HTML(".shiny-notification {background-color:yellow;position:fixed;top: 50%;left: 5%;right: 5%;}"))),
                    tags$hr(),
                    width = 26,

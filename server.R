@@ -4,7 +4,24 @@ source(".Renviron")
 readRenviron(".Renviron")
 library(BiocManager)
 options(repos = BiocManager::repositories())
+
+# Providers
+provider <- "together"
+provider_url <- "https://api.together.xyz/v1/chat/completions"
+# api_key <- "insert_your_together_api_key_here"
 api_key <- Sys.getenv("API_KEY")
+
+MODELS_ <- c("Gemma-3n" = "google/gemma-3n-E4B-it", "Llama-3.3-70B" = "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free")
+# model urls "https://huggingface.co/google/gemma-3n-E4B-it", "https://huggingface.co/meta-llama/Llama-3.3-70B-Instruct"
+
+# Alternative provider
+# provider <- "groq"
+# provider_url <- "https://api.groq.com/v1/chat/completions"
+# api_key <- "instert_your_groq_api_key_here"
+# MODELS <- c("GPT-oss-120b" = "openai/gpt-oss-120b", "Llama-3.3-70B" = "llama-3.3-70b-versatile")
+
+url <- provider_url
+
 
 
 shinyServer(function(input, output, session) {
@@ -105,24 +122,28 @@ shinyServer(function(input, output, session) {
         my_data <- read_and_clean_colnames(inDataFile$datapath, sep = "\t", header = TRUE, rownames = 1 )
         #   my_data <- read.table("expression_file.txt", header = TRUE, sep = "\t", row.names = 1)
         #   prompt = "could you make an violin (if you are able to) on columns 1,2,3?"
-        api_key <- Sys.getenv("API_KEY")
+        # api_key <- Sys.getenv("API_KEY")
         if (api_key == "") stop("NO API key found!")
         #api_key <-   # Replace with your API key
-        url <- "https://api.together.xyz/v1/chat/completions"
+        # url <- "https://api.together.xyz/v1/chat/completions"
         
         body <- list(
-          model = "google/gemma-3n-E4B-it",
-          #model = "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free",
+          #model = "google/gemma-3n-E4B-it", 
+          # model = "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free",
+          model = input$selected_model,
           messages = list(
             list(role = "system", content = "Respond only in JSON format. The JSON must have this structure: 
-               {\"functiontoberun\":[\"box\",\"violin\",\"heat\",\"corr heat\",\"volcano\",\"pca\",\"cluster\",
-               \"dendro\",\"dens\",\"integration\",\"component\",
-               \"MAplot\",\"dot\",\"net\",\"3D pca\"],
-               \"columns\":[[\"col1\"],[\"col2\"],[\"col3\"]]}. Do not add explanations or other text."),
+                  {\"functiontoberun\":[\"analysis\"],
+                  \"treated\":[[\"col1\"],[\"col2\"]],\"wt\":[[\"col3\"],[\"col4\"]],
+                  \"regulated\":[\"down\",\"up\",\"de\"]}. Do not add explanations or other text."),
             list(role = "user", content = prompt)
           ),
           max_tokens = 500
         )
+        print(paste0("<<<<<<<<This is the model: ", body$model))
+        print(paste0("<<<<<<<<This is the API key: ", api_key))
+        print(paste0("<<<<<<<<This is the URL: ", url))
+
         response <- POST(
           url,
           add_headers(
@@ -413,14 +434,15 @@ shinyServer(function(input, output, session) {
       #   prompt = "Example: perform an rnaseq analysis between treated 3,4 and wt 1,2 samples, up regulated"
       #   prompt = " compare treated_1, treated_2 vs control_1, control_2, up-regulated genes”
       #   prompt = " analize the first two treated against the second two wild type, only genes down regulated”
-      api_key <- Sys.getenv("API_KEY")
+      # api_key <- Sys.getenv("API_KEY")
       if (api_key == "") stop("NO API key found!")
       #api_key <-   # Replace with your API key
-      url <- "https://api.together.xyz/v1/chat/completions"
+      # url <- "https://api.together.xyz/v1/chat/completions"
       
       body <- list(
-        #model = "google/gemma-3n-E4B-it", 
-        model = "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free",
+        # model = "google/gemma-3n-E4B-it", 
+        # model = "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free",
+        model = input$selected_model,
         messages = list(
           list(role = "system", content = "Respond only in JSON format. The JSON must have this structure: 
                {\"functiontoberun\":[\"analysis\"],
@@ -514,13 +536,14 @@ shinyServer(function(input, output, session) {
       my_data <- read_and_clean_colnames(inDataFile$datapath, sep = "\t", header = TRUE, rownames = 1 )
       #   prompt = "Plot a heatmap"
       data_text <- paste(capture.output(head(my_data, 3)), collapse = "\n")  # Only show top 20 rows
-      api_key <- Sys.getenv("API_KEY")
+      # api_key <- Sys.getenv("API_KEY")
       if (api_key == "") stop("NO API key found!")
       #api_key <-   # Replace with your API key
-      url <- "https://api.together.xyz/v1/chat/completions"
+      # url <- "https://api.together.xyz/v1/chat/completions"
       body <- list(
         #model = "google/gemma-3n-E4B-it",
-        model = "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free",
+        # model = "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free",
+        model = input$selected_model,
         messages = list(
           list(role = "system", content = "use a Chain of Thought and Act as an expert data analyst in R programming language"),
           list(role = "user", content = paste(prompt," on a dataset that have: ", dim(my_data)[1]," rows, and ",dim(my_data)[2]," columns. 
@@ -551,13 +574,14 @@ shinyServer(function(input, output, session) {
       my_data <- read_and_clean_colnames(inDataFile$datapath, sep = "\t", header = TRUE, rownames = 1 )
       #   prompt = "Can you perform a de analysis of treated 1,2,5 against wt 3,7,8 ?"
       data_text <- paste(capture.output(head(my_data, 3)), collapse = "\n")  # Only show top 20 rows
-      api_key <- Sys.getenv("API_KEY")
+      # api_key <- Sys.getenv("API_KEY")
       if (api_key == "") stop("NO API key found!")
       #api_key <-   # Replace with your API key
-      url <- "https://api.together.xyz/v1/chat/completions"
+      # url <- "https://api.together.xyz/v1/chat/completions"
       body <- list(
-        model = "google/gemma-3n-E4B-it",
-        #model = "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free",
+        # model = "google/gemma-3n-E4B-it",
+        # model = "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free",
+        model = input$selected_model,
         messages = list(
           list(role = "system", content = "Act as an expert data analyst suggesting a general way to perform the request. Do not write code."),
           list(role = "user", content = paste(prompt," on a dataset that have ", dim(my_data)[1]," rows, and ",dim(my_data)[2]," columns. 
@@ -581,19 +605,20 @@ shinyServer(function(input, output, session) {
     }
   })
   
-  output$chat_output_interpretationGemma <- renderUI({
+  output$chat_output_interpretation <- renderUI({
       my_data <- enrichment_function()$results
       print(my_data[,1:5])
       my_data= my_data$Description
       Text7 = input$text7
       data_text = my_data
       data_text = paste(Text7, paste((data_text), collapse = ", "), collapse = ": ")
-      api_key <- Sys.getenv("API_KEY")
+      # api_key <- Sys.getenv("API_KEY")
       if (api_key == "") stop("NO API key found!")
       #api_key <-   # Replace with your API key
-      url <- "https://api.together.xyz/v1/chat/completions"
+      # url <- "https://api.together.xyz/v1/chat/completions"
       body <- list(
-        model = "google/gemma-3n-E4B-it",
+        # model = "google/gemma-3n-E4B-it",
+        model = input$selected_model,
         messages = list(
           list(role = "system", content = "Interpret data by giving possible explanations of the biological processes involved as an expert biologist"),
           list(role = "user", content = paste("Suggest some plausible cellular mechanistic explanations for these pathways by grouping them for category. At the end suggest future investigations.", data_text)
@@ -615,39 +640,40 @@ shinyServer(function(input, output, session) {
       HTML(markdown::markdownToHTML(parsed$choices$message[2]$content))
   })
   
-  output$chat_output_interpretationLlama <- renderUI({
-      my_data <- enrichment_function()$results
-      print(my_data[,1:5])
-      my_data= my_data$Description
-      Text7 = input$text7
-      data_text = my_data
-      data_text = paste(Text7, paste((data_text), collapse = ", "), collapse = ": ")
-      api_key <- Sys.getenv("API_KEY")
-      if (api_key == "") stop("NO API key found!")
-      #api_key <-   # Replace with your API key
-      url <- "https://api.together.xyz/v1/chat/completions"
-      body <- list(
-        model = "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free",
-        messages = list(
-          list(role = "system", content = "Interpret data by giving possible explanations of the biological processes involved as an expert biologist"),
-          list(role = "user", content = paste("Suggest some plausible cellular mechanistic explanations for these pathways by grouping them for category. At the end suggest future investigations.", data_text)
-          )
-        ),
-        max_tokens = 2500
-      )
-      response <- POST(
-        url,
-        add_headers(
-          Authorization = paste("Bearer", api_key),
-          `Content-Type` = "application/json"
-        ),
-        body = toJSON(body, auto_unbox = TRUE),
-        encode = "json"
-      )
-      content <- httr::content(response, as = "text")
-      parsed <- fromJSON(content)
-      HTML(markdown::markdownToHTML(parsed$choices$message[2]$content))
-  })
+  # output$chat_output_interpretationLlama <- renderUI({
+  #     my_data <- enrichment_function()$results
+  #     print(my_data[,1:5])
+  #     my_data= my_data$Description
+  #     Text7 = input$text7
+  #     data_text = my_data
+  #     data_text = paste(Text7, paste((data_text), collapse = ", "), collapse = ": ")
+  #     # api_key <- Sys.getenv("API_KEY")
+  #     if (api_key == "") stop("NO API key found!")
+  #     #api_key <-   # Replace with your API key
+  #     # url <- "https://api.together.xyz/v1/chat/completions"
+  #     body <- list(
+  #       # model = "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free",
+  #       model = input$selected_model,
+  #       messages = list(
+  #         list(role = "system", content = "Interpret data by giving possible explanations of the biological processes involved as an expert biologist"),
+  #         list(role = "user", content = paste("Suggest some plausible cellular mechanistic explanations for these pathways by grouping them for category. At the end suggest future investigations.", data_text)
+  #         )
+  #       ),
+  #       max_tokens = 2500
+  #     )
+  #     response <- POST(
+  #       url,
+  #       add_headers(
+  #         Authorization = paste("Bearer", api_key),
+  #         `Content-Type` = "application/json"
+  #       ),
+  #       body = toJSON(body, auto_unbox = TRUE),
+  #       encode = "json"
+  #     )
+  #     content <- httr::content(response, as = "text")
+  #     parsed <- fromJSON(content)
+  #     HTML(markdown::markdownToHTML(parsed$choices$message[2]$content))
+  # })
   
   output$show_input_fun <- DT::renderDT({  
     inFile <- input$file3
@@ -792,9 +818,10 @@ shinyServer(function(input, output, session) {
     )
   fig
   })
-  
-  
-  
+
+
+
+  # Reactive expression to perform DEA when button is clicked
   dea_results2 <- eventReactive(input$run2, {
     req(input$file2)
     req(input$text2)
@@ -809,18 +836,30 @@ shinyServer(function(input, output, session) {
     print("Here parsed")
     print(parsed)
     res_df <- as.data.frame(res) #%>% rownames_to_column("Gene")
-    # Save locally
-    write.table(res_df, paste("result_of_",input$text2,"_on_",input$file2$name,sep=""), row.names = TRUE, sep="\t",quote=FALSE, col.names = TRUE)
+    
+
+    # Set table name with timestamp
+    short_name <- substr(input$file2$name, 1, 30)
+    short_name <- gsub(" ", "_", short_name)
+    timestamp <- format(Sys.time(), "%Y%m%d_%H%M%S")
+    tablename <- paste("result_",timestamp,"_on_",short_name,".csv",sep="")
+    # Save the results to a CSV file
+    # debug line
+    print(paste(">>>>>>>>>>>> Table filename: ",tablename,sep=""))
+
+    write.table(res_df, tablename, row.names = TRUE, sep="\t",quote=FALSE, col.names = TRUE)
     counts <- read_and_clean_colnames(input$file2$datapath, header=T,rownames = 1, sep="\t")
     return(list(results = res_df, counts = counts, text=input$text2, parsed=parsed, ids_treated = ids_treated, ids_wt = ids_wt, regulated= regulated))
   })
   
-  output$download_results2 <- downloadHandler(
-    filename = function() { paste("result_of_",input$text2,"_on_",input$file2$name,sep="") },
-    content = function(file) {
-      file.copy(paste("result_of_",input$text2,"_on_",input$file2$name,sep=""), file)
-    }
+  # filename = function() {paste("result_", format(Sys.time(), "%Y%m%d_%H%M%S"), "_on_", gsub(" ", "_", substr(input$file2$name, 1, 30)), ".csv", sep = "") },
+  # filename = function() {paste("result_", format(Sys.time(), "%Y%m%d_%H%M%S"), "_on_", gsub(" ", "_", substr(input$file2$name, 1, 30)), ".csv", sep = "") },
+
+  output$download <- downloadHandler(
+    filename = function(){paste("results_of_the_analysis_of_",input$file2$name,sep="")},
+    content = function(fname){write.table(get_response_table(input$text2, input$file2)$result, fname, col.names = TRUE,row.names = FALSE,quote=FALSE, sep = "\t")}
   )
+
   
  output$resultsTable6 <- renderText({
    ids_treated = dea_results2()$ids_treated
@@ -868,15 +907,15 @@ shinyServer(function(input, output, session) {
     my_data <- dea_results2()$counts
     prompt <- dea_results2()$text
       #my_data <- read_and_clean_colnames(inDataFile$datapath, sep = "\t", header = TRUE, rownames = 1 )
-      #   prompt = "Plot a heatmap"
       data_text <- paste(capture.output(colnames(my_data)), collapse = "\n")  # Only show top 20 rows
-      api_key <- Sys.getenv("API_KEY")
+      # api_key <- Sys.getenv("API_KEY")
       if (api_key == "") stop("NO API key found!")
       #api_key <-   # Replace with your API key
-      url <- "https://api.together.xyz/v1/chat/completions"
+      # url <- "https://api.together.xyz/v1/chat/completions"
       body <- list(
         #model = "google/gemma-3n-E4B-it",
-        model = "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free",
+        # model = "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free",
+        model = input$selected_model,
         messages = list(
           list(role = "system", content = "use a Chain of Thought and Act as an expert data analyst in R programming language that uses DESEQ2 package"),
           list(role = "user", content = paste(prompt," on a dataset that have: ", dim(my_data)[1]," rows, and ",dim(my_data)[2]," columns. 
@@ -910,13 +949,14 @@ shinyServer(function(input, output, session) {
     #my_data <- read_and_clean_colnames(inDataFile$datapath, sep = "\t", header = TRUE, rownames = 1 )
     #   prompt = "Plot a heatmap"
     data_text <- paste(capture.output(colnames(my_data)), collapse = "\n")  # Only show top 20 rows
-    api_key <- Sys.getenv("API_KEY")
+    # api_key <- Sys.getenv("API_KEY")
     if (api_key == "") stop("NO API key found!")
     #api_key <-   # Replace with your API key
-    url <- "https://api.together.xyz/v1/chat/completions"
+    # url <- "https://api.together.xyz/v1/chat/completions"
     body <- list(
-      #model = "google/gemma-3n-E4B-it",
-      model = "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free",
+      # model = "google/gemma-3n-E4B-it",
+      # model = "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free",
+      model = input$selected_model,
       messages = list(
         list(role = "system", content = "use a Chain of Thought and Act as an expert data analyst in Python programming language"),
         list(role = "user", content = paste(prompt," on a dataset that have: ", dim(my_data)[1]," rows, and ",dim(my_data)[2]," columns. 
@@ -947,15 +987,20 @@ shinyServer(function(input, output, session) {
     #my_data <- read_and_clean_colnames(inDataFile$datapath, sep = "\t", header = TRUE, rownames = 1 )
     my_data <- dea_results2()$counts
     prompt <- dea_results2()$text
-      #   prompt = "Can you perform a de analysis of treated 1,2,5 against wt 3,7,8 ?"
-      data_text <- paste(capture.output(head(my_data, 3)), collapse = "\n")  # Only show top 20 rows
-      api_key <- Sys.getenv("API_KEY")
-      if (api_key == "") stop("NO API key found!")
-      #api_key <-   # Replace with your API key
-      url <- "https://api.together.xyz/v1/chat/completions"
-      body <- list(
-        model = "google/gemma-3n-E4B-it",
-        #model = "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free",
+    #   prompt = "Can you perform a de analysis of treated 1,2,5 against wt 3,7,8 ?"
+    data_text <- paste(capture.output(head(my_data, 3)), collapse = "\n")  # Only show top 20 rows
+    # api_key <- Sys.getenv("API_KEY")
+    if (api_key == "") stop("NO API key found!")
+    # api_key <-   # Replace with your API key
+    # url <- "https://api.together.xyz/v1/chat/completions"
+
+    # debug
+    print(paste(">>>>>>> Prompt for short advice:", prompt, " on a dataset that have ", dim(my_data)[1], " rows, and ", dim(my_data)[2], " columns. Here are the first 3 rows:\n", data_text))
+
+    body <- list(
+        # model = "google/gemma-3n-E4B-it",
+        # model = "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free",
+        model = input$selected_model,
         messages = list(
           list(role = "system", content = "Act as an expert rnaseq data analyst suggesting a general way to perform the request (suggesting the use of DESEQ2, EdgeR, limma, for de genes identification) 
                     and the generation of several plots such as PCA, densities, heatmap, dendrogram, violin, et cetera to explore input data and MAplot, volcano plot, et cetera to explore results. Do not write code."),
@@ -965,7 +1010,8 @@ shinyServer(function(input, output, session) {
         ),
         max_tokens = 1700
       )
-      response <- POST(
+
+    response <- POST(
         url,
         add_headers(
           Authorization = paste("Bearer", api_key),
@@ -979,6 +1025,9 @@ shinyServer(function(input, output, session) {
       HTML(markdown::markdownToHTML(parsed$choices$message[2]$content))
     #}
   })
+
+
+  
   output$volcanoPlot2 <- renderPlotly({
     res_df <- dea_results2()$results
     ids_wt = dea_results2()$ids_wt
@@ -1607,13 +1656,14 @@ shinyServer(function(input, output, session) {
         my_data <- read_and_clean_colnames(inDataFile$datapath, sep = "\t", header = TRUE, rownames = 1 )
         counts = my_data
       print(head(counts))
-      api_key <- Sys.getenv("API_KEY")
+      # api_key <- Sys.getenv("API_KEY")
       if (api_key == "") stop("NO API key found!")
       #api_key <-   # Replace with your API key
-      url <- "https://api.together.xyz/v1/chat/completions"
+      # url <- "https://api.together.xyz/v1/chat/completions"
       body <- list(
-        model = "google/gemma-3n-E4B-it",
-        #model = "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free",
+        # model = "google/gemma-3n-E4B-it",
+        # model = "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free",
+        model = input$selected_model,
         messages = list(
           list(role = "system", content = "Respond only in JSON format. The JSON must have this structure: 
                {\"functiontoberun\":[\"box\",\"surface\",\"density\",\"violin\",\"heat\",\"corrheat\",\"volcano\",\"pca\",\"cluster\",\"dendro\",\"integration\",\"pcacomp\",\"MAplot\",\"dot\",\"KEGG\",\"net\",\"3Dpca\"],
@@ -2894,12 +2944,13 @@ shinyServer(function(input, output, session) {
    get_response_param <- function(prompt,inDataFile) {
      if (is.null(inDataFile) || (prompt=="")){return(NULL)}else{
        my_data <- read_and_clean_colnames(inDataFile$datapath, sep = "\t", header = TRUE, rownames = 1 )
-       api_key <- Sys.getenv("API_KEY")
+      #  api_key <- Sys.getenv("API_KEY")
        if (api_key == "") stop("NO API key found!")
        #api_key <-   # Replace with your API key
-       url <- "https://api.together.xyz/v1/chat/completions"
+      #  url <- "https://api.together.xyz/v1/chat/completions"
        body <- list(
-         model = "google/gemma-3n-E4B-it",
+        #  model = "google/gemma-3n-E4B-it",
+         model = input$selected_model,
          messages = list(
            list(role = "system", content = "Respond only in JSON format. The JSON must have this structure: 
                {\"functiontoberun\":[\"analysis\"],
