@@ -411,6 +411,8 @@ shinyServer(function(input, output, session) {
       my_data <- read_and_clean_colnames(inDataFile$datapath, sep = "\t", header = TRUE, rownames = 1 )
       #   my_data <- read.table("C:/Users/f.russo.ENGIBBC/Desktop/REDAC_submission/expression_file.txt", header = TRUE, sep = "\t", row.names = 1)
       #   prompt = "Example: perform an rnaseq analysis between treated 3,4 and wt 1,2 samples, up regulated"
+      #   prompt = " compare treated_1, treated_2 vs control_1, control_2, up-regulated genes”
+      #   prompt = " analize the first two treated against the second two wild type, only genes down regulated”
       api_key <- Sys.getenv("API_KEY")
       if (api_key == "") stop("NO API key found!")
       #api_key <-   # Replace with your API key
@@ -423,7 +425,7 @@ shinyServer(function(input, output, session) {
           list(role = "system", content = "Respond only in JSON format. The JSON must have this structure: 
                {\"functiontoberun\":[\"analysis\"],
                 \"treated\":[[\"col1\"],[\"col2\"]],\"wt\":[[\"col3\"],[\"col4\"]],
-                \"regulated\":[\"down\",\"up\",\"de\"]}. Do not add explanations or other text."),
+                \"regulated\":[\"de\",\"down\",\"up\"]}. Do not add explanations or other text."),
           list(role = "user", content = prompt)
         ),
         max_tokens = 500
@@ -469,9 +471,14 @@ shinyServer(function(input, output, session) {
           wt_samples      <- unlist(str_replace_all(parsed$wt, c("col" = "")))
           regulated       <- parsed$regulated[i]
           #scegli qui le funzioni da usare
-          if (func_name == "rnaseq_analysis") {
-            print("HERE! rnaseqanalysis")
+          if ((func_name == "rnaseq_analysis") || (func_name == " de_analysis") || (func_name == "differential_expression_analysis") || func_name == "analysis"){
+            print("HERE!")
+            print(func_name)
             final_result  = de_analysis(counts,treated_samples,wt_samples,regulated)
+            treated_samples_numbers = as.numeric(gsub("\\D", "", treated_samples))
+            wt_samples_numbers      = as.numeric(gsub("\\D", "", wt_samples))
+            ids_treated = ((colnames(counts))[treated_samples_numbers])
+            ids_wt = ((colnames(counts))[wt_samples_numbers])
           } else if (func_name == "enrichment") {
             final_result = gene_pathway_enrichment(as.character(rownames(counts)))
           }
@@ -489,7 +496,7 @@ shinyServer(function(input, output, session) {
         (paste("Error: Unexpected response format -", content))
       }
     }
-    list(result = final_result, treated_samples = treated_samples, wt_samples = wt_samples, which_results = regulated)
+    list(result = final_result, treated_samples = treated_samples, wt_samples = wt_samples, which_results = regulated, parsed = parsed, ids_treated = ids_treated, ids_wt = ids_wt) #Here I added parsed
   }
   
   output$download <- downloadHandler(
@@ -793,12 +800,19 @@ shinyServer(function(input, output, session) {
     req(input$text2)
     #print(input$file2)
     #print(input$text2)
-    res = get_response_table(input$text2, input$file2)$result
+    result_list = get_response_table(input$text2, input$file2)
+    res = result_list$result
+    parsed = result_list$parsed
+    ids_wt = result_list$ids_wt
+    ids_treated = result_list$ids_treated
+    regulated = result_list$which_results
+    print("Here parsed")
+    print(parsed)
     res_df <- as.data.frame(res) #%>% rownames_to_column("Gene")
     # Save locally
     write.table(res_df, paste("result_of_",input$text2,"_on_",input$file2$name,sep=""), row.names = TRUE, sep="\t",quote=FALSE, col.names = TRUE)
     counts <- read_and_clean_colnames(input$file2$datapath, header=T,rownames = 1, sep="\t")
-    return(list(results = res_df, counts = counts, text=input$text2))
+    return(list(results = res_df, counts = counts, text=input$text2, parsed=parsed, ids_treated = ids_treated, ids_wt = ids_wt, regulated= regulated))
   })
   
   output$download_results2 <- downloadHandler(
@@ -807,6 +821,20 @@ shinyServer(function(input, output, session) {
       file.copy(paste("result_of_",input$text2,"_on_",input$file2$name,sep=""), file)
     }
   )
+  
+ output$resultsTable6 <- renderText({
+   ids_treated = dea_results2()$ids_treated
+   ids_wt = dea_results2()$ids_wt
+   regulated = dea_results2()$regulated
+   text = dea_results2()$text
+   if(regulated == "de"){regulated = "differentially"}
+   answer = paste(paste("You asked: <<",text,">>.",sep=""), 
+                  paste("I interpreted as treated samples these ones: ", printList(ids_treated), ". And as wild types these samples: ",printList(ids_wt),".", sep=""),
+                  paste("I think you are looking for ",regulated, " regulated genes.", sep=""),
+                  paste("Hope my interpretation is correct.","Otherwise, please refrase the request above and click on 'Run Analysis!' button again.", sep="\n")
+            , sep="\n")
+   answer
+  })
   
   output$resultsTable2 <- renderDT({
     #datatable(dea_results2()$results)
@@ -871,6 +899,47 @@ shinyServer(function(input, output, session) {
       HTML(markdown::markdownToHTML(parsed$choices$message[2]$content))
     #}
   })
+  
+  output$chat_output3 <- renderUI({
+    # inDataFile = input$file2
+    #  prompt = input$text2
+    # if ((is.null(inDataFile)) || (prompt=="")){return(NULL)}else{
+    print("answer")
+    my_data <- dea_results2()$counts
+    prompt <- dea_results2()$text
+    #my_data <- read_and_clean_colnames(inDataFile$datapath, sep = "\t", header = TRUE, rownames = 1 )
+    #   prompt = "Plot a heatmap"
+    data_text <- paste(capture.output(colnames(my_data)), collapse = "\n")  # Only show top 20 rows
+    api_key <- Sys.getenv("API_KEY")
+    if (api_key == "") stop("NO API key found!")
+    #api_key <-   # Replace with your API key
+    url <- "https://api.together.xyz/v1/chat/completions"
+    body <- list(
+      #model = "google/gemma-3n-E4B-it",
+      model = "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free",
+      messages = list(
+        list(role = "system", content = "use a Chain of Thought and Act as an expert data analyst in Python programming language"),
+        list(role = "user", content = paste(prompt," on a dataset that have: ", dim(my_data)[1]," rows, and ",dim(my_data)[2]," columns. 
+                                              Here are the sample names:\n", data_text, " use the PyDESeq2 Python package for this request",prompt)
+        )
+      ),
+      max_tokens = 1500
+    )
+    response <- POST(
+      url,
+      add_headers(
+        Authorization = paste("Bearer", api_key),
+        `Content-Type` = "application/json"
+      ),
+      body = toJSON(body, auto_unbox = TRUE),
+      encode = "json"
+    )
+    content <- httr::content(response, as = "text")
+    parsed <- fromJSON(content)
+    HTML(markdown::markdownToHTML(parsed$choices$message[2]$content))
+    #}
+  })
+  
   output$chat_output_short_advice2 <- renderUI({
    # inDataFile = input$file2
   #  prompt = input$text2
@@ -912,6 +981,8 @@ shinyServer(function(input, output, session) {
   })
   output$volcanoPlot2 <- renderPlotly({
     res_df <- dea_results2()$results
+    ids_wt = dea_results2()$ids_wt
+    ids_treated = dea_results2()$ids_treated
     res_df$significant <- res_df$FDR < 0.05
     res_df$gene <- rownames(res_df)
     volcano_plot <- plot_ly(
@@ -931,8 +1002,8 @@ shinyServer(function(input, output, session) {
       marker = list(size = 6, opacity = 0.6)
     ) %>%
       layout(
-        title = list(text = "Volcano Plot", font = list(size = 16)),
-        xaxis = list(title = "log2 Fold Change"),
+        title = list(text = paste("Volcano Plot between ",printList(ids_treated)," vs ",printList(ids_wt), sep="\n"), font = list(size = 10)),
+        xaxis = list(title = paste("log2FoldChange (",printList(ids_treated),"/",printList(ids_wt),")", sep=""),font = list(size = 8)),
         yaxis = list(title = "-log10 FDR"),
         legend = list(title = list(text = "Significance"))
       )
@@ -942,6 +1013,8 @@ shinyServer(function(input, output, session) {
   
   output$foldchangePlot2 <- renderPlotly({
     res_df <- dea_results2()$results
+    ids_wt = dea_results2()$ids_wt
+    ids_treated = dea_results2()$ids_treated
     res_df$significant <- res_df$FDR < 0.05
     #plot(log2(res$baseMean + 1) , res$log2FoldChange ,col = "black", main="DESeq2 Fold Change Plot", xlab='Mean of Normalized Counts', ylab='log2FoldChange',pch=19,cex=0.3) 
     res_df$gene <- rownames(res_df)
@@ -965,9 +1038,9 @@ shinyServer(function(input, output, session) {
       marker = list(size = 6, opacity = 0.6)
     ) %>%
       layout(
-        title = list(text =  "Fold Change vs logCPM Plot", font = list(size = 16)),
+        title = list(text =  paste("MA Plot of the comparison ",printList(ids_treated)," vs ",printList(ids_wt), sep="\n") , font = list(size = 10)),
         xaxis = list(title = "logCPM"),
-        yaxis = list(title = "log2 Fold Change"),
+        yaxis = list(title = paste("log2FoldChange (",printList(ids_treated),"/",printList(ids_wt),")", sep=""),font = list(size = 8)),
         legend = list(title = list(text = "Significance"))
       )
     
