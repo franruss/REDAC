@@ -43,9 +43,25 @@ source("definitions.R")
 options(shiny.maxRequestSize=100*2048^2)
 options(repos = BiocManager::repositories())
 
-TOGETHER_MODELS <- list("meta-llama/Llama-3.3-70B-Instruct-Turbo-Free", "google/gemma-3n-E4B-it", "meta-llama/Llama-4-Scout-17B-16E-Instruct", "openai/gpt-oss-120b")
-GROQ_MODELS <- list("llama-3.3-70b-versatile", "openai/gpt-oss-120b")
+TOGETHER_MODELS <- list(
+             "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free",
+             "meta-llama/Llama-3.2-3B-Instruct-Turbo",
+             "meta-llama/Llama-3.3-70B-Instruct-Turbo",
+             "meta-llama/Llama-4-Scout-17B-16E-Instruct",
+             "google/gemma-3n-E4B-it", 
+             "openai/gpt-oss-120b")
+
+
+GROQ_MODELS <- list(
+  "llama-3.3-70b-versatile", 
+  "meta-llama/llama-guard-4-12b",
+  "meta-llama/llama-4-scout-17b-16e-instruct",
+  "openai/gpt-oss-120b",
+  "openai/gpt-oss-20b"
+)
 MODEL_CHOICE <- TOGETHER_MODELS
+
+
 
 # Define UI 
 shinyUI(fluidPage(theme = shinytheme("united"),

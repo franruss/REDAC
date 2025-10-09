@@ -16,7 +16,7 @@ dataset_configs <- list(
     file = "./data/GSE146458_raw_counts_GRCh38.p13_NCBI.txt",
     treated_cols = "GSM4386209, GSM4386210",
     wt_cols = "GSM4386207, GSM4386208"
-  )
+  ) #https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE146458
 )
 
 # Funzione per generare prompts basati sulle colonne
