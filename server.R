@@ -133,7 +133,7 @@ shinyServer(function(input, output, session) {
         # url <- "https://api.together.xyz/v1/chat/completions"
         
         body <- list(
-          #model = "google/gemma-3n-E4B-it", 
+          # model = "google/gemma-3n-E4B-it", 
           # model = "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free",
           model = input$selected_model,
           messages = list(
@@ -145,9 +145,9 @@ shinyServer(function(input, output, session) {
           ),
           max_tokens = 500
         )
-        print(paste0("<<<<<<<<This is the model: ", body$model))
-        print(paste0("<<<<<<<<This is the API key: ", api_key))
-        print(paste0("<<<<<<<<This is the URL: ", url))
+        print(paste0("<<<<<<<< This is the model: ", body$model))
+        print(paste0("<<<<<<<< This is the API key: ", api_key))
+        print(paste0("<<<<<<<< This is the URL: ", url))
 
         response <- POST(
           url,

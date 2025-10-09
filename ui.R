@@ -50,7 +50,7 @@ TOGETHER_MODELS <- list(
              "meta-llama/Llama-4-Scout-17B-16E-Instruct",
              "google/gemma-3n-E4B-it", 
              "openai/gpt-oss-120b")
-
+# https://www.together.ai/pricing
 
 GROQ_MODELS <- list(
   "llama-3.3-70b-versatile", 
@@ -58,7 +58,9 @@ GROQ_MODELS <- list(
   "meta-llama/llama-4-scout-17b-16e-instruct",
   "openai/gpt-oss-120b",
   "openai/gpt-oss-20b"
-)
+) 
+# https://console.groq.com/docs/models
+
 MODEL_CHOICE <- TOGETHER_MODELS
 
 
