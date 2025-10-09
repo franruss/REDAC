@@ -465,12 +465,12 @@ run_simple_test <- function() {
 
 # Per test completo (Specifico):
 comprehensive_results <- run_comprehensive_test(
-  prompts_list = test_prompts[1],
+  prompts_list = dataset_prompts$RNAseq_submission$prompts,
   datasets_list = test_datasets[1],
   models_list = MODELS_["Llama-3.3-70B"],
   output_file = "validation/test_results.rds"
 )
-generate_summary_report(comprehensive_results)
+# generate_summary_report(comprehensive_results)
 
 cat("Script loaded successfully!\n")
 cat("Available functions:\n")
@@ -482,5 +482,6 @@ cat("simple_results <- run_simple_test()\n")
 
 
 # read test results.rds
-test_results <- readRDS("test_results.rds")
-test_results
+# test_results <- readRDS("validation/test_results.rds")
+
+test_prompts[1]
