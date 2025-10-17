@@ -46,9 +46,10 @@ library(rmdHelpers)
 
 # ==============================================================================
 # Carica le definizioni e l'ambiente
-source("./definitions.R")
-source("./.Renviron")
-readRenviron("./.Renviron")
+# setwd("C:/Users/f.russo.ENGIBBC/Desktop/REDAC_submission/REDAC/validation/")
+source("definitions.R")
+source(".Renviron")
+readRenviron(".Renviron")
 
 # Librerie necessarie
 library(BiocManager)
@@ -66,11 +67,11 @@ provider_url <- "https://api.together.xyz/v1/chat/completions"
 api_key <- Sys.getenv("API_KEY")
 
 # Modelli disponibili
-MODELS_ <- c("Gemma-3n" = "google/gemma-3n-E4B-it", 
-             "Llama-3.3-70B-Free" = "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free",
-             "Llama-3.2-3B" = "meta-llama/Llama-3.2-3B-Instruct-Turbo",
-             "Llama-3.3-70B" = "meta-llama/Llama-3.3-70B-Instruct-Turbo",
-             "Llama-4-Scout-17B-16E" = "meta-llama/Llama-4-Scout-17B-16E-Instruct"
+MODELS_ <- c(#"Gemma-3n" = "google/gemma-3n-E4B-it", 
+             "Llama-3.3-70B-Free" = "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+             #,"Llama-3.2-3B" = "meta-llama/Llama-3.2-3B-Instruct-Turbo",
+             #"Llama-3.3-70B" = "meta-llama/Llama-3.3-70B-Instruct-Turbo"
+             #"Llama-4-Scout-17B-16E" = "meta-llama/Llama-4-Scout-17B-16E-Instruct"
              )
 
 url <- provider_url
@@ -246,6 +247,14 @@ validate_json_structure <- function(parsed_json, dataset) {
     result$error_message <- paste("Missing required fields:", paste(missing_fields, collapse = ", "))
     return(result)
   }
+  print("parsed_json$regulated")
+  print(parsed_json$regulated)
+  #verifica de, up or down regulated
+  if (length(parsed_json$regulated) != 1) {
+    result$error_type <- "Invalid/unrecognized regulated"
+    result$error_message <- paste("Invalid/unrecognized regulated:", paste(missing_fields, collapse = ", "))
+    return(result)
+  }
   
   # Verifica che le colonne specificate esistano nel dataset
   all_cols <- c(unlist(parsed_json$treated), unlist(parsed_json$wt))
@@ -298,6 +307,10 @@ classify_error <- function(error_message) {
     return("API/Connection error")
   }
   
+  if (grepl("regulated", error_message, ignore.case = TRUE)) {
+    return("Invalid/unrecognized up, down or de request")
+  }
+  
   return("Execution error in R")
 }
 
@@ -320,6 +333,10 @@ run_comprehensive_test <- function(prompts_list, datasets_list, models_list = MO
     for (dataset_path in datasets_list) {
       for (prompt in prompts_list) {
         
+        # model_name <- models_list[1]
+        # dataset_path <- datasets_list[1]
+        # prompt <- prompts_list[1]
+        
         test_counter <- test_counter + 1
         test_id <- paste0("test_", sprintf("%04d", test_counter))
         
@@ -333,7 +350,7 @@ run_comprehensive_test <- function(prompts_list, datasets_list, models_list = MO
         all_results[[test_id]] <- result
         
         # Pausa tra richieste per evitare rate limiting
-        Sys.sleep(2)
+        Sys.sleep(10)
       }
     }
   }
@@ -401,7 +418,7 @@ generate_summary_report <- function(results) {
 # ==============================================================================
 
 # Carica la generazione dei prompts
-source("validation/prompt_gen.R")
+source("prompt_gen.R")
 
 # Lista di prompts e datasets da testare
 test_prompts <- c(
@@ -413,7 +430,14 @@ test_prompts <- c(
 test_datasets <- c(
   dataset_configs$RNAseq_submission$file,
   dataset_configs$GSE164073_Eye$file,
-  dataset_configs$GSE146458_raw$file
+  dataset_configs$GSE146458_raw$file,
+  dataset_configs$GSE279712$file,
+  dataset_configs$chol_tcga$file,
+  dataset_configs$acc_tcga$file,
+  dataset_configs$ucs_tcga$file,
+  dataset_configs$dlbclnos_tcga$file,
+  dataset_configs$coad_tcga$file,
+  dataset_configs$plmeso_tcga$file
 )
 
 # ==============================================================================
@@ -438,7 +462,7 @@ run_simple_test <- function() {
       test_id = paste0("simple_test_", i)
     )
     results[[i]] <- result
-    Sys.sleep(1) # Pausa tra richieste
+    Sys.sleep(10) # Pausa tra richieste
   }
   
   generate_summary_report(results)
@@ -459,20 +483,20 @@ run_simple_test <- function() {
 # Per test semplificato:
 # simple_results <- run_simple_test()
 
-# Per test completo (attenzione: molto lungo!):
-# comprehensive_results <- run_comprehensive_test(
-#   prompts_list = test_prompts,
-#   datasets_list = test_datasets,
-#   models_list = MODELS_,
-#   output_file = "test_results.rds"
-# )
+ #Per test completo #(attenzione: molto lungo!):
+ comprehensive_results <- run_comprehensive_test(
+   prompts_list = test_prompts,
+   datasets_list = test_datasets,
+   models_list = MODELS_,
+   output_file = "test_results.rds"
+ )
 
-# Per test completo (Specifico):
+# Test for RNAseq_submission prompts
 comprehensive_results <- run_comprehensive_test(
   prompts_list = dataset_prompts$RNAseq_submission$prompts,
-  datasets_list = test_datasets[1],
-  models_list = MODELS_["Llama-3.3-70B"],
-  output_file = "validation/test_results.rds"
+  datasets_list = test_datasets,
+  models_list = MODELS_,
+  output_file = "test_results.rds"
 )
 # generate_summary_report(comprehensive_results)
 
@@ -486,6 +510,6 @@ cat("simple_results <- run_simple_test()\n")
 
 
 # read test results.rds
-# test_results <- readRDS("validation/test_results.rds")
+# test_results <- readRDS("test_results.rds")
 
 test_prompts[1]
