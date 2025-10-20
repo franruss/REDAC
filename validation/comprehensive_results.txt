@@ -1,0 +1,7480 @@
+$test_0001
+$test_0001$test_id
+[1] "test_0001"
+
+$test_0001$prompt
+[1] "perform rnaseq analysis between treated 1, 2 and wt 3, 4 samples, up regulated"
+
+$test_0001$dataset_path
+[1] "./data/Raw-data-RNAseq-for-submission-with-gene-name-3-1-24.csv"
+
+$test_0001$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0001$timestamp
+[1] "2025-10-20 14:57:15 CEST"
+
+$test_0001$success
+[1] TRUE
+
+$test_0001$error_type
+NULL
+
+$test_0001$error_message
+NULL
+
+$test_0001$execution_time
+[1] 5.133273
+
+$test_0001$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 8488 Significant genes (FDR < 0.05): 4525"
+
+$test_0001$parsed_json
+$test_0001$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0001$parsed_json$treated
+     [,1]  
+[1,] "col1"
+[2,] "col2"
+
+$test_0001$parsed_json$wt
+     [,1]  
+[1,] "col3"
+[2,] "col4"
+
+$test_0001$parsed_json$regulated
+[1] "up"
+
+
+
+$test_0002
+$test_0002$test_id
+[1] "test_0002"
+
+$test_0002$prompt
+[1] "compare treated 1, 2 vs control 3, 4 down regulated genes"
+
+$test_0002$dataset_path
+[1] "./data/Raw-data-RNAseq-for-submission-with-gene-name-3-1-24.csv"
+
+$test_0002$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0002$timestamp
+[1] "2025-10-20 14:57:30 CEST"
+
+$test_0002$success
+[1] FALSE
+
+$test_0002$error_type
+[1] "Invalid/unrecognized regulated"
+
+$test_0002$error_message
+[1] "Invalid/unrecognized regulated: "
+
+$test_0002$execution_time
+[1] 0.8489668
+
+$test_0002$result_summary
+NULL
+
+$test_0002$parsed_json
+$test_0002$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0002$parsed_json$treated
+     [,1]  
+[1,] "col1"
+[2,] "col2"
+
+$test_0002$parsed_json$wt
+     [,1]  
+[1,] "col3"
+[2,] "col4"
+
+$test_0002$parsed_json$regulated
+[1] "de"   "down" "up"  
+
+
+
+$test_0003
+$test_0003$test_id
+[1] "test_0003"
+
+$test_0003$prompt
+[1] "analyze treated columns 1, 2 against wild type columns 3, 4, only genes down regulated"
+
+$test_0003$dataset_path
+[1] "./data/Raw-data-RNAseq-for-submission-with-gene-name-3-1-24.csv"
+
+$test_0003$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0003$timestamp
+[1] "2025-10-20 14:57:41 CEST"
+
+$test_0003$success
+[1] TRUE
+
+$test_0003$error_type
+NULL
+
+$test_0003$error_message
+NULL
+
+$test_0003$execution_time
+[1] 3.839755
+
+$test_0003$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 9296 Significant genes (FDR < 0.05): 4331"
+
+$test_0003$parsed_json
+$test_0003$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0003$parsed_json$treated
+     [,1]  
+[1,] "col1"
+[2,] "col2"
+
+$test_0003$parsed_json$wt
+     [,1]  
+[1,] "col3"
+[2,] "col4"
+
+$test_0003$parsed_json$regulated
+[1] "down"
+
+
+
+$test_0004
+$test_0004$test_id
+[1] "test_0004"
+
+$test_0004$prompt
+[1] "differential expression analysis: treated samples 1, 2 vs wild type samples 3, 4, all de regulated genes"
+
+$test_0004$dataset_path
+[1] "./data/Raw-data-RNAseq-for-submission-with-gene-name-3-1-24.csv"
+
+$test_0004$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0004$timestamp
+[1] "2025-10-20 14:57:55 CEST"
+
+$test_0004$success
+[1] FALSE
+
+$test_0004$error_type
+[1] "Invalid/unrecognized regulated"
+
+$test_0004$error_message
+[1] "Invalid/unrecognized regulated: "
+
+$test_0004$execution_time
+[1] 1.406418
+
+$test_0004$result_summary
+NULL
+
+$test_0004$parsed_json
+$test_0004$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0004$parsed_json$treated
+     [,1]     
+[1,] "sample1"
+[2,] "sample2"
+
+$test_0004$parsed_json$wt
+     [,1]     
+[1,] "sample3"
+[2,] "sample4"
+
+$test_0004$parsed_json$regulated
+[1] "de"   "down" "up"  
+
+
+
+$test_0005
+$test_0005$test_id
+[1] "test_0005"
+
+$test_0005$prompt
+[1] "compare columns 1, 2 (treated) with columns 3, 4 (control), show up regulated"
+
+$test_0005$dataset_path
+[1] "./data/Raw-data-RNAseq-for-submission-with-gene-name-3-1-24.csv"
+
+$test_0005$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0005$timestamp
+[1] "2025-10-20 14:58:06 CEST"
+
+$test_0005$success
+[1] TRUE
+
+$test_0005$error_type
+NULL
+
+$test_0005$error_message
+NULL
+
+$test_0005$execution_time
+[1] 3.795502
+
+$test_0005$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 8488 Significant genes (FDR < 0.05): 4525"
+
+$test_0005$parsed_json
+$test_0005$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0005$parsed_json$treated
+     [,1]  
+[1,] "col1"
+[2,] "col2"
+
+$test_0005$parsed_json$wt
+     [,1]  
+[1,] "col3"
+[2,] "col4"
+
+$test_0005$parsed_json$regulated
+[1] "up"
+
+
+
+$test_0006
+$test_0006$test_id
+[1] "test_0006"
+
+$test_0006$prompt
+[1] "DE analysis treated_1_2 vs control_3_4 up regulated"
+
+$test_0006$dataset_path
+[1] "./data/Raw-data-RNAseq-for-submission-with-gene-name-3-1-24.csv"
+
+$test_0006$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0006$timestamp
+[1] "2025-10-20 14:58:20 CEST"
+
+$test_0006$success
+[1] FALSE
+
+$test_0006$error_type
+[1] "Nonexistent sample reference"
+
+$test_0006$error_message
+[1] "Referenced column(s) do not exist in dataset: 34 . Dataset has 16 columns"
+
+$test_0006$execution_time
+[1] 0.9188211
+
+$test_0006$result_summary
+NULL
+
+$test_0006$parsed_json
+$test_0006$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0006$parsed_json$treated
+     [,1]         
+[1,] "treated_1_2"
+
+$test_0006$parsed_json$wt
+     [,1]         
+[1,] "control_3_4"
+
+$test_0006$parsed_json$regulated
+[1] "up"
+
+
+
+$test_0007
+$test_0007$test_id
+[1] "test_0007"
+
+$test_0007$prompt
+[1] "rnaseq comparison: treated samples 1, 2 versus wt samples 3, 4, down regulated genes"
+
+$test_0007$dataset_path
+[1] "./data/Raw-data-RNAseq-for-submission-with-gene-name-3-1-24.csv"
+
+$test_0007$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0007$timestamp
+[1] "2025-10-20 14:58:31 CEST"
+
+$test_0007$success
+[1] TRUE
+
+$test_0007$error_type
+NULL
+
+$test_0007$error_message
+NULL
+
+$test_0007$execution_time
+[1] 4.211715
+
+$test_0007$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 9296 Significant genes (FDR < 0.05): 4331"
+
+$test_0007$parsed_json
+$test_0007$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0007$parsed_json$treated
+     [,1]     
+[1,] "sample1"
+[2,] "sample2"
+
+$test_0007$parsed_json$wt
+     [,1]     
+[1,] "sample3"
+[2,] "sample4"
+
+$test_0007$parsed_json$regulated
+[1] "down"
+
+
+
+$test_0008
+$test_0008$test_id
+[1] "test_0008"
+
+$test_0008$prompt
+[1] "perform differential gene expression analysis between treatment group (samples 1, 2) and control group (samples 3, 4), focus on up regulated genes"
+
+$test_0008$dataset_path
+[1] "./data/Raw-data-RNAseq-for-submission-with-gene-name-3-1-24.csv"
+
+$test_0008$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0008$timestamp
+[1] "2025-10-20 14:58:46 CEST"
+
+$test_0008$success
+[1] TRUE
+
+$test_0008$error_type
+NULL
+
+$test_0008$error_message
+NULL
+
+$test_0008$execution_time
+[1] 4.274304
+
+$test_0008$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 8488 Significant genes (FDR < 0.05): 4525"
+
+$test_0008$parsed_json
+$test_0008$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0008$parsed_json$treated
+     [,1]     
+[1,] "sample1"
+[2,] "sample2"
+
+$test_0008$parsed_json$wt
+     [,1]     
+[1,] "sample3"
+[2,] "sample4"
+
+$test_0008$parsed_json$regulated
+[1] "up"
+
+
+
+$test_0009
+$test_0009$test_id
+[1] "test_0009"
+
+$test_0009$prompt
+[1] "make the comparison of the treated patients 1, 2 against wt ones 3, 4, only down genes"
+
+$test_0009$dataset_path
+[1] "./data/Raw-data-RNAseq-for-submission-with-gene-name-3-1-24.csv"
+
+$test_0009$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0009$timestamp
+[1] "2025-10-20 14:59:00 CEST"
+
+$test_0009$success
+[1] FALSE
+
+$test_0009$error_type
+[1] "Execution error in R"
+
+$test_0009$error_message
+[1] "duplicate 'row.names' are not allowed"
+
+$test_0009$execution_time
+[1] 1.423815
+
+$test_0009$result_summary
+NULL
+
+$test_0009$parsed_json
+$test_0009$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0009$parsed_json$treated
+     [,1]      
+[1,] "patient1"
+[2,] "patient2"
+
+$test_0009$parsed_json$wt
+     [,1] 
+[1,] "wt1"
+[2,] "wt2"
+
+$test_0009$parsed_json$regulated
+[1] "down"
+
+
+
+$test_0010
+$test_0010$test_id
+[1] "test_0010"
+
+$test_0010$prompt
+[1] "calculate significant differential genes between treatment samples (samples 1, 2) and control ones (samples 3, 4), expecially up regulated genes"
+
+$test_0010$dataset_path
+[1] "./data/Raw-data-RNAseq-for-submission-with-gene-name-3-1-24.csv"
+
+$test_0010$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0010$timestamp
+[1] "2025-10-20 14:59:12 CEST"
+
+$test_0010$success
+[1] TRUE
+
+$test_0010$error_type
+NULL
+
+$test_0010$error_message
+NULL
+
+$test_0010$execution_time
+[1] 5.339073
+
+$test_0010$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 8488 Significant genes (FDR < 0.05): 4525"
+
+$test_0010$parsed_json
+$test_0010$parsed_json$functiontoberun
+[1] "differential_gene_expression_analysis"
+
+$test_0010$parsed_json$treated
+     [,1]     
+[1,] "sample1"
+[2,] "sample2"
+
+$test_0010$parsed_json$wt
+     [,1]     
+[1,] "sample3"
+[2,] "sample4"
+
+$test_0010$parsed_json$regulated
+[1] "up"
+
+
+
+$test_0011
+$test_0011$test_id
+[1] "test_0011"
+
+$test_0011$prompt
+[1] "do the analysis of the 1, 2 treated and of the 3, 4 control. I want the up expressed genes only"
+
+$test_0011$dataset_path
+[1] "./data/Raw-data-RNAseq-for-submission-with-gene-name-3-1-24.csv"
+
+$test_0011$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0011$timestamp
+[1] "2025-10-20 14:59:27 CEST"
+
+$test_0011$success
+[1] TRUE
+
+$test_0011$error_type
+NULL
+
+$test_0011$error_message
+NULL
+
+$test_0011$execution_time
+[1] 4.170846
+
+$test_0011$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 8488 Significant genes (FDR < 0.05): 4525"
+
+$test_0011$parsed_json
+$test_0011$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0011$parsed_json$treated
+     [,1]  
+[1,] "col1"
+[2,] "col2"
+
+$test_0011$parsed_json$wt
+     [,1]  
+[1,] "col3"
+[2,] "col4"
+
+$test_0011$parsed_json$regulated
+[1] "up"
+
+
+
+$test_0012
+$test_0012$test_id
+[1] "test_0012"
+
+$test_0012$prompt
+[1] " 1, 2 treated  3, 4 wt, de regulated"
+
+$test_0012$dataset_path
+[1] "./data/Raw-data-RNAseq-for-submission-with-gene-name-3-1-24.csv"
+
+$test_0012$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0012$timestamp
+[1] "2025-10-20 14:59:41 CEST"
+
+$test_0012$success
+[1] TRUE
+
+$test_0012$error_type
+NULL
+
+$test_0012$error_message
+NULL
+
+$test_0012$execution_time
+[1] 4.062553
+
+$test_0012$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 18256 Significant genes (FDR < 0.05): 8856"
+
+$test_0012$parsed_json
+$test_0012$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0012$parsed_json$treated
+     [,1]
+[1,] "1" 
+[2,] "2" 
+
+$test_0012$parsed_json$wt
+     [,1]
+[1,] "3" 
+[2,] "4" 
+
+$test_0012$parsed_json$regulated
+[1] "de"
+
+
+
+$test_0013
+$test_0013$test_id
+[1] "test_0013"
+
+$test_0013$prompt
+[1] "generate only de between 1, 2 treated  3, 4 wild type"
+
+$test_0013$dataset_path
+[1] "./data/Raw-data-RNAseq-for-submission-with-gene-name-3-1-24.csv"
+
+$test_0013$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0013$timestamp
+[1] "2025-10-20 14:59:55 CEST"
+
+$test_0013$success
+[1] TRUE
+
+$test_0013$error_type
+NULL
+
+$test_0013$error_message
+NULL
+
+$test_0013$execution_time
+[1] 4.288826
+
+$test_0013$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 18256 Significant genes (FDR < 0.05): 8856"
+
+$test_0013$parsed_json
+$test_0013$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0013$parsed_json$treated
+     [,1]  
+[1,] "col1"
+[2,] "col2"
+
+$test_0013$parsed_json$wt
+     [,1]  
+[1,] "col3"
+[2,] "col4"
+
+$test_0013$parsed_json$regulated
+[1] "de"
+
+
+
+$test_0014
+$test_0014$test_id
+[1] "test_0014"
+
+$test_0014$prompt
+[1] "comparison between 1, 2 and 3, 4, that are treated and wild types respectively, just up regulated genes"
+
+$test_0014$dataset_path
+[1] "./data/Raw-data-RNAseq-for-submission-with-gene-name-3-1-24.csv"
+
+$test_0014$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0014$timestamp
+[1] "2025-10-20 15:00:10 CEST"
+
+$test_0014$success
+[1] TRUE
+
+$test_0014$error_type
+NULL
+
+$test_0014$error_message
+NULL
+
+$test_0014$execution_time
+[1] 4.426142
+
+$test_0014$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 8488 Significant genes (FDR < 0.05): 4525"
+
+$test_0014$parsed_json
+$test_0014$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0014$parsed_json$treated
+     [,1]
+[1,] "1" 
+[2,] "2" 
+
+$test_0014$parsed_json$wt
+     [,1]
+[1,] "3" 
+[2,] "4" 
+
+$test_0014$parsed_json$regulated
+[1] "up"
+
+
+
+$test_0015
+$test_0015$test_id
+[1] "test_0015"
+
+$test_0015$prompt
+[1] "I want to know de regulated between treated samples 1, 2 vs wild type samples 3, 4"
+
+$test_0015$dataset_path
+[1] "./data/Raw-data-RNAseq-for-submission-with-gene-name-3-1-24.csv"
+
+$test_0015$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0015$timestamp
+[1] "2025-10-20 15:00:24 CEST"
+
+$test_0015$success
+[1] FALSE
+
+$test_0015$error_type
+[1] "Invalid/unrecognized regulated"
+
+$test_0015$error_message
+[1] "Invalid/unrecognized regulated: "
+
+$test_0015$execution_time
+[1] 2.818343
+
+$test_0015$result_summary
+NULL
+
+$test_0015$parsed_json
+$test_0015$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0015$parsed_json$treated
+     [,1]     
+[1,] "sample1"
+[2,] "sample2"
+
+$test_0015$parsed_json$wt
+     [,1]     
+[1,] "sample3"
+[2,] "sample4"
+
+$test_0015$parsed_json$regulated
+[1] "de"   "down" "up"  
+
+
+
+$test_0016
+$test_0016$test_id
+[1] "test_0016"
+
+$test_0016$prompt
+[1] "perform rnaseq analysis between treated 1, 2 and wt 3, 4 samples, up regulated"
+
+$test_0016$dataset_path
+[1] "./data/GSE164073_Eye_count_matrix.tsv.txt"
+
+$test_0016$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0016$timestamp
+[1] "2025-10-20 15:00:37 CEST"
+
+$test_0016$success
+[1] TRUE
+
+$test_0016$error_type
+NULL
+
+$test_0016$error_message
+NULL
+
+$test_0016$execution_time
+[1] 3.904325
+
+$test_0016$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 8012 Significant genes (FDR < 0.05): 285"
+
+$test_0016$parsed_json
+$test_0016$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0016$parsed_json$treated
+     [,1]  
+[1,] "col1"
+[2,] "col2"
+
+$test_0016$parsed_json$wt
+     [,1]  
+[1,] "col3"
+[2,] "col4"
+
+$test_0016$parsed_json$regulated
+[1] "up"
+
+
+
+$test_0017
+$test_0017$test_id
+[1] "test_0017"
+
+$test_0017$prompt
+[1] "compare treated 1, 2 vs control 3, 4 down regulated genes"
+
+$test_0017$dataset_path
+[1] "./data/GSE164073_Eye_count_matrix.tsv.txt"
+
+$test_0017$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0017$timestamp
+[1] "2025-10-20 15:00:51 CEST"
+
+$test_0017$success
+[1] FALSE
+
+$test_0017$error_type
+[1] "Invalid/unrecognized regulated"
+
+$test_0017$error_message
+[1] "Invalid/unrecognized regulated: "
+
+$test_0017$execution_time
+[1] 2.963652
+
+$test_0017$result_summary
+NULL
+
+$test_0017$parsed_json
+$test_0017$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0017$parsed_json$treated
+     [,1]  
+[1,] "col1"
+[2,] "col2"
+
+$test_0017$parsed_json$wt
+     [,1]  
+[1,] "col3"
+[2,] "col4"
+
+$test_0017$parsed_json$regulated
+[1] "de"   "down"
+
+
+
+$test_0018
+$test_0018$test_id
+[1] "test_0018"
+
+$test_0018$prompt
+[1] "analyze treated columns 1, 2 against wild type columns 3, 4, only genes down regulated"
+
+$test_0018$dataset_path
+[1] "./data/GSE164073_Eye_count_matrix.tsv.txt"
+
+$test_0018$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0018$timestamp
+[1] "2025-10-20 15:01:04 CEST"
+
+$test_0018$success
+[1] TRUE
+
+$test_0018$error_type
+NULL
+
+$test_0018$error_message
+NULL
+
+$test_0018$execution_time
+[1] 9.061085
+
+$test_0018$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 8819 Significant genes (FDR < 0.05): 313"
+
+$test_0018$parsed_json
+$test_0018$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0018$parsed_json$treated
+     [,1]  
+[1,] "col1"
+[2,] "col2"
+
+$test_0018$parsed_json$wt
+     [,1]  
+[1,] "col3"
+[2,] "col4"
+
+$test_0018$parsed_json$regulated
+[1] "down"
+
+
+
+$test_0019
+$test_0019$test_id
+[1] "test_0019"
+
+$test_0019$prompt
+[1] "differential expression analysis: treated samples 1, 2 vs wild type samples 3, 4, all de regulated genes"
+
+$test_0019$dataset_path
+[1] "./data/GSE164073_Eye_count_matrix.tsv.txt"
+
+$test_0019$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0019$timestamp
+[1] "2025-10-20 15:01:23 CEST"
+
+$test_0019$success
+[1] FALSE
+
+$test_0019$error_type
+[1] "Invalid/unrecognized regulated"
+
+$test_0019$error_message
+[1] "Invalid/unrecognized regulated: "
+
+$test_0019$execution_time
+[1] 2.381485
+
+$test_0019$result_summary
+NULL
+
+$test_0019$parsed_json
+$test_0019$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0019$parsed_json$treated
+     [,1]     
+[1,] "sample1"
+[2,] "sample2"
+
+$test_0019$parsed_json$wt
+     [,1]     
+[1,] "sample3"
+[2,] "sample4"
+
+$test_0019$parsed_json$regulated
+[1] "de"   "down" "up"  
+
+
+
+$test_0020
+$test_0020$test_id
+[1] "test_0020"
+
+$test_0020$prompt
+[1] "compare columns 1, 2 (treated) with columns 3, 4 (control), show up regulated"
+
+$test_0020$dataset_path
+[1] "./data/GSE164073_Eye_count_matrix.tsv.txt"
+
+$test_0020$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0020$timestamp
+[1] "2025-10-20 15:01:36 CEST"
+
+$test_0020$success
+[1] TRUE
+
+$test_0020$error_type
+NULL
+
+$test_0020$error_message
+NULL
+
+$test_0020$execution_time
+[1] 5.274911
+
+$test_0020$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 8012 Significant genes (FDR < 0.05): 285"
+
+$test_0020$parsed_json
+$test_0020$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0020$parsed_json$treated
+     [,1]  
+[1,] "col1"
+[2,] "col2"
+
+$test_0020$parsed_json$wt
+     [,1]  
+[1,] "col3"
+[2,] "col4"
+
+$test_0020$parsed_json$regulated
+[1] "up"
+
+
+
+$test_0021
+$test_0021$test_id
+[1] "test_0021"
+
+$test_0021$prompt
+[1] "DE analysis treated_1_2 vs control_3_4 up regulated"
+
+$test_0021$dataset_path
+[1] "./data/GSE164073_Eye_count_matrix.tsv.txt"
+
+$test_0021$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0021$timestamp
+[1] "2025-10-20 15:01:51 CEST"
+
+$test_0021$success
+[1] FALSE
+
+$test_0021$error_type
+[1] "Nonexistent sample reference"
+
+$test_0021$error_message
+[1] "Referenced column(s) do not exist in dataset: 34 . Dataset has 18 columns"
+
+$test_0021$execution_time
+[1] 1.033397
+
+$test_0021$result_summary
+NULL
+
+$test_0021$parsed_json
+$test_0021$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0021$parsed_json$treated
+     [,1]         
+[1,] "treated_1_2"
+
+$test_0021$parsed_json$wt
+     [,1]         
+[1,] "control_3_4"
+
+$test_0021$parsed_json$regulated
+[1] "up"
+
+
+
+$test_0022
+$test_0022$test_id
+[1] "test_0022"
+
+$test_0022$prompt
+[1] "rnaseq comparison: treated samples 1, 2 versus wt samples 3, 4, down regulated genes"
+
+$test_0022$dataset_path
+[1] "./data/GSE164073_Eye_count_matrix.tsv.txt"
+
+$test_0022$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0022$timestamp
+[1] "2025-10-20 15:02:02 CEST"
+
+$test_0022$success
+[1] TRUE
+
+$test_0022$error_type
+NULL
+
+$test_0022$error_message
+NULL
+
+$test_0022$execution_time
+[1] 5.378589
+
+$test_0022$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 8819 Significant genes (FDR < 0.05): 313"
+
+$test_0022$parsed_json
+$test_0022$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0022$parsed_json$treated
+     [,1]     
+[1,] "sample1"
+[2,] "sample2"
+
+$test_0022$parsed_json$wt
+     [,1]     
+[1,] "sample3"
+[2,] "sample4"
+
+$test_0022$parsed_json$regulated
+[1] "down"
+
+
+
+$test_0023
+$test_0023$test_id
+[1] "test_0023"
+
+$test_0023$prompt
+[1] "perform differential gene expression analysis between treatment group (samples 1, 2) and control group (samples 3, 4), focus on up regulated genes"
+
+$test_0023$dataset_path
+[1] "./data/GSE164073_Eye_count_matrix.tsv.txt"
+
+$test_0023$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0023$timestamp
+[1] "2025-10-20 15:02:18 CEST"
+
+$test_0023$success
+[1] TRUE
+
+$test_0023$error_type
+NULL
+
+$test_0023$error_message
+NULL
+
+$test_0023$execution_time
+[1] 4.080514
+
+$test_0023$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 8012 Significant genes (FDR < 0.05): 285"
+
+$test_0023$parsed_json
+$test_0023$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0023$parsed_json$treated
+     [,1]     
+[1,] "sample1"
+[2,] "sample2"
+
+$test_0023$parsed_json$wt
+     [,1]     
+[1,] "sample3"
+[2,] "sample4"
+
+$test_0023$parsed_json$regulated
+[1] "up"
+
+
+
+$test_0024
+$test_0024$test_id
+[1] "test_0024"
+
+$test_0024$prompt
+[1] "make the comparison of the treated patients 1, 2 against wt ones 3, 4, only down genes"
+
+$test_0024$dataset_path
+[1] "./data/GSE164073_Eye_count_matrix.tsv.txt"
+
+$test_0024$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0024$timestamp
+[1] "2025-10-20 15:02:32 CEST"
+
+$test_0024$success
+[1] FALSE
+
+$test_0024$error_type
+[1] "Execution error in R"
+
+$test_0024$error_message
+[1] "duplicate 'row.names' are not allowed"
+
+$test_0024$execution_time
+[1] 2.688802
+
+$test_0024$result_summary
+NULL
+
+$test_0024$parsed_json
+$test_0024$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0024$parsed_json$treated
+     [,1]      
+[1,] "patient1"
+[2,] "patient2"
+
+$test_0024$parsed_json$wt
+     [,1] 
+[1,] "wt1"
+[2,] "wt2"
+
+$test_0024$parsed_json$regulated
+[1] "down"
+
+
+
+$test_0025
+$test_0025$test_id
+[1] "test_0025"
+
+$test_0025$prompt
+[1] "calculate significant differential genes between treatment samples (samples 1, 2) and control ones (samples 3, 4), expecially up regulated genes"
+
+$test_0025$dataset_path
+[1] "./data/GSE164073_Eye_count_matrix.tsv.txt"
+
+$test_0025$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0025$timestamp
+[1] "2025-10-20 15:02:45 CEST"
+
+$test_0025$success
+[1] TRUE
+
+$test_0025$error_type
+NULL
+
+$test_0025$error_message
+NULL
+
+$test_0025$execution_time
+[1] 4.750338
+
+$test_0025$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 8012 Significant genes (FDR < 0.05): 285"
+
+$test_0025$parsed_json
+$test_0025$parsed_json$functiontoberun
+[1] "differential_gene_expression_analysis"
+
+$test_0025$parsed_json$treated
+     [,1]     
+[1,] "sample1"
+[2,] "sample2"
+
+$test_0025$parsed_json$wt
+     [,1]     
+[1,] "sample3"
+[2,] "sample4"
+
+$test_0025$parsed_json$regulated
+[1] "up"
+
+
+
+$test_0026
+$test_0026$test_id
+[1] "test_0026"
+
+$test_0026$prompt
+[1] "do the analysis of the 1, 2 treated and of the 3, 4 control. I want the up expressed genes only"
+
+$test_0026$dataset_path
+[1] "./data/GSE164073_Eye_count_matrix.tsv.txt"
+
+$test_0026$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0026$timestamp
+[1] "2025-10-20 15:03:00 CEST"
+
+$test_0026$success
+[1] TRUE
+
+$test_0026$error_type
+NULL
+
+$test_0026$error_message
+NULL
+
+$test_0026$execution_time
+[1] 5.977477
+
+$test_0026$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 8012 Significant genes (FDR < 0.05): 285"
+
+$test_0026$parsed_json
+$test_0026$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0026$parsed_json$treated
+     [,1]  
+[1,] "col1"
+[2,] "col2"
+
+$test_0026$parsed_json$wt
+     [,1]  
+[1,] "col3"
+[2,] "col4"
+
+$test_0026$parsed_json$regulated
+[1] "up"
+
+
+
+$test_0027
+$test_0027$test_id
+[1] "test_0027"
+
+$test_0027$prompt
+[1] " 1, 2 treated  3, 4 wt, de regulated"
+
+$test_0027$dataset_path
+[1] "./data/GSE164073_Eye_count_matrix.tsv.txt"
+
+$test_0027$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0027$timestamp
+[1] "2025-10-20 15:03:16 CEST"
+
+$test_0027$success
+[1] TRUE
+
+$test_0027$error_type
+NULL
+
+$test_0027$error_message
+NULL
+
+$test_0027$execution_time
+[1] 6.068631
+
+$test_0027$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 17070 Significant genes (FDR < 0.05): 598"
+
+$test_0027$parsed_json
+$test_0027$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0027$parsed_json$treated
+     [,1]
+[1,] "1" 
+[2,] "2" 
+
+$test_0027$parsed_json$wt
+     [,1]
+[1,] "3" 
+[2,] "4" 
+
+$test_0027$parsed_json$regulated
+[1] "de"
+
+
+
+$test_0028
+$test_0028$test_id
+[1] "test_0028"
+
+$test_0028$prompt
+[1] "generate only de between 1, 2 treated  3, 4 wild type"
+
+$test_0028$dataset_path
+[1] "./data/GSE164073_Eye_count_matrix.tsv.txt"
+
+$test_0028$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0028$timestamp
+[1] "2025-10-20 15:03:32 CEST"
+
+$test_0028$success
+[1] TRUE
+
+$test_0028$error_type
+NULL
+
+$test_0028$error_message
+NULL
+
+$test_0028$execution_time
+[1] 3.85367
+
+$test_0028$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 17070 Significant genes (FDR < 0.05): 598"
+
+$test_0028$parsed_json
+$test_0028$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0028$parsed_json$treated
+     [,1]  
+[1,] "col1"
+[2,] "col2"
+
+$test_0028$parsed_json$wt
+     [,1]  
+[1,] "col3"
+[2,] "col4"
+
+$test_0028$parsed_json$regulated
+[1] "de"
+
+
+
+$test_0029
+$test_0029$test_id
+[1] "test_0029"
+
+$test_0029$prompt
+[1] "comparison between 1, 2 and 3, 4, that are treated and wild types respectively, just up regulated genes"
+
+$test_0029$dataset_path
+[1] "./data/GSE164073_Eye_count_matrix.tsv.txt"
+
+$test_0029$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0029$timestamp
+[1] "2025-10-20 15:03:46 CEST"
+
+$test_0029$success
+[1] TRUE
+
+$test_0029$error_type
+NULL
+
+$test_0029$error_message
+NULL
+
+$test_0029$execution_time
+[1] 5.66025
+
+$test_0029$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 8012 Significant genes (FDR < 0.05): 285"
+
+$test_0029$parsed_json
+$test_0029$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0029$parsed_json$treated
+     [,1]
+[1,] "1" 
+[2,] "2" 
+
+$test_0029$parsed_json$wt
+     [,1]
+[1,] "3" 
+[2,] "4" 
+
+$test_0029$parsed_json$regulated
+[1] "up"
+
+
+
+$test_0030
+$test_0030$test_id
+[1] "test_0030"
+
+$test_0030$prompt
+[1] "I want to know de regulated between treated samples 1, 2 vs wild type samples 3, 4"
+
+$test_0030$dataset_path
+[1] "./data/GSE164073_Eye_count_matrix.tsv.txt"
+
+$test_0030$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0030$timestamp
+[1] "2025-10-20 15:04:02 CEST"
+
+$test_0030$success
+[1] FALSE
+
+$test_0030$error_type
+[1] "Invalid/unrecognized regulated"
+
+$test_0030$error_message
+[1] "Invalid/unrecognized regulated: "
+
+$test_0030$execution_time
+[1] 1.39369
+
+$test_0030$result_summary
+NULL
+
+$test_0030$parsed_json
+$test_0030$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0030$parsed_json$treated
+     [,1]     
+[1,] "sample1"
+[2,] "sample2"
+
+$test_0030$parsed_json$wt
+     [,1]     
+[1,] "sample3"
+[2,] "sample4"
+
+$test_0030$parsed_json$regulated
+[1] "de"   "down" "up"  
+
+
+
+$test_0031
+$test_0031$test_id
+[1] "test_0031"
+
+$test_0031$prompt
+[1] "perform rnaseq analysis between treated 1, 2 and wt 3, 4 samples, up regulated"
+
+$test_0031$dataset_path
+[1] "./data/GSE146458_raw_counts_GRCh38.p13_NCBI.txt"
+
+$test_0031$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0031$timestamp
+[1] "2025-10-20 15:04:13 CEST"
+
+$test_0031$success
+[1] TRUE
+
+$test_0031$error_type
+NULL
+
+$test_0031$error_message
+NULL
+
+$test_0031$execution_time
+[1] 4.946853
+
+$test_0031$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 10895 Significant genes (FDR < 0.05): 437"
+
+$test_0031$parsed_json
+$test_0031$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0031$parsed_json$treated
+     [,1]  
+[1,] "col1"
+[2,] "col2"
+
+$test_0031$parsed_json$wt
+     [,1]  
+[1,] "col3"
+[2,] "col4"
+
+$test_0031$parsed_json$regulated
+[1] "up"
+
+
+
+$test_0032
+$test_0032$test_id
+[1] "test_0032"
+
+$test_0032$prompt
+[1] "compare treated 1, 2 vs control 3, 4 down regulated genes"
+
+$test_0032$dataset_path
+[1] "./data/GSE146458_raw_counts_GRCh38.p13_NCBI.txt"
+
+$test_0032$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0032$timestamp
+[1] "2025-10-20 15:04:28 CEST"
+
+$test_0032$success
+[1] FALSE
+
+$test_0032$error_type
+[1] "Invalid/unrecognized regulated"
+
+$test_0032$error_message
+[1] "Invalid/unrecognized regulated: "
+
+$test_0032$execution_time
+[1] 5.10137
+
+$test_0032$result_summary
+NULL
+
+$test_0032$parsed_json
+$test_0032$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0032$parsed_json$treated
+     [,1]  
+[1,] "col1"
+[2,] "col2"
+
+$test_0032$parsed_json$wt
+     [,1]  
+[1,] "col3"
+[2,] "col4"
+
+$test_0032$parsed_json$regulated
+[1] "de"   "down" "up"  
+
+
+
+$test_0033
+$test_0033$test_id
+[1] "test_0033"
+
+$test_0033$prompt
+[1] "analyze treated columns 1, 2 against wild type columns 3, 4, only genes down regulated"
+
+$test_0033$dataset_path
+[1] "./data/GSE146458_raw_counts_GRCh38.p13_NCBI.txt"
+
+$test_0033$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0033$timestamp
+[1] "2025-10-20 15:04:44 CEST"
+
+$test_0033$success
+[1] TRUE
+
+$test_0033$error_type
+NULL
+
+$test_0033$error_message
+NULL
+
+$test_0033$execution_time
+[1] 5.057151
+
+$test_0033$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 10924 Significant genes (FDR < 0.05): 299"
+
+$test_0033$parsed_json
+$test_0033$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0033$parsed_json$treated
+     [,1]  
+[1,] "col1"
+[2,] "col2"
+
+$test_0033$parsed_json$wt
+     [,1]  
+[1,] "col3"
+[2,] "col4"
+
+$test_0033$parsed_json$regulated
+[1] "down"
+
+
+
+$test_0034
+$test_0034$test_id
+[1] "test_0034"
+
+$test_0034$prompt
+[1] "differential expression analysis: treated samples 1, 2 vs wild type samples 3, 4, all de regulated genes"
+
+$test_0034$dataset_path
+[1] "./data/GSE146458_raw_counts_GRCh38.p13_NCBI.txt"
+
+$test_0034$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0034$timestamp
+[1] "2025-10-20 15:04:59 CEST"
+
+$test_0034$success
+[1] FALSE
+
+$test_0034$error_type
+[1] "Invalid/unrecognized regulated"
+
+$test_0034$error_message
+[1] "Invalid/unrecognized regulated: "
+
+$test_0034$execution_time
+[1] 4.701566
+
+$test_0034$result_summary
+NULL
+
+$test_0034$parsed_json
+$test_0034$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0034$parsed_json$treated
+     [,1]     
+[1,] "sample1"
+[2,] "sample2"
+
+$test_0034$parsed_json$wt
+     [,1]     
+[1,] "sample3"
+[2,] "sample4"
+
+$test_0034$parsed_json$regulated
+[1] "de"   "down" "up"  
+
+
+
+$test_0035
+$test_0035$test_id
+[1] "test_0035"
+
+$test_0035$prompt
+[1] "compare columns 1, 2 (treated) with columns 3, 4 (control), show up regulated"
+
+$test_0035$dataset_path
+[1] "./data/GSE146458_raw_counts_GRCh38.p13_NCBI.txt"
+
+$test_0035$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0035$timestamp
+[1] "2025-10-20 15:05:14 CEST"
+
+$test_0035$success
+[1] TRUE
+
+$test_0035$error_type
+NULL
+
+$test_0035$error_message
+NULL
+
+$test_0035$execution_time
+[1] 7.367591
+
+$test_0035$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 10895 Significant genes (FDR < 0.05): 437"
+
+$test_0035$parsed_json
+$test_0035$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0035$parsed_json$treated
+     [,1]  
+[1,] "col1"
+[2,] "col2"
+
+$test_0035$parsed_json$wt
+     [,1]  
+[1,] "col3"
+[2,] "col4"
+
+$test_0035$parsed_json$regulated
+[1] "up"
+
+
+
+$test_0036
+$test_0036$test_id
+[1] "test_0036"
+
+$test_0036$prompt
+[1] "DE analysis treated_1_2 vs control_3_4 up regulated"
+
+$test_0036$dataset_path
+[1] "./data/GSE146458_raw_counts_GRCh38.p13_NCBI.txt"
+
+$test_0036$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0036$timestamp
+[1] "2025-10-20 15:05:31 CEST"
+
+$test_0036$success
+[1] FALSE
+
+$test_0036$error_type
+[1] "Execution error in R"
+
+$test_0036$error_message
+[1] "dispersion is NA"
+
+$test_0036$execution_time
+[1] 3.605921
+
+$test_0036$result_summary
+NULL
+
+$test_0036$parsed_json
+$test_0036$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0036$parsed_json$treated
+     [,1]         
+[1,] "treated_1_2"
+
+$test_0036$parsed_json$wt
+     [,1]         
+[1,] "control_3_4"
+
+$test_0036$parsed_json$regulated
+[1] "up"
+
+
+
+$test_0037
+$test_0037$test_id
+[1] "test_0037"
+
+$test_0037$prompt
+[1] "rnaseq comparison: treated samples 1, 2 versus wt samples 3, 4, down regulated genes"
+
+$test_0037$dataset_path
+[1] "./data/GSE146458_raw_counts_GRCh38.p13_NCBI.txt"
+
+$test_0037$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0037$timestamp
+[1] "2025-10-20 15:05:45 CEST"
+
+$test_0037$success
+[1] TRUE
+
+$test_0037$error_type
+NULL
+
+$test_0037$error_message
+NULL
+
+$test_0037$execution_time
+[1] 9.144911
+
+$test_0037$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 10924 Significant genes (FDR < 0.05): 299"
+
+$test_0037$parsed_json
+$test_0037$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0037$parsed_json$treated
+     [,1]     
+[1,] "sample1"
+[2,] "sample2"
+
+$test_0037$parsed_json$wt
+     [,1]     
+[1,] "sample3"
+[2,] "sample4"
+
+$test_0037$parsed_json$regulated
+[1] "down"
+
+
+
+$test_0038
+$test_0038$test_id
+[1] "test_0038"
+
+$test_0038$prompt
+[1] "perform differential gene expression analysis between treatment group (samples 1, 2) and control group (samples 3, 4), focus on up regulated genes"
+
+$test_0038$dataset_path
+[1] "./data/GSE146458_raw_counts_GRCh38.p13_NCBI.txt"
+
+$test_0038$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0038$timestamp
+[1] "2025-10-20 15:06:04 CEST"
+
+$test_0038$success
+[1] TRUE
+
+$test_0038$error_type
+NULL
+
+$test_0038$error_message
+NULL
+
+$test_0038$execution_time
+[1] 5.90938
+
+$test_0038$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 10895 Significant genes (FDR < 0.05): 437"
+
+$test_0038$parsed_json
+$test_0038$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0038$parsed_json$treated
+     [,1]     
+[1,] "sample1"
+[2,] "sample2"
+
+$test_0038$parsed_json$wt
+     [,1]     
+[1,] "sample3"
+[2,] "sample4"
+
+$test_0038$parsed_json$regulated
+[1] "up"
+
+
+
+$test_0039
+$test_0039$test_id
+[1] "test_0039"
+
+$test_0039$prompt
+[1] "make the comparison of the treated patients 1, 2 against wt ones 3, 4, only down genes"
+
+$test_0039$dataset_path
+[1] "./data/GSE146458_raw_counts_GRCh38.p13_NCBI.txt"
+
+$test_0039$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0039$timestamp
+[1] "2025-10-20 15:06:20 CEST"
+
+$test_0039$success
+[1] FALSE
+
+$test_0039$error_type
+[1] "Execution error in R"
+
+$test_0039$error_message
+[1] "duplicate 'row.names' are not allowed"
+
+$test_0039$execution_time
+[1] 4.463455
+
+$test_0039$result_summary
+NULL
+
+$test_0039$parsed_json
+$test_0039$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0039$parsed_json$treated
+     [,1]      
+[1,] "patient1"
+[2,] "patient2"
+
+$test_0039$parsed_json$wt
+     [,1] 
+[1,] "wt1"
+[2,] "wt2"
+
+$test_0039$parsed_json$regulated
+[1] "down"
+
+
+
+$test_0040
+$test_0040$test_id
+[1] "test_0040"
+
+$test_0040$prompt
+[1] "calculate significant differential genes between treatment samples (samples 1, 2) and control ones (samples 3, 4), expecially up regulated genes"
+
+$test_0040$dataset_path
+[1] "./data/GSE146458_raw_counts_GRCh38.p13_NCBI.txt"
+
+$test_0040$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0040$timestamp
+[1] "2025-10-20 15:06:35 CEST"
+
+$test_0040$success
+[1] TRUE
+
+$test_0040$error_type
+NULL
+
+$test_0040$error_message
+NULL
+
+$test_0040$execution_time
+[1] 5.35944
+
+$test_0040$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 10895 Significant genes (FDR < 0.05): 437"
+
+$test_0040$parsed_json
+$test_0040$parsed_json$functiontoberun
+[1] "differential_gene_expression_analysis"
+
+$test_0040$parsed_json$treated
+     [,1]     
+[1,] "sample1"
+[2,] "sample2"
+
+$test_0040$parsed_json$wt
+     [,1]     
+[1,] "sample3"
+[2,] "sample4"
+
+$test_0040$parsed_json$regulated
+[1] "up"
+
+
+
+$test_0041
+$test_0041$test_id
+[1] "test_0041"
+
+$test_0041$prompt
+[1] "do the analysis of the 1, 2 treated and of the 3, 4 control. I want the up expressed genes only"
+
+$test_0041$dataset_path
+[1] "./data/GSE146458_raw_counts_GRCh38.p13_NCBI.txt"
+
+$test_0041$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0041$timestamp
+[1] "2025-10-20 15:06:51 CEST"
+
+$test_0041$success
+[1] TRUE
+
+$test_0041$error_type
+NULL
+
+$test_0041$error_message
+NULL
+
+$test_0041$execution_time
+[1] 4.838803
+
+$test_0041$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 10895 Significant genes (FDR < 0.05): 437"
+
+$test_0041$parsed_json
+$test_0041$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0041$parsed_json$treated
+     [,1]  
+[1,] "col1"
+[2,] "col2"
+
+$test_0041$parsed_json$wt
+     [,1]  
+[1,] "col3"
+[2,] "col4"
+
+$test_0041$parsed_json$regulated
+[1] "up"
+
+
+
+$test_0042
+$test_0042$test_id
+[1] "test_0042"
+
+$test_0042$prompt
+[1] " 1, 2 treated  3, 4 wt, de regulated"
+
+$test_0042$dataset_path
+[1] "./data/GSE146458_raw_counts_GRCh38.p13_NCBI.txt"
+
+$test_0042$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0042$timestamp
+[1] "2025-10-20 15:07:06 CEST"
+
+$test_0042$success
+[1] TRUE
+
+$test_0042$error_type
+NULL
+
+$test_0042$error_message
+NULL
+
+$test_0042$execution_time
+[1] 6.354083
+
+$test_0042$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 22225 Significant genes (FDR < 0.05): 736"
+
+$test_0042$parsed_json
+$test_0042$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0042$parsed_json$treated
+     [,1]
+[1,] "1" 
+[2,] "2" 
+
+$test_0042$parsed_json$wt
+     [,1]
+[1,] "3" 
+[2,] "4" 
+
+$test_0042$parsed_json$regulated
+[1] "de"
+
+
+
+$test_0043
+$test_0043$test_id
+[1] "test_0043"
+
+$test_0043$prompt
+[1] "generate only de between 1, 2 treated  3, 4 wild type"
+
+$test_0043$dataset_path
+[1] "./data/GSE146458_raw_counts_GRCh38.p13_NCBI.txt"
+
+$test_0043$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0043$timestamp
+[1] "2025-10-20 15:07:22 CEST"
+
+$test_0043$success
+[1] TRUE
+
+$test_0043$error_type
+NULL
+
+$test_0043$error_message
+NULL
+
+$test_0043$execution_time
+[1] 5.750303
+
+$test_0043$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 22225 Significant genes (FDR < 0.05): 736"
+
+$test_0043$parsed_json
+$test_0043$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0043$parsed_json$treated
+     [,1]  
+[1,] "col1"
+[2,] "col2"
+
+$test_0043$parsed_json$wt
+     [,1]  
+[1,] "col3"
+[2,] "col4"
+
+$test_0043$parsed_json$regulated
+[1] "de"
+
+
+
+$test_0044
+$test_0044$test_id
+[1] "test_0044"
+
+$test_0044$prompt
+[1] "comparison between 1, 2 and 3, 4, that are treated and wild types respectively, just up regulated genes"
+
+$test_0044$dataset_path
+[1] "./data/GSE146458_raw_counts_GRCh38.p13_NCBI.txt"
+
+$test_0044$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0044$timestamp
+[1] "2025-10-20 15:07:38 CEST"
+
+$test_0044$success
+[1] TRUE
+
+$test_0044$error_type
+NULL
+
+$test_0044$error_message
+NULL
+
+$test_0044$execution_time
+[1] 7.317824
+
+$test_0044$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 10895 Significant genes (FDR < 0.05): 437"
+
+$test_0044$parsed_json
+$test_0044$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0044$parsed_json$treated
+     [,1]
+[1,] "1" 
+[2,] "2" 
+
+$test_0044$parsed_json$wt
+     [,1]
+[1,] "3" 
+[2,] "4" 
+
+$test_0044$parsed_json$regulated
+[1] "up"
+
+
+
+$test_0045
+$test_0045$test_id
+[1] "test_0045"
+
+$test_0045$prompt
+[1] "I want to know de regulated between treated samples 1, 2 vs wild type samples 3, 4"
+
+$test_0045$dataset_path
+[1] "./data/GSE146458_raw_counts_GRCh38.p13_NCBI.txt"
+
+$test_0045$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0045$timestamp
+[1] "2025-10-20 15:07:55 CEST"
+
+$test_0045$success
+[1] FALSE
+
+$test_0045$error_type
+[1] "Invalid/unrecognized regulated"
+
+$test_0045$error_message
+[1] "Invalid/unrecognized regulated: "
+
+$test_0045$execution_time
+[1] 16.34066
+
+$test_0045$result_summary
+NULL
+
+$test_0045$parsed_json
+$test_0045$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0045$parsed_json$treated
+     [,1]     
+[1,] "sample1"
+[2,] "sample2"
+
+$test_0045$parsed_json$wt
+     [,1]     
+[1,] "sample3"
+[2,] "sample4"
+
+$test_0045$parsed_json$regulated
+[1] "de"   "down" "up"  
+
+
+
+$test_0046
+$test_0046$test_id
+[1] "test_0046"
+
+$test_0046$prompt
+[1] "perform rnaseq analysis between treated 1, 2 and wt 3, 4 samples, up regulated"
+
+$test_0046$dataset_path
+[1] "./data/GSE279712_human.merged.counts.txt"
+
+$test_0046$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0046$timestamp
+[1] "2025-10-20 15:08:22 CEST"
+
+$test_0046$success
+[1] TRUE
+
+$test_0046$error_type
+NULL
+
+$test_0046$error_message
+NULL
+
+$test_0046$execution_time
+[1] 27.849
+
+$test_0046$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 11527 Significant genes (FDR < 0.05): 3"
+
+$test_0046$parsed_json
+$test_0046$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0046$parsed_json$treated
+     [,1]  
+[1,] "col1"
+[2,] "col2"
+
+$test_0046$parsed_json$wt
+     [,1]  
+[1,] "col3"
+[2,] "col4"
+
+$test_0046$parsed_json$regulated
+[1] "up"
+
+
+
+$test_0047
+$test_0047$test_id
+[1] "test_0047"
+
+$test_0047$prompt
+[1] "compare treated 1, 2 vs control 3, 4 down regulated genes"
+
+$test_0047$dataset_path
+[1] "./data/GSE279712_human.merged.counts.txt"
+
+$test_0047$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0047$timestamp
+[1] "2025-10-20 15:09:00 CEST"
+
+$test_0047$success
+[1] FALSE
+
+$test_0047$error_type
+[1] "Invalid/unrecognized regulated"
+
+$test_0047$error_message
+[1] "Invalid/unrecognized regulated: "
+
+$test_0047$execution_time
+[1] 13.95704
+
+$test_0047$result_summary
+NULL
+
+$test_0047$parsed_json
+$test_0047$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0047$parsed_json$treated
+     [,1]  
+[1,] "col1"
+[2,] "col2"
+
+$test_0047$parsed_json$wt
+     [,1]  
+[1,] "col3"
+[2,] "col4"
+
+$test_0047$parsed_json$regulated
+[1] "de"   "down"
+
+
+
+$test_0048
+$test_0048$test_id
+[1] "test_0048"
+
+$test_0048$prompt
+[1] "analyze treated columns 1, 2 against wild type columns 3, 4, only genes down regulated"
+
+$test_0048$dataset_path
+[1] "./data/GSE279712_human.merged.counts.txt"
+
+$test_0048$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0048$timestamp
+[1] "2025-10-20 15:09:24 CEST"
+
+$test_0048$success
+[1] TRUE
+
+$test_0048$error_type
+NULL
+
+$test_0048$error_message
+NULL
+
+$test_0048$execution_time
+[1] 12.05667
+
+$test_0048$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 11876 Significant genes (FDR < 0.05): 0"
+
+$test_0048$parsed_json
+$test_0048$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0048$parsed_json$treated
+     [,1]  
+[1,] "col1"
+[2,] "col2"
+
+$test_0048$parsed_json$wt
+     [,1]  
+[1,] "col3"
+[2,] "col4"
+
+$test_0048$parsed_json$regulated
+[1] "down"
+
+
+
+$test_0049
+$test_0049$test_id
+[1] "test_0049"
+
+$test_0049$prompt
+[1] "differential expression analysis: treated samples 1, 2 vs wild type samples 3, 4, all de regulated genes"
+
+$test_0049$dataset_path
+[1] "./data/GSE279712_human.merged.counts.txt"
+
+$test_0049$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0049$timestamp
+[1] "2025-10-20 15:09:46 CEST"
+
+$test_0049$success
+[1] FALSE
+
+$test_0049$error_type
+[1] "Invalid/unrecognized regulated"
+
+$test_0049$error_message
+[1] "Invalid/unrecognized regulated: "
+
+$test_0049$execution_time
+[1] 1.443938
+
+$test_0049$result_summary
+NULL
+
+$test_0049$parsed_json
+$test_0049$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0049$parsed_json$treated
+     [,1]     
+[1,] "sample1"
+[2,] "sample2"
+
+$test_0049$parsed_json$wt
+     [,1]     
+[1,] "sample3"
+[2,] "sample4"
+
+$test_0049$parsed_json$regulated
+[1] "de"   "down" "up"  
+
+
+
+$test_0050
+$test_0050$test_id
+[1] "test_0050"
+
+$test_0050$prompt
+[1] "compare columns 1, 2 (treated) with columns 3, 4 (control), show up regulated"
+
+$test_0050$dataset_path
+[1] "./data/GSE279712_human.merged.counts.txt"
+
+$test_0050$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0050$timestamp
+[1] "2025-10-20 15:09:57 CEST"
+
+$test_0050$success
+[1] TRUE
+
+$test_0050$error_type
+NULL
+
+$test_0050$error_message
+NULL
+
+$test_0050$execution_time
+[1] 5.742331
+
+$test_0050$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 11527 Significant genes (FDR < 0.05): 3"
+
+$test_0050$parsed_json
+$test_0050$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0050$parsed_json$treated
+     [,1]  
+[1,] "col1"
+[2,] "col2"
+
+$test_0050$parsed_json$wt
+     [,1]  
+[1,] "col3"
+[2,] "col4"
+
+$test_0050$parsed_json$regulated
+[1] "up"
+
+
+
+$test_0051
+$test_0051$test_id
+[1] "test_0051"
+
+$test_0051$prompt
+[1] "DE analysis treated_1_2 vs control_3_4 up regulated"
+
+$test_0051$dataset_path
+[1] "./data/GSE279712_human.merged.counts.txt"
+
+$test_0051$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0051$timestamp
+[1] "2025-10-20 15:10:13 CEST"
+
+$test_0051$success
+[1] FALSE
+
+$test_0051$error_type
+[1] "Nonexistent sample reference"
+
+$test_0051$error_message
+[1] "Referenced column(s) do not exist in dataset: 34 . Dataset has 12 columns"
+
+$test_0051$execution_time
+[1] 2.617636
+
+$test_0051$result_summary
+NULL
+
+$test_0051$parsed_json
+$test_0051$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0051$parsed_json$treated
+     [,1]         
+[1,] "treated_1_2"
+
+$test_0051$parsed_json$wt
+     [,1]         
+[1,] "control_3_4"
+
+$test_0051$parsed_json$regulated
+[1] "up"
+
+
+
+$test_0052
+$test_0052$test_id
+[1] "test_0052"
+
+$test_0052$prompt
+[1] "rnaseq comparison: treated samples 1, 2 versus wt samples 3, 4, down regulated genes"
+
+$test_0052$dataset_path
+[1] "./data/GSE279712_human.merged.counts.txt"
+
+$test_0052$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0052$timestamp
+[1] "2025-10-20 15:10:26 CEST"
+
+$test_0052$success
+[1] TRUE
+
+$test_0052$error_type
+NULL
+
+$test_0052$error_message
+NULL
+
+$test_0052$execution_time
+[1] 7.098243
+
+$test_0052$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 11876 Significant genes (FDR < 0.05): 0"
+
+$test_0052$parsed_json
+$test_0052$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0052$parsed_json$treated
+     [,1]     
+[1,] "sample1"
+[2,] "sample2"
+
+$test_0052$parsed_json$wt
+     [,1]     
+[1,] "sample3"
+[2,] "sample4"
+
+$test_0052$parsed_json$regulated
+[1] "down"
+
+
+
+$test_0053
+$test_0053$test_id
+[1] "test_0053"
+
+$test_0053$prompt
+[1] "perform differential gene expression analysis between treatment group (samples 1, 2) and control group (samples 3, 4), focus on up regulated genes"
+
+$test_0053$dataset_path
+[1] "./data/GSE279712_human.merged.counts.txt"
+
+$test_0053$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0053$timestamp
+[1] "2025-10-20 15:10:43 CEST"
+
+$test_0053$success
+[1] TRUE
+
+$test_0053$error_type
+NULL
+
+$test_0053$error_message
+NULL
+
+$test_0053$execution_time
+[1] 5.506293
+
+$test_0053$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 11527 Significant genes (FDR < 0.05): 3"
+
+$test_0053$parsed_json
+$test_0053$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0053$parsed_json$treated
+     [,1]     
+[1,] "sample1"
+[2,] "sample2"
+
+$test_0053$parsed_json$wt
+     [,1]     
+[1,] "sample3"
+[2,] "sample4"
+
+$test_0053$parsed_json$regulated
+[1] "up"
+
+
+
+$test_0054
+$test_0054$test_id
+[1] "test_0054"
+
+$test_0054$prompt
+[1] "make the comparison of the treated patients 1, 2 against wt ones 3, 4, only down genes"
+
+$test_0054$dataset_path
+[1] "./data/GSE279712_human.merged.counts.txt"
+
+$test_0054$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0054$timestamp
+[1] "2025-10-20 15:10:59 CEST"
+
+$test_0054$success
+[1] FALSE
+
+$test_0054$error_type
+[1] "Execution error in R"
+
+$test_0054$error_message
+[1] "duplicate 'row.names' are not allowed"
+
+$test_0054$execution_time
+[1] 0.9833331
+
+$test_0054$result_summary
+NULL
+
+$test_0054$parsed_json
+$test_0054$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0054$parsed_json$treated
+     [,1]      
+[1,] "patient1"
+[2,] "patient2"
+
+$test_0054$parsed_json$wt
+     [,1] 
+[1,] "wt1"
+[2,] "wt2"
+
+$test_0054$parsed_json$regulated
+[1] "down"
+
+
+
+$test_0055
+$test_0055$test_id
+[1] "test_0055"
+
+$test_0055$prompt
+[1] "calculate significant differential genes between treatment samples (samples 1, 2) and control ones (samples 3, 4), expecially up regulated genes"
+
+$test_0055$dataset_path
+[1] "./data/GSE279712_human.merged.counts.txt"
+
+$test_0055$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0055$timestamp
+[1] "2025-10-20 15:11:10 CEST"
+
+$test_0055$success
+[1] TRUE
+
+$test_0055$error_type
+NULL
+
+$test_0055$error_message
+NULL
+
+$test_0055$execution_time
+[1] 11.24119
+
+$test_0055$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 11527 Significant genes (FDR < 0.05): 3"
+
+$test_0055$parsed_json
+$test_0055$parsed_json$functiontoberun
+[1] "differential_gene_expression_analysis"
+
+$test_0055$parsed_json$treated
+     [,1]     
+[1,] "sample1"
+[2,] "sample2"
+
+$test_0055$parsed_json$wt
+     [,1]     
+[1,] "sample3"
+[2,] "sample4"
+
+$test_0055$parsed_json$regulated
+[1] "up"
+
+
+
+$test_0056
+$test_0056$test_id
+[1] "test_0056"
+
+$test_0056$prompt
+[1] "do the analysis of the 1, 2 treated and of the 3, 4 control. I want the up expressed genes only"
+
+$test_0056$dataset_path
+[1] "./data/GSE279712_human.merged.counts.txt"
+
+$test_0056$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0056$timestamp
+[1] "2025-10-20 15:11:32 CEST"
+
+$test_0056$success
+[1] TRUE
+
+$test_0056$error_type
+NULL
+
+$test_0056$error_message
+NULL
+
+$test_0056$execution_time
+[1] 6.186343
+
+$test_0056$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 11527 Significant genes (FDR < 0.05): 3"
+
+$test_0056$parsed_json
+$test_0056$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0056$parsed_json$treated
+     [,1]  
+[1,] "col1"
+[2,] "col2"
+
+$test_0056$parsed_json$wt
+     [,1]  
+[1,] "col3"
+[2,] "col4"
+
+$test_0056$parsed_json$regulated
+[1] "up"
+
+
+
+$test_0057
+$test_0057$test_id
+[1] "test_0057"
+
+$test_0057$prompt
+[1] " 1, 2 treated  3, 4 wt, de regulated"
+
+$test_0057$dataset_path
+[1] "./data/GSE279712_human.merged.counts.txt"
+
+$test_0057$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0057$timestamp
+[1] "2025-10-20 15:11:48 CEST"
+
+$test_0057$success
+[1] TRUE
+
+$test_0057$error_type
+NULL
+
+$test_0057$error_message
+NULL
+
+$test_0057$execution_time
+[1] 5.237334
+
+$test_0057$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 24080 Significant genes (FDR < 0.05): 3"
+
+$test_0057$parsed_json
+$test_0057$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0057$parsed_json$treated
+     [,1]
+[1,] "1" 
+[2,] "2" 
+
+$test_0057$parsed_json$wt
+     [,1]
+[1,] "3" 
+[2,] "4" 
+
+$test_0057$parsed_json$regulated
+[1] "de"
+
+
+
+$test_0058
+$test_0058$test_id
+[1] "test_0058"
+
+$test_0058$prompt
+[1] "generate only de between 1, 2 treated  3, 4 wild type"
+
+$test_0058$dataset_path
+[1] "./data/GSE279712_human.merged.counts.txt"
+
+$test_0058$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0058$timestamp
+[1] "2025-10-20 15:12:03 CEST"
+
+$test_0058$success
+[1] TRUE
+
+$test_0058$error_type
+NULL
+
+$test_0058$error_message
+NULL
+
+$test_0058$execution_time
+[1] 5.961659
+
+$test_0058$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 24080 Significant genes (FDR < 0.05): 3"
+
+$test_0058$parsed_json
+$test_0058$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0058$parsed_json$treated
+     [,1]  
+[1,] "col1"
+[2,] "col2"
+
+$test_0058$parsed_json$wt
+     [,1]  
+[1,] "col3"
+[2,] "col4"
+
+$test_0058$parsed_json$regulated
+[1] "de"
+
+
+
+$test_0059
+$test_0059$test_id
+[1] "test_0059"
+
+$test_0059$prompt
+[1] "comparison between 1, 2 and 3, 4, that are treated and wild types respectively, just up regulated genes"
+
+$test_0059$dataset_path
+[1] "./data/GSE279712_human.merged.counts.txt"
+
+$test_0059$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0059$timestamp
+[1] "2025-10-20 15:12:19 CEST"
+
+$test_0059$success
+[1] TRUE
+
+$test_0059$error_type
+NULL
+
+$test_0059$error_message
+NULL
+
+$test_0059$execution_time
+[1] 5.324209
+
+$test_0059$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 11527 Significant genes (FDR < 0.05): 3"
+
+$test_0059$parsed_json
+$test_0059$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0059$parsed_json$treated
+     [,1]
+[1,] "1" 
+[2,] "2" 
+
+$test_0059$parsed_json$wt
+     [,1]
+[1,] "3" 
+[2,] "4" 
+
+$test_0059$parsed_json$regulated
+[1] "up"
+
+
+
+$test_0060
+$test_0060$test_id
+[1] "test_0060"
+
+$test_0060$prompt
+[1] "I want to know de regulated between treated samples 1, 2 vs wild type samples 3, 4"
+
+$test_0060$dataset_path
+[1] "./data/GSE279712_human.merged.counts.txt"
+
+$test_0060$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0060$timestamp
+[1] "2025-10-20 15:12:35 CEST"
+
+$test_0060$success
+[1] FALSE
+
+$test_0060$error_type
+[1] "Invalid/unrecognized regulated"
+
+$test_0060$error_message
+[1] "Invalid/unrecognized regulated: "
+
+$test_0060$execution_time
+[1] 2.13921
+
+$test_0060$result_summary
+NULL
+
+$test_0060$parsed_json
+$test_0060$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0060$parsed_json$treated
+     [,1]     
+[1,] "sample1"
+[2,] "sample2"
+
+$test_0060$parsed_json$wt
+     [,1]     
+[1,] "sample3"
+[2,] "sample4"
+
+$test_0060$parsed_json$regulated
+[1] "de"   "down" "up"  
+
+
+
+$test_0061
+$test_0061$test_id
+[1] "test_0061"
+
+$test_0061$prompt
+[1] "perform rnaseq analysis between treated 1, 2 and wt 3, 4 samples, up regulated"
+
+$test_0061$dataset_path
+[1] "./data/chol_tcga_gdc_read_counts.txt"
+
+$test_0061$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0061$timestamp
+[1] "2025-10-20 15:12:47 CEST"
+
+$test_0061$success
+[1] TRUE
+
+$test_0061$error_type
+NULL
+
+$test_0061$error_message
+NULL
+
+$test_0061$execution_time
+[1] 6.711024
+
+$test_0061$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 12376 Significant genes (FDR < 0.05): 7"
+
+$test_0061$parsed_json
+$test_0061$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0061$parsed_json$treated
+     [,1]  
+[1,] "col1"
+[2,] "col2"
+
+$test_0061$parsed_json$wt
+     [,1]  
+[1,] "col3"
+[2,] "col4"
+
+$test_0061$parsed_json$regulated
+[1] "up"
+
+
+
+$test_0062
+$test_0062$test_id
+[1] "test_0062"
+
+$test_0062$prompt
+[1] "compare treated 1, 2 vs control 3, 4 down regulated genes"
+
+$test_0062$dataset_path
+[1] "./data/chol_tcga_gdc_read_counts.txt"
+
+$test_0062$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0062$timestamp
+[1] "2025-10-20 15:13:04 CEST"
+
+$test_0062$success
+[1] FALSE
+
+$test_0062$error_type
+[1] "Invalid/unrecognized regulated"
+
+$test_0062$error_message
+[1] "Invalid/unrecognized regulated: "
+
+$test_0062$execution_time
+[1] 4.052281
+
+$test_0062$result_summary
+NULL
+
+$test_0062$parsed_json
+$test_0062$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0062$parsed_json$treated
+     [,1]  
+[1,] "col1"
+[2,] "col2"
+
+$test_0062$parsed_json$wt
+     [,1]  
+[1,] "col3"
+[2,] "col4"
+
+$test_0062$parsed_json$regulated
+[1] "de"   "down"
+
+
+
+$test_0063
+$test_0063$test_id
+[1] "test_0063"
+
+$test_0063$prompt
+[1] "analyze treated columns 1, 2 against wild type columns 3, 4, only genes down regulated"
+
+$test_0063$dataset_path
+[1] "./data/chol_tcga_gdc_read_counts.txt"
+
+$test_0063$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0063$timestamp
+[1] "2025-10-20 15:13:18 CEST"
+
+$test_0063$success
+[1] TRUE
+
+$test_0063$error_type
+NULL
+
+$test_0063$error_message
+NULL
+
+$test_0063$execution_time
+[1] 6.246889
+
+$test_0063$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 12082 Significant genes (FDR < 0.05): 21"
+
+$test_0063$parsed_json
+$test_0063$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0063$parsed_json$treated
+     [,1]  
+[1,] "col1"
+[2,] "col2"
+
+$test_0063$parsed_json$wt
+     [,1]  
+[1,] "col3"
+[2,] "col4"
+
+$test_0063$parsed_json$regulated
+[1] "down"
+
+
+
+$test_0064
+$test_0064$test_id
+[1] "test_0064"
+
+$test_0064$prompt
+[1] "differential expression analysis: treated samples 1, 2 vs wild type samples 3, 4, all de regulated genes"
+
+$test_0064$dataset_path
+[1] "./data/chol_tcga_gdc_read_counts.txt"
+
+$test_0064$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0064$timestamp
+[1] "2025-10-20 15:13:35 CEST"
+
+$test_0064$success
+[1] FALSE
+
+$test_0064$error_type
+[1] "Invalid/unrecognized regulated"
+
+$test_0064$error_message
+[1] "Invalid/unrecognized regulated: "
+
+$test_0064$execution_time
+[1] 1.10618
+
+$test_0064$result_summary
+NULL
+
+$test_0064$parsed_json
+$test_0064$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0064$parsed_json$treated
+     [,1]     
+[1,] "sample1"
+[2,] "sample2"
+
+$test_0064$parsed_json$wt
+     [,1]     
+[1,] "sample3"
+[2,] "sample4"
+
+$test_0064$parsed_json$regulated
+[1] "de"   "down" "up"  
+
+
+
+$test_0065
+$test_0065$test_id
+[1] "test_0065"
+
+$test_0065$prompt
+[1] "compare columns 1, 2 (treated) with columns 3, 4 (control), show up regulated"
+
+$test_0065$dataset_path
+[1] "./data/chol_tcga_gdc_read_counts.txt"
+
+$test_0065$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0065$timestamp
+[1] "2025-10-20 15:13:46 CEST"
+
+$test_0065$success
+[1] TRUE
+
+$test_0065$error_type
+NULL
+
+$test_0065$error_message
+NULL
+
+$test_0065$execution_time
+[1] 7.760988
+
+$test_0065$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 12376 Significant genes (FDR < 0.05): 7"
+
+$test_0065$parsed_json
+$test_0065$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0065$parsed_json$treated
+     [,1]  
+[1,] "col1"
+[2,] "col2"
+
+$test_0065$parsed_json$wt
+     [,1]  
+[1,] "col3"
+[2,] "col4"
+
+$test_0065$parsed_json$regulated
+[1] "up"
+
+
+
+$test_0066
+$test_0066$test_id
+[1] "test_0066"
+
+$test_0066$prompt
+[1] "DE analysis treated_1_2 vs control_3_4 up regulated"
+
+$test_0066$dataset_path
+[1] "./data/chol_tcga_gdc_read_counts.txt"
+
+$test_0066$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0066$timestamp
+[1] "2025-10-20 15:14:04 CEST"
+
+$test_0066$success
+[1] FALSE
+
+$test_0066$error_type
+[1] "Execution error in R"
+
+$test_0066$error_message
+[1] "dispersion is NA"
+
+$test_0066$execution_time
+[1] 2.711893
+
+$test_0066$result_summary
+NULL
+
+$test_0066$parsed_json
+$test_0066$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0066$parsed_json$treated
+     [,1]         
+[1,] "treated_1_2"
+
+$test_0066$parsed_json$wt
+     [,1]         
+[1,] "control_3_4"
+
+$test_0066$parsed_json$regulated
+[1] "up"
+
+
+
+$test_0067
+$test_0067$test_id
+[1] "test_0067"
+
+$test_0067$prompt
+[1] "rnaseq comparison: treated samples 1, 2 versus wt samples 3, 4, down regulated genes"
+
+$test_0067$dataset_path
+[1] "./data/chol_tcga_gdc_read_counts.txt"
+
+$test_0067$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0067$timestamp
+[1] "2025-10-20 15:14:16 CEST"
+
+$test_0067$success
+[1] TRUE
+
+$test_0067$error_type
+NULL
+
+$test_0067$error_message
+NULL
+
+$test_0067$execution_time
+[1] 5.567376
+
+$test_0067$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 12082 Significant genes (FDR < 0.05): 21"
+
+$test_0067$parsed_json
+$test_0067$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0067$parsed_json$treated
+     [,1]     
+[1,] "sample1"
+[2,] "sample2"
+
+$test_0067$parsed_json$wt
+     [,1]     
+[1,] "sample3"
+[2,] "sample4"
+
+$test_0067$parsed_json$regulated
+[1] "down"
+
+
+
+$test_0068
+$test_0068$test_id
+[1] "test_0068"
+
+$test_0068$prompt
+[1] "perform differential gene expression analysis between treatment group (samples 1, 2) and control group (samples 3, 4), focus on up regulated genes"
+
+$test_0068$dataset_path
+[1] "./data/chol_tcga_gdc_read_counts.txt"
+
+$test_0068$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0068$timestamp
+[1] "2025-10-20 15:14:32 CEST"
+
+$test_0068$success
+[1] TRUE
+
+$test_0068$error_type
+NULL
+
+$test_0068$error_message
+NULL
+
+$test_0068$execution_time
+[1] 7.303696
+
+$test_0068$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 12376 Significant genes (FDR < 0.05): 7"
+
+$test_0068$parsed_json
+$test_0068$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0068$parsed_json$treated
+     [,1]     
+[1,] "sample1"
+[2,] "sample2"
+
+$test_0068$parsed_json$wt
+     [,1]     
+[1,] "sample3"
+[2,] "sample4"
+
+$test_0068$parsed_json$regulated
+[1] "up"
+
+
+
+$test_0069
+$test_0069$test_id
+[1] "test_0069"
+
+$test_0069$prompt
+[1] "make the comparison of the treated patients 1, 2 against wt ones 3, 4, only down genes"
+
+$test_0069$dataset_path
+[1] "./data/chol_tcga_gdc_read_counts.txt"
+
+$test_0069$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0069$timestamp
+[1] "2025-10-20 15:14:50 CEST"
+
+$test_0069$success
+[1] FALSE
+
+$test_0069$error_type
+[1] "Execution error in R"
+
+$test_0069$error_message
+[1] "duplicate 'row.names' are not allowed"
+
+$test_0069$execution_time
+[1] 4.051119
+
+$test_0069$result_summary
+NULL
+
+$test_0069$parsed_json
+$test_0069$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0069$parsed_json$treated
+     [,1]      
+[1,] "patient1"
+[2,] "patient2"
+
+$test_0069$parsed_json$wt
+     [,1] 
+[1,] "wt1"
+[2,] "wt2"
+
+$test_0069$parsed_json$regulated
+[1] "down"
+
+
+
+$test_0070
+$test_0070$test_id
+[1] "test_0070"
+
+$test_0070$prompt
+[1] "calculate significant differential genes between treatment samples (samples 1, 2) and control ones (samples 3, 4), expecially up regulated genes"
+
+$test_0070$dataset_path
+[1] "./data/chol_tcga_gdc_read_counts.txt"
+
+$test_0070$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0070$timestamp
+[1] "2025-10-20 15:15:04 CEST"
+
+$test_0070$success
+[1] TRUE
+
+$test_0070$error_type
+NULL
+
+$test_0070$error_message
+NULL
+
+$test_0070$execution_time
+[1] 10.79609
+
+$test_0070$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 12376 Significant genes (FDR < 0.05): 7"
+
+$test_0070$parsed_json
+$test_0070$parsed_json$functiontoberun
+[1] "differential_gene_expression_analysis"
+
+$test_0070$parsed_json$treated
+     [,1]     
+[1,] "sample1"
+[2,] "sample2"
+
+$test_0070$parsed_json$wt
+     [,1]     
+[1,] "sample3"
+[2,] "sample4"
+
+$test_0070$parsed_json$regulated
+[1] "up"
+
+
+
+$test_0071
+$test_0071$test_id
+[1] "test_0071"
+
+$test_0071$prompt
+[1] "do the analysis of the 1, 2 treated and of the 3, 4 control. I want the up expressed genes only"
+
+$test_0071$dataset_path
+[1] "./data/chol_tcga_gdc_read_counts.txt"
+
+$test_0071$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0071$timestamp
+[1] "2025-10-20 15:15:25 CEST"
+
+$test_0071$success
+[1] TRUE
+
+$test_0071$error_type
+NULL
+
+$test_0071$error_message
+NULL
+
+$test_0071$execution_time
+[1] 5.498327
+
+$test_0071$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 12376 Significant genes (FDR < 0.05): 7"
+
+$test_0071$parsed_json
+$test_0071$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0071$parsed_json$treated
+     [,1]  
+[1,] "col1"
+[2,] "col2"
+
+$test_0071$parsed_json$wt
+     [,1]  
+[1,] "col3"
+[2,] "col4"
+
+$test_0071$parsed_json$regulated
+[1] "up"
+
+
+
+$test_0072
+$test_0072$test_id
+[1] "test_0072"
+
+$test_0072$prompt
+[1] " 1, 2 treated  3, 4 wt, de regulated"
+
+$test_0072$dataset_path
+[1] "./data/chol_tcga_gdc_read_counts.txt"
+
+$test_0072$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0072$timestamp
+[1] "2025-10-20 15:15:40 CEST"
+
+$test_0072$success
+[1] TRUE
+
+$test_0072$error_type
+NULL
+
+$test_0072$error_message
+NULL
+
+$test_0072$execution_time
+[1] 5.419397
+
+$test_0072$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 24671 Significant genes (FDR < 0.05): 28"
+
+$test_0072$parsed_json
+$test_0072$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0072$parsed_json$treated
+     [,1]
+[1,] "1" 
+[2,] "2" 
+
+$test_0072$parsed_json$wt
+     [,1]
+[1,] "3" 
+[2,] "4" 
+
+$test_0072$parsed_json$regulated
+[1] "de"
+
+
+
+$test_0073
+$test_0073$test_id
+[1] "test_0073"
+
+$test_0073$prompt
+[1] "generate only de between 1, 2 treated  3, 4 wild type"
+
+$test_0073$dataset_path
+[1] "./data/chol_tcga_gdc_read_counts.txt"
+
+$test_0073$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0073$timestamp
+[1] "2025-10-20 15:15:56 CEST"
+
+$test_0073$success
+[1] TRUE
+
+$test_0073$error_type
+NULL
+
+$test_0073$error_message
+NULL
+
+$test_0073$execution_time
+[1] 5.265267
+
+$test_0073$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 24671 Significant genes (FDR < 0.05): 28"
+
+$test_0073$parsed_json
+$test_0073$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0073$parsed_json$treated
+     [,1]  
+[1,] "col1"
+[2,] "col2"
+
+$test_0073$parsed_json$wt
+     [,1]  
+[1,] "col3"
+[2,] "col4"
+
+$test_0073$parsed_json$regulated
+[1] "de"
+
+
+
+$test_0074
+$test_0074$test_id
+[1] "test_0074"
+
+$test_0074$prompt
+[1] "comparison between 1, 2 and 3, 4, that are treated and wild types respectively, just up regulated genes"
+
+$test_0074$dataset_path
+[1] "./data/chol_tcga_gdc_read_counts.txt"
+
+$test_0074$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0074$timestamp
+[1] "2025-10-20 15:16:12 CEST"
+
+$test_0074$success
+[1] TRUE
+
+$test_0074$error_type
+NULL
+
+$test_0074$error_message
+NULL
+
+$test_0074$execution_time
+[1] 5.964933
+
+$test_0074$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 12376 Significant genes (FDR < 0.05): 7"
+
+$test_0074$parsed_json
+$test_0074$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0074$parsed_json$treated
+     [,1]
+[1,] "1" 
+[2,] "2" 
+
+$test_0074$parsed_json$wt
+     [,1]
+[1,] "3" 
+[2,] "4" 
+
+$test_0074$parsed_json$regulated
+[1] "up"
+
+
+
+$test_0075
+$test_0075$test_id
+[1] "test_0075"
+
+$test_0075$prompt
+[1] "I want to know de regulated between treated samples 1, 2 vs wild type samples 3, 4"
+
+$test_0075$dataset_path
+[1] "./data/chol_tcga_gdc_read_counts.txt"
+
+$test_0075$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0075$timestamp
+[1] "2025-10-20 15:16:28 CEST"
+
+$test_0075$success
+[1] FALSE
+
+$test_0075$error_type
+[1] "Invalid/unrecognized regulated"
+
+$test_0075$error_message
+[1] "Invalid/unrecognized regulated: "
+
+$test_0075$execution_time
+[1] 1.404872
+
+$test_0075$result_summary
+NULL
+
+$test_0075$parsed_json
+$test_0075$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0075$parsed_json$treated
+     [,1]     
+[1,] "sample1"
+[2,] "sample2"
+
+$test_0075$parsed_json$wt
+     [,1]     
+[1,] "sample3"
+[2,] "sample4"
+
+$test_0075$parsed_json$regulated
+[1] "de"   "down" "up"  
+
+
+
+$test_0076
+$test_0076$test_id
+[1] "test_0076"
+
+$test_0076$prompt
+[1] "perform rnaseq analysis between treated 1, 2 and wt 3, 4 samples, up regulated"
+
+$test_0076$dataset_path
+[1] "./data/acc_tcga_gdc_read_counts.txt"
+
+$test_0076$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0076$timestamp
+[1] "2025-10-20 15:16:39 CEST"
+
+$test_0076$success
+[1] TRUE
+
+$test_0076$error_type
+NULL
+
+$test_0076$error_message
+NULL
+
+$test_0076$execution_time
+[1] 6.38987
+
+$test_0076$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 11956 Significant genes (FDR < 0.05): 68"
+
+$test_0076$parsed_json
+$test_0076$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0076$parsed_json$treated
+     [,1]  
+[1,] "col1"
+[2,] "col2"
+
+$test_0076$parsed_json$wt
+     [,1]  
+[1,] "col3"
+[2,] "col4"
+
+$test_0076$parsed_json$regulated
+[1] "up"
+
+
+
+$test_0077
+$test_0077$test_id
+[1] "test_0077"
+
+$test_0077$prompt
+[1] "compare treated 1, 2 vs control 3, 4 down regulated genes"
+
+$test_0077$dataset_path
+[1] "./data/acc_tcga_gdc_read_counts.txt"
+
+$test_0077$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0077$timestamp
+[1] "2025-10-20 15:16:56 CEST"
+
+$test_0077$success
+[1] FALSE
+
+$test_0077$error_type
+[1] "Invalid/unrecognized regulated"
+
+$test_0077$error_message
+[1] "Invalid/unrecognized regulated: "
+
+$test_0077$execution_time
+[1] 2.196264
+
+$test_0077$result_summary
+NULL
+
+$test_0077$parsed_json
+$test_0077$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0077$parsed_json$treated
+     [,1]  
+[1,] "col1"
+[2,] "col2"
+
+$test_0077$parsed_json$wt
+     [,1]  
+[1,] "col3"
+[2,] "col4"
+
+$test_0077$parsed_json$regulated
+[1] "de"   "down"
+
+
+
+$test_0078
+$test_0078$test_id
+[1] "test_0078"
+
+$test_0078$prompt
+[1] "analyze treated columns 1, 2 against wild type columns 3, 4, only genes down regulated"
+
+$test_0078$dataset_path
+[1] "./data/acc_tcga_gdc_read_counts.txt"
+
+$test_0078$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0078$timestamp
+[1] "2025-10-20 15:17:08 CEST"
+
+$test_0078$success
+[1] TRUE
+
+$test_0078$error_type
+NULL
+
+$test_0078$error_message
+NULL
+
+$test_0078$execution_time
+[1] 5.846448
+
+$test_0078$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 11925 Significant genes (FDR < 0.05): 141"
+
+$test_0078$parsed_json
+$test_0078$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0078$parsed_json$treated
+     [,1]  
+[1,] "col1"
+[2,] "col2"
+
+$test_0078$parsed_json$wt
+     [,1]  
+[1,] "col3"
+[2,] "col4"
+
+$test_0078$parsed_json$regulated
+[1] "down"
+
+
+
+$test_0079
+$test_0079$test_id
+[1] "test_0079"
+
+$test_0079$prompt
+[1] "differential expression analysis: treated samples 1, 2 vs wild type samples 3, 4, all de regulated genes"
+
+$test_0079$dataset_path
+[1] "./data/acc_tcga_gdc_read_counts.txt"
+
+$test_0079$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0079$timestamp
+[1] "2025-10-20 15:17:24 CEST"
+
+$test_0079$success
+[1] FALSE
+
+$test_0079$error_type
+[1] "Invalid/unrecognized regulated"
+
+$test_0079$error_message
+[1] "Invalid/unrecognized regulated: "
+
+$test_0079$execution_time
+[1] 1.650405
+
+$test_0079$result_summary
+NULL
+
+$test_0079$parsed_json
+$test_0079$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0079$parsed_json$treated
+     [,1]     
+[1,] "sample1"
+[2,] "sample2"
+
+$test_0079$parsed_json$wt
+     [,1]     
+[1,] "sample3"
+[2,] "sample4"
+
+$test_0079$parsed_json$regulated
+[1] "de"   "down" "up"  
+
+
+
+$test_0080
+$test_0080$test_id
+[1] "test_0080"
+
+$test_0080$prompt
+[1] "compare columns 1, 2 (treated) with columns 3, 4 (control), show up regulated"
+
+$test_0080$dataset_path
+[1] "./data/acc_tcga_gdc_read_counts.txt"
+
+$test_0080$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0080$timestamp
+[1] "2025-10-20 15:17:36 CEST"
+
+$test_0080$success
+[1] TRUE
+
+$test_0080$error_type
+NULL
+
+$test_0080$error_message
+NULL
+
+$test_0080$execution_time
+[1] 6.129842
+
+$test_0080$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 11956 Significant genes (FDR < 0.05): 68"
+
+$test_0080$parsed_json
+$test_0080$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0080$parsed_json$treated
+     [,1]  
+[1,] "col1"
+[2,] "col2"
+
+$test_0080$parsed_json$wt
+     [,1]  
+[1,] "col3"
+[2,] "col4"
+
+$test_0080$parsed_json$regulated
+[1] "up"
+
+
+
+$test_0081
+$test_0081$test_id
+[1] "test_0081"
+
+$test_0081$prompt
+[1] "DE analysis treated_1_2 vs control_3_4 up regulated"
+
+$test_0081$dataset_path
+[1] "./data/acc_tcga_gdc_read_counts.txt"
+
+$test_0081$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0081$timestamp
+[1] "2025-10-20 15:17:53 CEST"
+
+$test_0081$success
+[1] FALSE
+
+$test_0081$error_type
+[1] "Execution error in R"
+
+$test_0081$error_message
+[1] "dispersion is NA"
+
+$test_0081$execution_time
+[1] 3.28387
+
+$test_0081$result_summary
+NULL
+
+$test_0081$parsed_json
+$test_0081$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0081$parsed_json$treated
+     [,1]         
+[1,] "treated_1_2"
+
+$test_0081$parsed_json$wt
+     [,1]         
+[1,] "control_3_4"
+
+$test_0081$parsed_json$regulated
+[1] "up"
+
+
+
+$test_0082
+$test_0082$test_id
+[1] "test_0082"
+
+$test_0082$prompt
+[1] "rnaseq comparison: treated samples 1, 2 versus wt samples 3, 4, down regulated genes"
+
+$test_0082$dataset_path
+[1] "./data/acc_tcga_gdc_read_counts.txt"
+
+$test_0082$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0082$timestamp
+[1] "2025-10-20 15:18:06 CEST"
+
+$test_0082$success
+[1] TRUE
+
+$test_0082$error_type
+NULL
+
+$test_0082$error_message
+NULL
+
+$test_0082$execution_time
+[1] 5.862524
+
+$test_0082$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 11925 Significant genes (FDR < 0.05): 141"
+
+$test_0082$parsed_json
+$test_0082$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0082$parsed_json$treated
+     [,1]     
+[1,] "sample1"
+[2,] "sample2"
+
+$test_0082$parsed_json$wt
+     [,1]     
+[1,] "sample3"
+[2,] "sample4"
+
+$test_0082$parsed_json$regulated
+[1] "down"
+
+
+
+$test_0083
+$test_0083$test_id
+[1] "test_0083"
+
+$test_0083$prompt
+[1] "perform differential gene expression analysis between treatment group (samples 1, 2) and control group (samples 3, 4), focus on up regulated genes"
+
+$test_0083$dataset_path
+[1] "./data/acc_tcga_gdc_read_counts.txt"
+
+$test_0083$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0083$timestamp
+[1] "2025-10-20 15:18:22 CEST"
+
+$test_0083$success
+[1] TRUE
+
+$test_0083$error_type
+NULL
+
+$test_0083$error_message
+NULL
+
+$test_0083$execution_time
+[1] 5.983572
+
+$test_0083$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 11956 Significant genes (FDR < 0.05): 68"
+
+$test_0083$parsed_json
+$test_0083$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0083$parsed_json$treated
+     [,1]     
+[1,] "sample1"
+[2,] "sample2"
+
+$test_0083$parsed_json$wt
+     [,1]     
+[1,] "sample3"
+[2,] "sample4"
+
+$test_0083$parsed_json$regulated
+[1] "up"
+
+
+
+$test_0084
+$test_0084$test_id
+[1] "test_0084"
+
+$test_0084$prompt
+[1] "make the comparison of the treated patients 1, 2 against wt ones 3, 4, only down genes"
+
+$test_0084$dataset_path
+[1] "./data/acc_tcga_gdc_read_counts.txt"
+
+$test_0084$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0084$timestamp
+[1] "2025-10-20 15:18:38 CEST"
+
+$test_0084$success
+[1] FALSE
+
+$test_0084$error_type
+[1] "Execution error in R"
+
+$test_0084$error_message
+[1] "duplicate 'row.names' are not allowed"
+
+$test_0084$execution_time
+[1] 2.554573
+
+$test_0084$result_summary
+NULL
+
+$test_0084$parsed_json
+$test_0084$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0084$parsed_json$treated
+     [,1]      
+[1,] "patient1"
+[2,] "patient2"
+
+$test_0084$parsed_json$wt
+     [,1] 
+[1,] "wt1"
+[2,] "wt2"
+
+$test_0084$parsed_json$regulated
+[1] "down"
+
+
+
+$test_0085
+$test_0085$test_id
+[1] "test_0085"
+
+$test_0085$prompt
+[1] "calculate significant differential genes between treatment samples (samples 1, 2) and control ones (samples 3, 4), expecially up regulated genes"
+
+$test_0085$dataset_path
+[1] "./data/acc_tcga_gdc_read_counts.txt"
+
+$test_0085$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0085$timestamp
+[1] "2025-10-20 15:18:51 CEST"
+
+$test_0085$success
+[1] TRUE
+
+$test_0085$error_type
+NULL
+
+$test_0085$error_message
+NULL
+
+$test_0085$execution_time
+[1] 7.735873
+
+$test_0085$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 11956 Significant genes (FDR < 0.05): 68"
+
+$test_0085$parsed_json
+$test_0085$parsed_json$functiontoberun
+[1] "differential_gene_expression_analysis"
+
+$test_0085$parsed_json$treated
+     [,1]     
+[1,] "sample1"
+[2,] "sample2"
+
+$test_0085$parsed_json$wt
+     [,1]     
+[1,] "sample3"
+[2,] "sample4"
+
+$test_0085$parsed_json$regulated
+[1] "up"
+
+
+
+$test_0086
+$test_0086$test_id
+[1] "test_0086"
+
+$test_0086$prompt
+[1] "do the analysis of the 1, 2 treated and of the 3, 4 control. I want the up expressed genes only"
+
+$test_0086$dataset_path
+[1] "./data/acc_tcga_gdc_read_counts.txt"
+
+$test_0086$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0086$timestamp
+[1] "2025-10-20 15:19:09 CEST"
+
+$test_0086$success
+[1] TRUE
+
+$test_0086$error_type
+NULL
+
+$test_0086$error_message
+NULL
+
+$test_0086$execution_time
+[1] 6.32969
+
+$test_0086$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 11956 Significant genes (FDR < 0.05): 68"
+
+$test_0086$parsed_json
+$test_0086$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0086$parsed_json$treated
+     [,1]  
+[1,] "col1"
+[2,] "col2"
+
+$test_0086$parsed_json$wt
+     [,1]  
+[1,] "col3"
+[2,] "col4"
+
+$test_0086$parsed_json$regulated
+[1] "up"
+
+
+
+$test_0087
+$test_0087$test_id
+[1] "test_0087"
+
+$test_0087$prompt
+[1] " 1, 2 treated  3, 4 wt, de regulated"
+
+$test_0087$dataset_path
+[1] "./data/acc_tcga_gdc_read_counts.txt"
+
+$test_0087$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0087$timestamp
+[1] "2025-10-20 15:19:25 CEST"
+
+$test_0087$success
+[1] TRUE
+
+$test_0087$error_type
+NULL
+
+$test_0087$error_message
+NULL
+
+$test_0087$execution_time
+[1] 5.876167
+
+$test_0087$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 24079 Significant genes (FDR < 0.05): 209"
+
+$test_0087$parsed_json
+$test_0087$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0087$parsed_json$treated
+     [,1]
+[1,] "1" 
+[2,] "2" 
+
+$test_0087$parsed_json$wt
+     [,1]
+[1,] "3" 
+[2,] "4" 
+
+$test_0087$parsed_json$regulated
+[1] "de"
+
+
+
+$test_0088
+$test_0088$test_id
+[1] "test_0088"
+
+$test_0088$prompt
+[1] "generate only de between 1, 2 treated  3, 4 wild type"
+
+$test_0088$dataset_path
+[1] "./data/acc_tcga_gdc_read_counts.txt"
+
+$test_0088$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0088$timestamp
+[1] "2025-10-20 15:19:41 CEST"
+
+$test_0088$success
+[1] TRUE
+
+$test_0088$error_type
+NULL
+
+$test_0088$error_message
+NULL
+
+$test_0088$execution_time
+[1] 5.931888
+
+$test_0088$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 24079 Significant genes (FDR < 0.05): 209"
+
+$test_0088$parsed_json
+$test_0088$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0088$parsed_json$treated
+     [,1]  
+[1,] "col1"
+[2,] "col2"
+
+$test_0088$parsed_json$wt
+     [,1]  
+[1,] "col3"
+[2,] "col4"
+
+$test_0088$parsed_json$regulated
+[1] "de"
+
+
+
+$test_0089
+$test_0089$test_id
+[1] "test_0089"
+
+$test_0089$prompt
+[1] "comparison between 1, 2 and 3, 4, that are treated and wild types respectively, just up regulated genes"
+
+$test_0089$dataset_path
+[1] "./data/acc_tcga_gdc_read_counts.txt"
+
+$test_0089$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0089$timestamp
+[1] "2025-10-20 15:19:57 CEST"
+
+$test_0089$success
+[1] TRUE
+
+$test_0089$error_type
+NULL
+
+$test_0089$error_message
+NULL
+
+$test_0089$execution_time
+[1] 5.786367
+
+$test_0089$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 11956 Significant genes (FDR < 0.05): 68"
+
+$test_0089$parsed_json
+$test_0089$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0089$parsed_json$treated
+     [,1]
+[1,] "1" 
+[2,] "2" 
+
+$test_0089$parsed_json$wt
+     [,1]
+[1,] "3" 
+[2,] "4" 
+
+$test_0089$parsed_json$regulated
+[1] "up"
+
+
+
+$test_0090
+$test_0090$test_id
+[1] "test_0090"
+
+$test_0090$prompt
+[1] "I want to know de regulated between treated samples 1, 2 vs wild type samples 3, 4"
+
+$test_0090$dataset_path
+[1] "./data/acc_tcga_gdc_read_counts.txt"
+
+$test_0090$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0090$timestamp
+[1] "2025-10-20 15:20:13 CEST"
+
+$test_0090$success
+[1] FALSE
+
+$test_0090$error_type
+[1] "Invalid/unrecognized regulated"
+
+$test_0090$error_message
+[1] "Invalid/unrecognized regulated: "
+
+$test_0090$execution_time
+[1] 1.689422
+
+$test_0090$result_summary
+NULL
+
+$test_0090$parsed_json
+$test_0090$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0090$parsed_json$treated
+     [,1]     
+[1,] "sample1"
+[2,] "sample2"
+
+$test_0090$parsed_json$wt
+     [,1]     
+[1,] "sample3"
+[2,] "sample4"
+
+$test_0090$parsed_json$regulated
+[1] "de"   "down" "up"  
+
+
+
+$test_0091
+$test_0091$test_id
+[1] "test_0091"
+
+$test_0091$prompt
+[1] "perform rnaseq analysis between treated 1, 2 and wt 3, 4 samples, up regulated"
+
+$test_0091$dataset_path
+[1] "./data/ucs_tcga_gdc_read_counts.txt"
+
+$test_0091$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0091$timestamp
+[1] "2025-10-20 15:20:25 CEST"
+
+$test_0091$success
+[1] TRUE
+
+$test_0091$error_type
+NULL
+
+$test_0091$error_message
+NULL
+
+$test_0091$execution_time
+[1] 10.85887
+
+$test_0091$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 13483 Significant genes (FDR < 0.05): 59"
+
+$test_0091$parsed_json
+$test_0091$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0091$parsed_json$treated
+     [,1]  
+[1,] "col1"
+[2,] "col2"
+
+$test_0091$parsed_json$wt
+     [,1]  
+[1,] "col3"
+[2,] "col4"
+
+$test_0091$parsed_json$regulated
+[1] "up"
+
+
+
+$test_0092
+$test_0092$test_id
+[1] "test_0092"
+
+$test_0092$prompt
+[1] "compare treated 1, 2 vs control 3, 4 down regulated genes"
+
+$test_0092$dataset_path
+[1] "./data/ucs_tcga_gdc_read_counts.txt"
+
+$test_0092$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0092$timestamp
+[1] "2025-10-20 15:20:46 CEST"
+
+$test_0092$success
+[1] TRUE
+
+$test_0092$error_type
+NULL
+
+$test_0092$error_message
+NULL
+
+$test_0092$execution_time
+[1] 7.141935
+
+$test_0092$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 12747 Significant genes (FDR < 0.05): 85"
+
+$test_0092$parsed_json
+$test_0092$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0092$parsed_json$treated
+     [,1]  
+[1,] "col1"
+[2,] "col2"
+
+$test_0092$parsed_json$wt
+     [,1]  
+[1,] "col3"
+[2,] "col4"
+
+$test_0092$parsed_json$regulated
+[1] "down"
+
+
+
+$test_0093
+$test_0093$test_id
+[1] "test_0093"
+
+$test_0093$prompt
+[1] "analyze treated columns 1, 2 against wild type columns 3, 4, only genes down regulated"
+
+$test_0093$dataset_path
+[1] "./data/ucs_tcga_gdc_read_counts.txt"
+
+$test_0093$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0093$timestamp
+[1] "2025-10-20 15:21:03 CEST"
+
+$test_0093$success
+[1] TRUE
+
+$test_0093$error_type
+NULL
+
+$test_0093$error_message
+NULL
+
+$test_0093$execution_time
+[1] 7.229204
+
+$test_0093$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 12747 Significant genes (FDR < 0.05): 85"
+
+$test_0093$parsed_json
+$test_0093$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0093$parsed_json$treated
+     [,1]  
+[1,] "col1"
+[2,] "col2"
+
+$test_0093$parsed_json$wt
+     [,1]  
+[1,] "col3"
+[2,] "col4"
+
+$test_0093$parsed_json$regulated
+[1] "down"
+
+
+
+$test_0094
+$test_0094$test_id
+[1] "test_0094"
+
+$test_0094$prompt
+[1] "differential expression analysis: treated samples 1, 2 vs wild type samples 3, 4, all de regulated genes"
+
+$test_0094$dataset_path
+[1] "./data/ucs_tcga_gdc_read_counts.txt"
+
+$test_0094$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0094$timestamp
+[1] "2025-10-20 15:21:20 CEST"
+
+$test_0094$success
+[1] FALSE
+
+$test_0094$error_type
+[1] "Invalid/unrecognized regulated"
+
+$test_0094$error_message
+[1] "Invalid/unrecognized regulated: "
+
+$test_0094$execution_time
+[1] 2.747549
+
+$test_0094$result_summary
+NULL
+
+$test_0094$parsed_json
+$test_0094$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0094$parsed_json$treated
+     [,1]     
+[1,] "sample1"
+[2,] "sample2"
+
+$test_0094$parsed_json$wt
+     [,1]     
+[1,] "sample3"
+[2,] "sample4"
+
+$test_0094$parsed_json$regulated
+[1] "de"   "down" "up"  
+
+
+
+$test_0095
+$test_0095$test_id
+[1] "test_0095"
+
+$test_0095$prompt
+[1] "compare columns 1, 2 (treated) with columns 3, 4 (control), show up regulated"
+
+$test_0095$dataset_path
+[1] "./data/ucs_tcga_gdc_read_counts.txt"
+
+$test_0095$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0095$timestamp
+[1] "2025-10-20 15:21:33 CEST"
+
+$test_0095$success
+[1] TRUE
+
+$test_0095$error_type
+NULL
+
+$test_0095$error_message
+NULL
+
+$test_0095$execution_time
+[1] 6.940555
+
+$test_0095$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 13483 Significant genes (FDR < 0.05): 59"
+
+$test_0095$parsed_json
+$test_0095$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0095$parsed_json$treated
+     [,1]  
+[1,] "col1"
+[2,] "col2"
+
+$test_0095$parsed_json$wt
+     [,1]  
+[1,] "col3"
+[2,] "col4"
+
+$test_0095$parsed_json$regulated
+[1] "up"
+
+
+
+$test_0096
+$test_0096$test_id
+[1] "test_0096"
+
+$test_0096$prompt
+[1] "DE analysis treated_1_2 vs control_3_4 up regulated"
+
+$test_0096$dataset_path
+[1] "./data/ucs_tcga_gdc_read_counts.txt"
+
+$test_0096$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0096$timestamp
+[1] "2025-10-20 15:21:50 CEST"
+
+$test_0096$success
+[1] FALSE
+
+$test_0096$error_type
+[1] "Execution error in R"
+
+$test_0096$error_message
+[1] "dispersion is NA"
+
+$test_0096$execution_time
+[1] 2.395551
+
+$test_0096$result_summary
+NULL
+
+$test_0096$parsed_json
+$test_0096$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0096$parsed_json$treated
+     [,1]         
+[1,] "treated_1_2"
+
+$test_0096$parsed_json$wt
+     [,1]         
+[1,] "control_3_4"
+
+$test_0096$parsed_json$regulated
+[1] "up"
+
+
+
+$test_0097
+$test_0097$test_id
+[1] "test_0097"
+
+$test_0097$prompt
+[1] "rnaseq comparison: treated samples 1, 2 versus wt samples 3, 4, down regulated genes"
+
+$test_0097$dataset_path
+[1] "./data/ucs_tcga_gdc_read_counts.txt"
+
+$test_0097$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0097$timestamp
+[1] "2025-10-20 15:22:03 CEST"
+
+$test_0097$success
+[1] TRUE
+
+$test_0097$error_type
+NULL
+
+$test_0097$error_message
+NULL
+
+$test_0097$execution_time
+[1] 5.807571
+
+$test_0097$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 12747 Significant genes (FDR < 0.05): 85"
+
+$test_0097$parsed_json
+$test_0097$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0097$parsed_json$treated
+     [,1]     
+[1,] "sample1"
+[2,] "sample2"
+
+$test_0097$parsed_json$wt
+     [,1]     
+[1,] "sample3"
+[2,] "sample4"
+
+$test_0097$parsed_json$regulated
+[1] "down"
+
+
+
+$test_0098
+$test_0098$test_id
+[1] "test_0098"
+
+$test_0098$prompt
+[1] "perform differential gene expression analysis between treatment group (samples 1, 2) and control group (samples 3, 4), focus on up regulated genes"
+
+$test_0098$dataset_path
+[1] "./data/ucs_tcga_gdc_read_counts.txt"
+
+$test_0098$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0098$timestamp
+[1] "2025-10-20 15:22:19 CEST"
+
+$test_0098$success
+[1] TRUE
+
+$test_0098$error_type
+NULL
+
+$test_0098$error_message
+NULL
+
+$test_0098$execution_time
+[1] 5.988878
+
+$test_0098$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 13483 Significant genes (FDR < 0.05): 59"
+
+$test_0098$parsed_json
+$test_0098$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0098$parsed_json$treated
+     [,1]     
+[1,] "sample1"
+[2,] "sample2"
+
+$test_0098$parsed_json$wt
+     [,1]     
+[1,] "sample3"
+[2,] "sample4"
+
+$test_0098$parsed_json$regulated
+[1] "up"
+
+
+
+$test_0099
+$test_0099$test_id
+[1] "test_0099"
+
+$test_0099$prompt
+[1] "make the comparison of the treated patients 1, 2 against wt ones 3, 4, only down genes"
+
+$test_0099$dataset_path
+[1] "./data/ucs_tcga_gdc_read_counts.txt"
+
+$test_0099$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0099$timestamp
+[1] "2025-10-20 15:22:35 CEST"
+
+$test_0099$success
+[1] FALSE
+
+$test_0099$error_type
+[1] "Execution error in R"
+
+$test_0099$error_message
+[1] "duplicate 'row.names' are not allowed"
+
+$test_0099$execution_time
+[1] 2.262043
+
+$test_0099$result_summary
+NULL
+
+$test_0099$parsed_json
+$test_0099$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0099$parsed_json$treated
+     [,1]      
+[1,] "patient1"
+[2,] "patient2"
+
+$test_0099$parsed_json$wt
+     [,1] 
+[1,] "wt1"
+[2,] "wt2"
+
+$test_0099$parsed_json$regulated
+[1] "down"
+
+
+
+$test_0100
+$test_0100$test_id
+[1] "test_0100"
+
+$test_0100$prompt
+[1] "calculate significant differential genes between treatment samples (samples 1, 2) and control ones (samples 3, 4), expecially up regulated genes"
+
+$test_0100$dataset_path
+[1] "./data/ucs_tcga_gdc_read_counts.txt"
+
+$test_0100$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0100$timestamp
+[1] "2025-10-20 15:22:47 CEST"
+
+$test_0100$success
+[1] TRUE
+
+$test_0100$error_type
+NULL
+
+$test_0100$error_message
+NULL
+
+$test_0100$execution_time
+[1] 5.898298
+
+$test_0100$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 13483 Significant genes (FDR < 0.05): 59"
+
+$test_0100$parsed_json
+$test_0100$parsed_json$functiontoberun
+[1] "differential_gene_expression_analysis"
+
+$test_0100$parsed_json$treated
+     [,1]     
+[1,] "sample1"
+[2,] "sample2"
+
+$test_0100$parsed_json$wt
+     [,1]     
+[1,] "sample3"
+[2,] "sample4"
+
+$test_0100$parsed_json$regulated
+[1] "up"
+
+
+
+$test_0101
+$test_0101$test_id
+[1] "test_0101"
+
+$test_0101$prompt
+[1] "do the analysis of the 1, 2 treated and of the 3, 4 control. I want the up expressed genes only"
+
+$test_0101$dataset_path
+[1] "./data/ucs_tcga_gdc_read_counts.txt"
+
+$test_0101$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0101$timestamp
+[1] "2025-10-20 15:23:03 CEST"
+
+$test_0101$success
+[1] TRUE
+
+$test_0101$error_type
+NULL
+
+$test_0101$error_message
+NULL
+
+$test_0101$execution_time
+[1] 6.454151
+
+$test_0101$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 13483 Significant genes (FDR < 0.05): 59"
+
+$test_0101$parsed_json
+$test_0101$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0101$parsed_json$treated
+     [,1]  
+[1,] "col1"
+[2,] "col2"
+
+$test_0101$parsed_json$wt
+     [,1]  
+[1,] "col3"
+[2,] "col4"
+
+$test_0101$parsed_json$regulated
+[1] "up"
+
+
+
+$test_0102
+$test_0102$test_id
+[1] "test_0102"
+
+$test_0102$prompt
+[1] " 1, 2 treated  3, 4 wt, de regulated"
+
+$test_0102$dataset_path
+[1] "./data/ucs_tcga_gdc_read_counts.txt"
+
+$test_0102$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0102$timestamp
+[1] "2025-10-20 15:23:20 CEST"
+
+$test_0102$success
+[1] TRUE
+
+$test_0102$error_type
+NULL
+
+$test_0102$error_message
+NULL
+
+$test_0102$execution_time
+[1] 6.283089
+
+$test_0102$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 26512 Significant genes (FDR < 0.05): 144"
+
+$test_0102$parsed_json
+$test_0102$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0102$parsed_json$treated
+     [,1]
+[1,] "1" 
+[2,] "2" 
+
+$test_0102$parsed_json$wt
+     [,1]
+[1,] "3" 
+[2,] "4" 
+
+$test_0102$parsed_json$regulated
+[1] "de"
+
+
+
+$test_0103
+$test_0103$test_id
+[1] "test_0103"
+
+$test_0103$prompt
+[1] "generate only de between 1, 2 treated  3, 4 wild type"
+
+$test_0103$dataset_path
+[1] "./data/ucs_tcga_gdc_read_counts.txt"
+
+$test_0103$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0103$timestamp
+[1] "2025-10-20 15:23:36 CEST"
+
+$test_0103$success
+[1] TRUE
+
+$test_0103$error_type
+NULL
+
+$test_0103$error_message
+NULL
+
+$test_0103$execution_time
+[1] 7.588248
+
+$test_0103$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 26512 Significant genes (FDR < 0.05): 144"
+
+$test_0103$parsed_json
+$test_0103$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0103$parsed_json$treated
+     [,1]  
+[1,] "col1"
+[2,] "col2"
+
+$test_0103$parsed_json$wt
+     [,1]  
+[1,] "col3"
+[2,] "col4"
+
+$test_0103$parsed_json$regulated
+[1] "de"
+
+
+
+$test_0104
+$test_0104$test_id
+[1] "test_0104"
+
+$test_0104$prompt
+[1] "comparison between 1, 2 and 3, 4, that are treated and wild types respectively, just up regulated genes"
+
+$test_0104$dataset_path
+[1] "./data/ucs_tcga_gdc_read_counts.txt"
+
+$test_0104$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0104$timestamp
+[1] "2025-10-20 15:23:54 CEST"
+
+$test_0104$success
+[1] TRUE
+
+$test_0104$error_type
+NULL
+
+$test_0104$error_message
+NULL
+
+$test_0104$execution_time
+[1] 8.803503
+
+$test_0104$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 13483 Significant genes (FDR < 0.05): 59"
+
+$test_0104$parsed_json
+$test_0104$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0104$parsed_json$treated
+     [,1]
+[1,] "1" 
+[2,] "2" 
+
+$test_0104$parsed_json$wt
+     [,1]
+[1,] "3" 
+[2,] "4" 
+
+$test_0104$parsed_json$regulated
+[1] "up"
+
+
+
+$test_0105
+$test_0105$test_id
+[1] "test_0105"
+
+$test_0105$prompt
+[1] "I want to know de regulated between treated samples 1, 2 vs wild type samples 3, 4"
+
+$test_0105$dataset_path
+[1] "./data/ucs_tcga_gdc_read_counts.txt"
+
+$test_0105$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0105$timestamp
+[1] "2025-10-20 15:24:12 CEST"
+
+$test_0105$success
+[1] FALSE
+
+$test_0105$error_type
+[1] "Invalid/unrecognized regulated"
+
+$test_0105$error_message
+[1] "Invalid/unrecognized regulated: "
+
+$test_0105$execution_time
+[1] 2.138245
+
+$test_0105$result_summary
+NULL
+
+$test_0105$parsed_json
+$test_0105$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0105$parsed_json$treated
+     [,1]     
+[1,] "sample1"
+[2,] "sample2"
+
+$test_0105$parsed_json$wt
+     [,1]     
+[1,] "sample3"
+[2,] "sample4"
+
+$test_0105$parsed_json$regulated
+[1] "de"   "down" "up"  
+
+
+
+$test_0106
+$test_0106$test_id
+[1] "test_0106"
+
+$test_0106$prompt
+[1] "perform rnaseq analysis between treated 1, 2 and wt 3, 4 samples, up regulated"
+
+$test_0106$dataset_path
+[1] "./data/dlbclnos_tcga_gdc_read_counts.txt"
+
+$test_0106$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0106$timestamp
+[1] "2025-10-20 15:24:25 CEST"
+
+$test_0106$success
+[1] TRUE
+
+$test_0106$error_type
+NULL
+
+$test_0106$error_message
+NULL
+
+$test_0106$execution_time
+[1] 5.480314
+
+$test_0106$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 12123 Significant genes (FDR < 0.05): 13"
+
+$test_0106$parsed_json
+$test_0106$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0106$parsed_json$treated
+     [,1]  
+[1,] "col1"
+[2,] "col2"
+
+$test_0106$parsed_json$wt
+     [,1]  
+[1,] "col3"
+[2,] "col4"
+
+$test_0106$parsed_json$regulated
+[1] "up"
+
+
+
+$test_0107
+$test_0107$test_id
+[1] "test_0107"
+
+$test_0107$prompt
+[1] "compare treated 1, 2 vs control 3, 4 down regulated genes"
+
+$test_0107$dataset_path
+[1] "./data/dlbclnos_tcga_gdc_read_counts.txt"
+
+$test_0107$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0107$timestamp
+[1] "2025-10-20 15:24:40 CEST"
+
+$test_0107$success
+[1] FALSE
+
+$test_0107$error_type
+[1] "Invalid/unrecognized regulated"
+
+$test_0107$error_message
+[1] "Invalid/unrecognized regulated: "
+
+$test_0107$execution_time
+[1] 1.777531
+
+$test_0107$result_summary
+NULL
+
+$test_0107$parsed_json
+$test_0107$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0107$parsed_json$treated
+     [,1]  
+[1,] "col1"
+[2,] "col2"
+
+$test_0107$parsed_json$wt
+     [,1]  
+[1,] "col3"
+[2,] "col4"
+
+$test_0107$parsed_json$regulated
+[1] "de"   "down"
+
+
+
+$test_0108
+$test_0108$test_id
+[1] "test_0108"
+
+$test_0108$prompt
+[1] "analyze treated columns 1, 2 against wild type columns 3, 4, only genes down regulated"
+
+$test_0108$dataset_path
+[1] "./data/dlbclnos_tcga_gdc_read_counts.txt"
+
+$test_0108$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0108$timestamp
+[1] "2025-10-20 15:24:52 CEST"
+
+$test_0108$success
+[1] TRUE
+
+$test_0108$error_type
+NULL
+
+$test_0108$error_message
+NULL
+
+$test_0108$execution_time
+[1] 7.361048
+
+$test_0108$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 12691 Significant genes (FDR < 0.05): 20"
+
+$test_0108$parsed_json
+$test_0108$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0108$parsed_json$treated
+     [,1]  
+[1,] "col1"
+[2,] "col2"
+
+$test_0108$parsed_json$wt
+     [,1]  
+[1,] "col3"
+[2,] "col4"
+
+$test_0108$parsed_json$regulated
+[1] "down"
+
+
+
+$test_0109
+$test_0109$test_id
+[1] "test_0109"
+
+$test_0109$prompt
+[1] "differential expression analysis: treated samples 1, 2 vs wild type samples 3, 4, all de regulated genes"
+
+$test_0109$dataset_path
+[1] "./data/dlbclnos_tcga_gdc_read_counts.txt"
+
+$test_0109$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0109$timestamp
+[1] "2025-10-20 15:25:10 CEST"
+
+$test_0109$success
+[1] FALSE
+
+$test_0109$error_type
+[1] "Invalid/unrecognized regulated"
+
+$test_0109$error_message
+[1] "Invalid/unrecognized regulated: "
+
+$test_0109$execution_time
+[1] 2.667696
+
+$test_0109$result_summary
+NULL
+
+$test_0109$parsed_json
+$test_0109$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0109$parsed_json$treated
+     [,1]     
+[1,] "sample1"
+[2,] "sample2"
+
+$test_0109$parsed_json$wt
+     [,1]     
+[1,] "sample3"
+[2,] "sample4"
+
+$test_0109$parsed_json$regulated
+[1] "de"   "down" "up"  
+
+
+
+$test_0110
+$test_0110$test_id
+[1] "test_0110"
+
+$test_0110$prompt
+[1] "compare columns 1, 2 (treated) with columns 3, 4 (control), show up regulated"
+
+$test_0110$dataset_path
+[1] "./data/dlbclnos_tcga_gdc_read_counts.txt"
+
+$test_0110$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0110$timestamp
+[1] "2025-10-20 15:25:22 CEST"
+
+$test_0110$success
+[1] TRUE
+
+$test_0110$error_type
+NULL
+
+$test_0110$error_message
+NULL
+
+$test_0110$execution_time
+[1] 7.765182
+
+$test_0110$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 12123 Significant genes (FDR < 0.05): 13"
+
+$test_0110$parsed_json
+$test_0110$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0110$parsed_json$treated
+     [,1]  
+[1,] "col1"
+[2,] "col2"
+
+$test_0110$parsed_json$wt
+     [,1]  
+[1,] "col3"
+[2,] "col4"
+
+$test_0110$parsed_json$regulated
+[1] "up"
+
+
+
+$test_0111
+$test_0111$test_id
+[1] "test_0111"
+
+$test_0111$prompt
+[1] "DE analysis treated_1_2 vs control_3_4 up regulated"
+
+$test_0111$dataset_path
+[1] "./data/dlbclnos_tcga_gdc_read_counts.txt"
+
+$test_0111$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0111$timestamp
+[1] "2025-10-20 15:25:40 CEST"
+
+$test_0111$success
+[1] FALSE
+
+$test_0111$error_type
+[1] "Execution error in R"
+
+$test_0111$error_message
+[1] "dispersion is NA"
+
+$test_0111$execution_time
+[1] 3.381969
+
+$test_0111$result_summary
+NULL
+
+$test_0111$parsed_json
+$test_0111$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0111$parsed_json$treated
+     [,1]         
+[1,] "treated_1_2"
+
+$test_0111$parsed_json$wt
+     [,1]         
+[1,] "control_3_4"
+
+$test_0111$parsed_json$regulated
+[1] "up"
+
+
+
+$test_0112
+$test_0112$test_id
+[1] "test_0112"
+
+$test_0112$prompt
+[1] "rnaseq comparison: treated samples 1, 2 versus wt samples 3, 4, down regulated genes"
+
+$test_0112$dataset_path
+[1] "./data/dlbclnos_tcga_gdc_read_counts.txt"
+
+$test_0112$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0112$timestamp
+[1] "2025-10-20 15:25:54 CEST"
+
+$test_0112$success
+[1] TRUE
+
+$test_0112$error_type
+NULL
+
+$test_0112$error_message
+NULL
+
+$test_0112$execution_time
+[1] 7.782894
+
+$test_0112$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 12691 Significant genes (FDR < 0.05): 20"
+
+$test_0112$parsed_json
+$test_0112$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0112$parsed_json$treated
+     [,1]     
+[1,] "sample1"
+[2,] "sample2"
+
+$test_0112$parsed_json$wt
+     [,1]     
+[1,] "sample3"
+[2,] "sample4"
+
+$test_0112$parsed_json$regulated
+[1] "down"
+
+
+
+$test_0113
+$test_0113$test_id
+[1] "test_0113"
+
+$test_0113$prompt
+[1] "perform differential gene expression analysis between treatment group (samples 1, 2) and control group (samples 3, 4), focus on up regulated genes"
+
+$test_0113$dataset_path
+[1] "./data/dlbclnos_tcga_gdc_read_counts.txt"
+
+$test_0113$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0113$timestamp
+[1] "2025-10-20 15:26:12 CEST"
+
+$test_0113$success
+[1] TRUE
+
+$test_0113$error_type
+NULL
+
+$test_0113$error_message
+NULL
+
+$test_0113$execution_time
+[1] 6.942693
+
+$test_0113$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 12123 Significant genes (FDR < 0.05): 13"
+
+$test_0113$parsed_json
+$test_0113$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0113$parsed_json$treated
+     [,1]     
+[1,] "sample1"
+[2,] "sample2"
+
+$test_0113$parsed_json$wt
+     [,1]     
+[1,] "sample3"
+[2,] "sample4"
+
+$test_0113$parsed_json$regulated
+[1] "up"
+
+
+
+$test_0114
+$test_0114$test_id
+[1] "test_0114"
+
+$test_0114$prompt
+[1] "make the comparison of the treated patients 1, 2 against wt ones 3, 4, only down genes"
+
+$test_0114$dataset_path
+[1] "./data/dlbclnos_tcga_gdc_read_counts.txt"
+
+$test_0114$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0114$timestamp
+[1] "2025-10-20 15:26:29 CEST"
+
+$test_0114$success
+[1] FALSE
+
+$test_0114$error_type
+[1] "Execution error in R"
+
+$test_0114$error_message
+[1] "duplicate 'row.names' are not allowed"
+
+$test_0114$execution_time
+[1] 2.511857
+
+$test_0114$result_summary
+NULL
+
+$test_0114$parsed_json
+$test_0114$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0114$parsed_json$treated
+     [,1]      
+[1,] "patient1"
+[2,] "patient2"
+
+$test_0114$parsed_json$wt
+     [,1] 
+[1,] "wt1"
+[2,] "wt2"
+
+$test_0114$parsed_json$regulated
+[1] "down"
+
+
+
+$test_0115
+$test_0115$test_id
+[1] "test_0115"
+
+$test_0115$prompt
+[1] "calculate significant differential genes between treatment samples (samples 1, 2) and control ones (samples 3, 4), expecially up regulated genes"
+
+$test_0115$dataset_path
+[1] "./data/dlbclnos_tcga_gdc_read_counts.txt"
+
+$test_0115$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0115$timestamp
+[1] "2025-10-20 15:26:42 CEST"
+
+$test_0115$success
+[1] TRUE
+
+$test_0115$error_type
+NULL
+
+$test_0115$error_message
+NULL
+
+$test_0115$execution_time
+[1] 7.33743
+
+$test_0115$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 12123 Significant genes (FDR < 0.05): 13"
+
+$test_0115$parsed_json
+$test_0115$parsed_json$functiontoberun
+[1] "differential_gene_expression_analysis"
+
+$test_0115$parsed_json$treated
+     [,1]     
+[1,] "sample1"
+[2,] "sample2"
+
+$test_0115$parsed_json$wt
+     [,1]     
+[1,] "sample3"
+[2,] "sample4"
+
+$test_0115$parsed_json$regulated
+[1] "up"
+
+
+
+$test_0116
+$test_0116$test_id
+[1] "test_0116"
+
+$test_0116$prompt
+[1] "do the analysis of the 1, 2 treated and of the 3, 4 control. I want the up expressed genes only"
+
+$test_0116$dataset_path
+[1] "./data/dlbclnos_tcga_gdc_read_counts.txt"
+
+$test_0116$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0116$timestamp
+[1] "2025-10-20 15:26:59 CEST"
+
+$test_0116$success
+[1] TRUE
+
+$test_0116$error_type
+NULL
+
+$test_0116$error_message
+NULL
+
+$test_0116$execution_time
+[1] 5.457182
+
+$test_0116$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 12123 Significant genes (FDR < 0.05): 13"
+
+$test_0116$parsed_json
+$test_0116$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0116$parsed_json$treated
+     [,1]  
+[1,] "col1"
+[2,] "col2"
+
+$test_0116$parsed_json$wt
+     [,1]  
+[1,] "col3"
+[2,] "col4"
+
+$test_0116$parsed_json$regulated
+[1] "up"
+
+
+
+$test_0117
+$test_0117$test_id
+[1] "test_0117"
+
+$test_0117$prompt
+[1] " 1, 2 treated  3, 4 wt, de regulated"
+
+$test_0117$dataset_path
+[1] "./data/dlbclnos_tcga_gdc_read_counts.txt"
+
+$test_0117$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0117$timestamp
+[1] "2025-10-20 15:27:15 CEST"
+
+$test_0117$success
+[1] TRUE
+
+$test_0117$error_type
+NULL
+
+$test_0117$error_message
+NULL
+
+$test_0117$execution_time
+[1] 6.416799
+
+$test_0117$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 25096 Significant genes (FDR < 0.05): 33"
+
+$test_0117$parsed_json
+$test_0117$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0117$parsed_json$treated
+     [,1]
+[1,] "1" 
+[2,] "2" 
+
+$test_0117$parsed_json$wt
+     [,1]
+[1,] "3" 
+[2,] "4" 
+
+$test_0117$parsed_json$regulated
+[1] "de"
+
+
+
+$test_0118
+$test_0118$test_id
+[1] "test_0118"
+
+$test_0118$prompt
+[1] "generate only de between 1, 2 treated  3, 4 wild type"
+
+$test_0118$dataset_path
+[1] "./data/dlbclnos_tcga_gdc_read_counts.txt"
+
+$test_0118$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0118$timestamp
+[1] "2025-10-20 15:27:31 CEST"
+
+$test_0118$success
+[1] TRUE
+
+$test_0118$error_type
+NULL
+
+$test_0118$error_message
+NULL
+
+$test_0118$execution_time
+[1] 7.124348
+
+$test_0118$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 25096 Significant genes (FDR < 0.05): 33"
+
+$test_0118$parsed_json
+$test_0118$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0118$parsed_json$treated
+     [,1]  
+[1,] "col1"
+[2,] "col2"
+
+$test_0118$parsed_json$wt
+     [,1]  
+[1,] "col3"
+[2,] "col4"
+
+$test_0118$parsed_json$regulated
+[1] "de"
+
+
+
+$test_0119
+$test_0119$test_id
+[1] "test_0119"
+
+$test_0119$prompt
+[1] "comparison between 1, 2 and 3, 4, that are treated and wild types respectively, just up regulated genes"
+
+$test_0119$dataset_path
+[1] "./data/dlbclnos_tcga_gdc_read_counts.txt"
+
+$test_0119$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0119$timestamp
+[1] "2025-10-20 15:27:49 CEST"
+
+$test_0119$success
+[1] TRUE
+
+$test_0119$error_type
+NULL
+
+$test_0119$error_message
+NULL
+
+$test_0119$execution_time
+[1] 7.327678
+
+$test_0119$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 12123 Significant genes (FDR < 0.05): 13"
+
+$test_0119$parsed_json
+$test_0119$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0119$parsed_json$treated
+     [,1]
+[1,] "1" 
+[2,] "2" 
+
+$test_0119$parsed_json$wt
+     [,1]
+[1,] "3" 
+[2,] "4" 
+
+$test_0119$parsed_json$regulated
+[1] "up"
+
+
+
+$test_0120
+$test_0120$test_id
+[1] "test_0120"
+
+$test_0120$prompt
+[1] "I want to know de regulated between treated samples 1, 2 vs wild type samples 3, 4"
+
+$test_0120$dataset_path
+[1] "./data/dlbclnos_tcga_gdc_read_counts.txt"
+
+$test_0120$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0120$timestamp
+[1] "2025-10-20 15:28:06 CEST"
+
+$test_0120$success
+[1] FALSE
+
+$test_0120$error_type
+[1] "Invalid/unrecognized regulated"
+
+$test_0120$error_message
+[1] "Invalid/unrecognized regulated: "
+
+$test_0120$execution_time
+[1] 3.332477
+
+$test_0120$result_summary
+NULL
+
+$test_0120$parsed_json
+$test_0120$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0120$parsed_json$treated
+     [,1]     
+[1,] "sample1"
+[2,] "sample2"
+
+$test_0120$parsed_json$wt
+     [,1]     
+[1,] "sample3"
+[2,] "sample4"
+
+$test_0120$parsed_json$regulated
+[1] "de"   "down" "up"  
+
+
+
+$test_0121
+$test_0121$test_id
+[1] "test_0121"
+
+$test_0121$prompt
+[1] "perform rnaseq analysis between treated 1, 2 and wt 3, 4 samples, up regulated"
+
+$test_0121$dataset_path
+[1] "./data/coad_tcga_gdc_read_counts.txt"
+
+$test_0121$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0121$timestamp
+[1] "2025-10-20 15:28:20 CEST"
+
+$test_0121$success
+[1] TRUE
+
+$test_0121$error_type
+NULL
+
+$test_0121$error_message
+NULL
+
+$test_0121$execution_time
+[1] 12.88557
+
+$test_0121$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 13256 Significant genes (FDR < 0.05): 5"
+
+$test_0121$parsed_json
+$test_0121$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0121$parsed_json$treated
+     [,1]  
+[1,] "col1"
+[2,] "col2"
+
+$test_0121$parsed_json$wt
+     [,1]  
+[1,] "col3"
+[2,] "col4"
+
+$test_0121$parsed_json$regulated
+[1] "up"
+
+
+
+$test_0122
+$test_0122$test_id
+[1] "test_0122"
+
+$test_0122$prompt
+[1] "compare treated 1, 2 vs control 3, 4 down regulated genes"
+
+$test_0122$dataset_path
+[1] "./data/coad_tcga_gdc_read_counts.txt"
+
+$test_0122$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0122$timestamp
+[1] "2025-10-20 15:28:42 CEST"
+
+$test_0122$success
+[1] FALSE
+
+$test_0122$error_type
+[1] "Invalid/unrecognized regulated"
+
+$test_0122$error_message
+[1] "Invalid/unrecognized regulated: "
+
+$test_0122$execution_time
+[1] 7.761401
+
+$test_0122$result_summary
+NULL
+
+$test_0122$parsed_json
+$test_0122$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0122$parsed_json$treated
+     [,1]  
+[1,] "col1"
+[2,] "col2"
+
+$test_0122$parsed_json$wt
+     [,1]  
+[1,] "col3"
+[2,] "col4"
+
+$test_0122$parsed_json$regulated
+[1] "de"   "down" "up"  
+
+
+
+$test_0123
+$test_0123$test_id
+[1] "test_0123"
+
+$test_0123$prompt
+[1] "analyze treated columns 1, 2 against wild type columns 3, 4, only genes down regulated"
+
+$test_0123$dataset_path
+[1] "./data/coad_tcga_gdc_read_counts.txt"
+
+$test_0123$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0123$timestamp
+[1] "2025-10-20 15:29:00 CEST"
+
+$test_0123$success
+[1] TRUE
+
+$test_0123$error_type
+NULL
+
+$test_0123$error_message
+NULL
+
+$test_0123$execution_time
+[1] 12.62043
+
+$test_0123$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 11019 Significant genes (FDR < 0.05): 11"
+
+$test_0123$parsed_json
+$test_0123$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0123$parsed_json$treated
+     [,1]  
+[1,] "col1"
+[2,] "col2"
+
+$test_0123$parsed_json$wt
+     [,1]  
+[1,] "col3"
+[2,] "col4"
+
+$test_0123$parsed_json$regulated
+[1] "down"
+
+
+
+$test_0124
+$test_0124$test_id
+[1] "test_0124"
+
+$test_0124$prompt
+[1] "differential expression analysis: treated samples 1, 2 vs wild type samples 3, 4, all de regulated genes"
+
+$test_0124$dataset_path
+[1] "./data/coad_tcga_gdc_read_counts.txt"
+
+$test_0124$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0124$timestamp
+[1] "2025-10-20 15:29:23 CEST"
+
+$test_0124$success
+[1] FALSE
+
+$test_0124$error_type
+[1] "Invalid/unrecognized regulated"
+
+$test_0124$error_message
+[1] "Invalid/unrecognized regulated: "
+
+$test_0124$execution_time
+[1] 9.12436
+
+$test_0124$result_summary
+NULL
+
+$test_0124$parsed_json
+$test_0124$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0124$parsed_json$treated
+     [,1]     
+[1,] "sample1"
+[2,] "sample2"
+
+$test_0124$parsed_json$wt
+     [,1]     
+[1,] "sample3"
+[2,] "sample4"
+
+$test_0124$parsed_json$regulated
+[1] "de"   "down" "up"  
+
+
+
+$test_0125
+$test_0125$test_id
+[1] "test_0125"
+
+$test_0125$prompt
+[1] "compare columns 1, 2 (treated) with columns 3, 4 (control), show up regulated"
+
+$test_0125$dataset_path
+[1] "./data/coad_tcga_gdc_read_counts.txt"
+
+$test_0125$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0125$timestamp
+[1] "2025-10-20 15:29:42 CEST"
+
+$test_0125$success
+[1] TRUE
+
+$test_0125$error_type
+NULL
+
+$test_0125$error_message
+NULL
+
+$test_0125$execution_time
+[1] 15.31051
+
+$test_0125$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 13256 Significant genes (FDR < 0.05): 5"
+
+$test_0125$parsed_json
+$test_0125$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0125$parsed_json$treated
+     [,1]  
+[1,] "col1"
+[2,] "col2"
+
+$test_0125$parsed_json$wt
+     [,1]  
+[1,] "col3"
+[2,] "col4"
+
+$test_0125$parsed_json$regulated
+[1] "up"
+
+
+
+$test_0126
+$test_0126$test_id
+[1] "test_0126"
+
+$test_0126$prompt
+[1] "DE analysis treated_1_2 vs control_3_4 up regulated"
+
+$test_0126$dataset_path
+[1] "./data/coad_tcga_gdc_read_counts.txt"
+
+$test_0126$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0126$timestamp
+[1] "2025-10-20 15:30:08 CEST"
+
+$test_0126$success
+[1] FALSE
+
+$test_0126$error_type
+[1] "Execution error in R"
+
+$test_0126$error_message
+[1] "dispersion is NA"
+
+$test_0126$execution_time
+[1] 6.882011
+
+$test_0126$result_summary
+NULL
+
+$test_0126$parsed_json
+$test_0126$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0126$parsed_json$treated
+     [,1]         
+[1,] "treated_1_2"
+
+$test_0126$parsed_json$wt
+     [,1]         
+[1,] "control_3_4"
+
+$test_0126$parsed_json$regulated
+[1] "up"
+
+
+
+$test_0127
+$test_0127$test_id
+[1] "test_0127"
+
+$test_0127$prompt
+[1] "rnaseq comparison: treated samples 1, 2 versus wt samples 3, 4, down regulated genes"
+
+$test_0127$dataset_path
+[1] "./data/coad_tcga_gdc_read_counts.txt"
+
+$test_0127$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0127$timestamp
+[1] "2025-10-20 15:30:25 CEST"
+
+$test_0127$success
+[1] TRUE
+
+$test_0127$error_type
+NULL
+
+$test_0127$error_message
+NULL
+
+$test_0127$execution_time
+[1] 21.43099
+
+$test_0127$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 11019 Significant genes (FDR < 0.05): 11"
+
+$test_0127$parsed_json
+$test_0127$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0127$parsed_json$treated
+     [,1]     
+[1,] "sample1"
+[2,] "sample2"
+
+$test_0127$parsed_json$wt
+     [,1]     
+[1,] "sample3"
+[2,] "sample4"
+
+$test_0127$parsed_json$regulated
+[1] "down"
+
+
+
+$test_0128
+$test_0128$test_id
+[1] "test_0128"
+
+$test_0128$prompt
+[1] "perform differential gene expression analysis between treatment group (samples 1, 2) and control group (samples 3, 4), focus on up regulated genes"
+
+$test_0128$dataset_path
+[1] "./data/coad_tcga_gdc_read_counts.txt"
+
+$test_0128$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0128$timestamp
+[1] "2025-10-20 15:30:56 CEST"
+
+$test_0128$success
+[1] TRUE
+
+$test_0128$error_type
+NULL
+
+$test_0128$error_message
+NULL
+
+$test_0128$execution_time
+[1] 12.71939
+
+$test_0128$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 13256 Significant genes (FDR < 0.05): 5"
+
+$test_0128$parsed_json
+$test_0128$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0128$parsed_json$treated
+     [,1]     
+[1,] "sample1"
+[2,] "sample2"
+
+$test_0128$parsed_json$wt
+     [,1]     
+[1,] "sample3"
+[2,] "sample4"
+
+$test_0128$parsed_json$regulated
+[1] "up"
+
+
+
+$test_0129
+$test_0129$test_id
+[1] "test_0129"
+
+$test_0129$prompt
+[1] "make the comparison of the treated patients 1, 2 against wt ones 3, 4, only down genes"
+
+$test_0129$dataset_path
+[1] "./data/coad_tcga_gdc_read_counts.txt"
+
+$test_0129$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0129$timestamp
+[1] "2025-10-20 15:31:19 CEST"
+
+$test_0129$success
+[1] FALSE
+
+$test_0129$error_type
+[1] "Execution error in R"
+
+$test_0129$error_message
+[1] "duplicate 'row.names' are not allowed"
+
+$test_0129$execution_time
+[1] 7.922661
+
+$test_0129$result_summary
+NULL
+
+$test_0129$parsed_json
+$test_0129$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0129$parsed_json$treated
+     [,1]      
+[1,] "patient1"
+[2,] "patient2"
+
+$test_0129$parsed_json$wt
+     [,1] 
+[1,] "wt1"
+[2,] "wt2"
+
+$test_0129$parsed_json$regulated
+[1] "down"
+
+
+
+$test_0130
+$test_0130$test_id
+[1] "test_0130"
+
+$test_0130$prompt
+[1] "calculate significant differential genes between treatment samples (samples 1, 2) and control ones (samples 3, 4), expecially up regulated genes"
+
+$test_0130$dataset_path
+[1] "./data/coad_tcga_gdc_read_counts.txt"
+
+$test_0130$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0130$timestamp
+[1] "2025-10-20 15:31:37 CEST"
+
+$test_0130$success
+[1] TRUE
+
+$test_0130$error_type
+NULL
+
+$test_0130$error_message
+NULL
+
+$test_0130$execution_time
+[1] 12.69918
+
+$test_0130$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 13256 Significant genes (FDR < 0.05): 5"
+
+$test_0130$parsed_json
+$test_0130$parsed_json$functiontoberun
+[1] "differential_gene_expression_analysis"
+
+$test_0130$parsed_json$treated
+     [,1]     
+[1,] "sample1"
+[2,] "sample2"
+
+$test_0130$parsed_json$wt
+     [,1]     
+[1,] "sample3"
+[2,] "sample4"
+
+$test_0130$parsed_json$regulated
+[1] "up"
+
+
+
+$test_0131
+$test_0131$test_id
+[1] "test_0131"
+
+$test_0131$prompt
+[1] "do the analysis of the 1, 2 treated and of the 3, 4 control. I want the up expressed genes only"
+
+$test_0131$dataset_path
+[1] "./data/coad_tcga_gdc_read_counts.txt"
+
+$test_0131$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0131$timestamp
+[1] "2025-10-20 15:32:00 CEST"
+
+$test_0131$success
+[1] TRUE
+
+$test_0131$error_type
+NULL
+
+$test_0131$error_message
+NULL
+
+$test_0131$execution_time
+[1] 12.7296
+
+$test_0131$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 13256 Significant genes (FDR < 0.05): 5"
+
+$test_0131$parsed_json
+$test_0131$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0131$parsed_json$treated
+     [,1]  
+[1,] "col1"
+[2,] "col2"
+
+$test_0131$parsed_json$wt
+     [,1]  
+[1,] "col3"
+[2,] "col4"
+
+$test_0131$parsed_json$regulated
+[1] "up"
+
+
+
+$test_0132
+$test_0132$test_id
+[1] "test_0132"
+
+$test_0132$prompt
+[1] " 1, 2 treated  3, 4 wt, de regulated"
+
+$test_0132$dataset_path
+[1] "./data/coad_tcga_gdc_read_counts.txt"
+
+$test_0132$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0132$timestamp
+[1] "2025-10-20 15:32:23 CEST"
+
+$test_0132$success
+[1] TRUE
+
+$test_0132$error_type
+NULL
+
+$test_0132$error_message
+NULL
+
+$test_0132$execution_time
+[1] 11.82248
+
+$test_0132$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 24624 Significant genes (FDR < 0.05): 16"
+
+$test_0132$parsed_json
+$test_0132$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0132$parsed_json$treated
+     [,1]
+[1,] "1" 
+[2,] "2" 
+
+$test_0132$parsed_json$wt
+     [,1]
+[1,] "3" 
+[2,] "4" 
+
+$test_0132$parsed_json$regulated
+[1] "de"
+
+
+
+$test_0133
+$test_0133$test_id
+[1] "test_0133"
+
+$test_0133$prompt
+[1] "generate only de between 1, 2 treated  3, 4 wild type"
+
+$test_0133$dataset_path
+[1] "./data/coad_tcga_gdc_read_counts.txt"
+
+$test_0133$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0133$timestamp
+[1] "2025-10-20 15:32:45 CEST"
+
+$test_0133$success
+[1] TRUE
+
+$test_0133$error_type
+NULL
+
+$test_0133$error_message
+NULL
+
+$test_0133$execution_time
+[1] 13.48164
+
+$test_0133$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 24624 Significant genes (FDR < 0.05): 16"
+
+$test_0133$parsed_json
+$test_0133$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0133$parsed_json$treated
+     [,1]  
+[1,] "col1"
+[2,] "col2"
+
+$test_0133$parsed_json$wt
+     [,1]  
+[1,] "col3"
+[2,] "col4"
+
+$test_0133$parsed_json$regulated
+[1] "de"
+
+
+
+$test_0134
+$test_0134$test_id
+[1] "test_0134"
+
+$test_0134$prompt
+[1] "comparison between 1, 2 and 3, 4, that are treated and wild types respectively, just up regulated genes"
+
+$test_0134$dataset_path
+[1] "./data/coad_tcga_gdc_read_counts.txt"
+
+$test_0134$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0134$timestamp
+[1] "2025-10-20 15:33:09 CEST"
+
+$test_0134$success
+[1] TRUE
+
+$test_0134$error_type
+NULL
+
+$test_0134$error_message
+NULL
+
+$test_0134$execution_time
+[1] 12.99423
+
+$test_0134$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 13256 Significant genes (FDR < 0.05): 5"
+
+$test_0134$parsed_json
+$test_0134$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0134$parsed_json$treated
+     [,1]
+[1,] "1" 
+[2,] "2" 
+
+$test_0134$parsed_json$wt
+     [,1]
+[1,] "3" 
+[2,] "4" 
+
+$test_0134$parsed_json$regulated
+[1] "up"
+
+
+
+$test_0135
+$test_0135$test_id
+[1] "test_0135"
+
+$test_0135$prompt
+[1] "I want to know de regulated between treated samples 1, 2 vs wild type samples 3, 4"
+
+$test_0135$dataset_path
+[1] "./data/coad_tcga_gdc_read_counts.txt"
+
+$test_0135$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0135$timestamp
+[1] "2025-10-20 15:33:32 CEST"
+
+$test_0135$success
+[1] FALSE
+
+$test_0135$error_type
+[1] "Invalid/unrecognized regulated"
+
+$test_0135$error_message
+[1] "Invalid/unrecognized regulated: "
+
+$test_0135$execution_time
+[1] 7.80506
+
+$test_0135$result_summary
+NULL
+
+$test_0135$parsed_json
+$test_0135$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0135$parsed_json$treated
+     [,1]     
+[1,] "sample1"
+[2,] "sample2"
+
+$test_0135$parsed_json$wt
+     [,1]     
+[1,] "sample3"
+[2,] "sample4"
+
+$test_0135$parsed_json$regulated
+[1] "de"   "down" "up"  
+
+
+
+$test_0136
+$test_0136$test_id
+[1] "test_0136"
+
+$test_0136$prompt
+[1] "perform rnaseq analysis between treated 1, 2 and wt 3, 4 samples, up regulated"
+
+$test_0136$dataset_path
+[1] "./data/plmeso_tcga_gdc_seq_read_counts.txt"
+
+$test_0136$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0136$timestamp
+[1] "2025-10-20 15:33:50 CEST"
+
+$test_0136$success
+[1] TRUE
+
+$test_0136$error_type
+NULL
+
+$test_0136$error_message
+NULL
+
+$test_0136$execution_time
+[1] 7.033695
+
+$test_0136$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 11545 Significant genes (FDR < 0.05): 18"
+
+$test_0136$parsed_json
+$test_0136$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0136$parsed_json$treated
+     [,1]  
+[1,] "col1"
+[2,] "col2"
+
+$test_0136$parsed_json$wt
+     [,1]  
+[1,] "col3"
+[2,] "col4"
+
+$test_0136$parsed_json$regulated
+[1] "up"
+
+
+
+$test_0137
+$test_0137$test_id
+[1] "test_0137"
+
+$test_0137$prompt
+[1] "compare treated 1, 2 vs control 3, 4 down regulated genes"
+
+$test_0137$dataset_path
+[1] "./data/plmeso_tcga_gdc_seq_read_counts.txt"
+
+$test_0137$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0137$timestamp
+[1] "2025-10-20 15:34:07 CEST"
+
+$test_0137$success
+[1] FALSE
+
+$test_0137$error_type
+[1] "Invalid/unrecognized regulated"
+
+$test_0137$error_message
+[1] "Invalid/unrecognized regulated: "
+
+$test_0137$execution_time
+[1] 2.231878
+
+$test_0137$result_summary
+NULL
+
+$test_0137$parsed_json
+$test_0137$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0137$parsed_json$treated
+     [,1]  
+[1,] "col1"
+[2,] "col2"
+
+$test_0137$parsed_json$wt
+     [,1]  
+[1,] "col3"
+[2,] "col4"
+
+$test_0137$parsed_json$regulated
+[1] "de"   "down" "up"  
+
+
+
+$test_0138
+$test_0138$test_id
+[1] "test_0138"
+
+$test_0138$prompt
+[1] "analyze treated columns 1, 2 against wild type columns 3, 4, only genes down regulated"
+
+$test_0138$dataset_path
+[1] "./data/plmeso_tcga_gdc_seq_read_counts.txt"
+
+$test_0138$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0138$timestamp
+[1] "2025-10-20 15:34:19 CEST"
+
+$test_0138$success
+[1] TRUE
+
+$test_0138$error_type
+NULL
+
+$test_0138$error_message
+NULL
+
+$test_0138$execution_time
+[1] 5.974622
+
+$test_0138$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 13114 Significant genes (FDR < 0.05): 7"
+
+$test_0138$parsed_json
+$test_0138$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0138$parsed_json$treated
+     [,1]  
+[1,] "col1"
+[2,] "col2"
+
+$test_0138$parsed_json$wt
+     [,1]  
+[1,] "col3"
+[2,] "col4"
+
+$test_0138$parsed_json$regulated
+[1] "down"
+
+
+
+$test_0139
+$test_0139$test_id
+[1] "test_0139"
+
+$test_0139$prompt
+[1] "differential expression analysis: treated samples 1, 2 vs wild type samples 3, 4, all de regulated genes"
+
+$test_0139$dataset_path
+[1] "./data/plmeso_tcga_gdc_seq_read_counts.txt"
+
+$test_0139$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0139$timestamp
+[1] "2025-10-20 15:34:35 CEST"
+
+$test_0139$success
+[1] FALSE
+
+$test_0139$error_type
+[1] "Invalid/unrecognized regulated"
+
+$test_0139$error_message
+[1] "Invalid/unrecognized regulated: "
+
+$test_0139$execution_time
+[1] 2.518081
+
+$test_0139$result_summary
+NULL
+
+$test_0139$parsed_json
+$test_0139$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0139$parsed_json$treated
+     [,1]     
+[1,] "sample1"
+[2,] "sample2"
+
+$test_0139$parsed_json$wt
+     [,1]     
+[1,] "sample3"
+[2,] "sample4"
+
+$test_0139$parsed_json$regulated
+[1] "de"   "down" "up"  
+
+
+
+$test_0140
+$test_0140$test_id
+[1] "test_0140"
+
+$test_0140$prompt
+[1] "compare columns 1, 2 (treated) with columns 3, 4 (control), show up regulated"
+
+$test_0140$dataset_path
+[1] "./data/plmeso_tcga_gdc_seq_read_counts.txt"
+
+$test_0140$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0140$timestamp
+[1] "2025-10-20 15:34:48 CEST"
+
+$test_0140$success
+[1] TRUE
+
+$test_0140$error_type
+NULL
+
+$test_0140$error_message
+NULL
+
+$test_0140$execution_time
+[1] 6.257288
+
+$test_0140$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 11545 Significant genes (FDR < 0.05): 18"
+
+$test_0140$parsed_json
+$test_0140$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0140$parsed_json$treated
+     [,1]  
+[1,] "col1"
+[2,] "col2"
+
+$test_0140$parsed_json$wt
+     [,1]  
+[1,] "col3"
+[2,] "col4"
+
+$test_0140$parsed_json$regulated
+[1] "up"
+
+
+
+$test_0141
+$test_0141$test_id
+[1] "test_0141"
+
+$test_0141$prompt
+[1] "DE analysis treated_1_2 vs control_3_4 up regulated"
+
+$test_0141$dataset_path
+[1] "./data/plmeso_tcga_gdc_seq_read_counts.txt"
+
+$test_0141$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0141$timestamp
+[1] "2025-10-20 15:35:04 CEST"
+
+$test_0141$success
+[1] FALSE
+
+$test_0141$error_type
+[1] "Execution error in R"
+
+$test_0141$error_message
+[1] "dispersion is NA"
+
+$test_0141$execution_time
+[1] 1.810606
+
+$test_0141$result_summary
+NULL
+
+$test_0141$parsed_json
+$test_0141$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0141$parsed_json$treated
+     [,1]         
+[1,] "treated_1_2"
+
+$test_0141$parsed_json$wt
+     [,1]         
+[1,] "control_3_4"
+
+$test_0141$parsed_json$regulated
+[1] "up"
+
+
+
+$test_0142
+$test_0142$test_id
+[1] "test_0142"
+
+$test_0142$prompt
+[1] "rnaseq comparison: treated samples 1, 2 versus wt samples 3, 4, down regulated genes"
+
+$test_0142$dataset_path
+[1] "./data/plmeso_tcga_gdc_seq_read_counts.txt"
+
+$test_0142$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0142$timestamp
+[1] "2025-10-20 15:35:16 CEST"
+
+$test_0142$success
+[1] TRUE
+
+$test_0142$error_type
+NULL
+
+$test_0142$error_message
+NULL
+
+$test_0142$execution_time
+[1] 5.807022
+
+$test_0142$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 13114 Significant genes (FDR < 0.05): 7"
+
+$test_0142$parsed_json
+$test_0142$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0142$parsed_json$treated
+     [,1]     
+[1,] "sample1"
+[2,] "sample2"
+
+$test_0142$parsed_json$wt
+     [,1]     
+[1,] "sample3"
+[2,] "sample4"
+
+$test_0142$parsed_json$regulated
+[1] "down"
+
+
+
+$test_0143
+$test_0143$test_id
+[1] "test_0143"
+
+$test_0143$prompt
+[1] "perform differential gene expression analysis between treatment group (samples 1, 2) and control group (samples 3, 4), focus on up regulated genes"
+
+$test_0143$dataset_path
+[1] "./data/plmeso_tcga_gdc_seq_read_counts.txt"
+
+$test_0143$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0143$timestamp
+[1] "2025-10-20 15:35:32 CEST"
+
+$test_0143$success
+[1] TRUE
+
+$test_0143$error_type
+NULL
+
+$test_0143$error_message
+NULL
+
+$test_0143$execution_time
+[1] 6.752039
+
+$test_0143$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 11545 Significant genes (FDR < 0.05): 18"
+
+$test_0143$parsed_json
+$test_0143$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0143$parsed_json$treated
+     [,1]     
+[1,] "sample1"
+[2,] "sample2"
+
+$test_0143$parsed_json$wt
+     [,1]     
+[1,] "sample3"
+[2,] "sample4"
+
+$test_0143$parsed_json$regulated
+[1] "up"
+
+
+
+$test_0144
+$test_0144$test_id
+[1] "test_0144"
+
+$test_0144$prompt
+[1] "make the comparison of the treated patients 1, 2 against wt ones 3, 4, only down genes"
+
+$test_0144$dataset_path
+[1] "./data/plmeso_tcga_gdc_seq_read_counts.txt"
+
+$test_0144$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0144$timestamp
+[1] "2025-10-20 15:35:49 CEST"
+
+$test_0144$success
+[1] FALSE
+
+$test_0144$error_type
+[1] "Execution error in R"
+
+$test_0144$error_message
+[1] "duplicate 'row.names' are not allowed"
+
+$test_0144$execution_time
+[1] 1.770485
+
+$test_0144$result_summary
+NULL
+
+$test_0144$parsed_json
+$test_0144$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0144$parsed_json$treated
+     [,1]      
+[1,] "patient1"
+[2,] "patient2"
+
+$test_0144$parsed_json$wt
+     [,1] 
+[1,] "wt1"
+[2,] "wt2"
+
+$test_0144$parsed_json$regulated
+[1] "down"
+
+
+
+$test_0145
+$test_0145$test_id
+[1] "test_0145"
+
+$test_0145$prompt
+[1] "calculate significant differential genes between treatment samples (samples 1, 2) and control ones (samples 3, 4), expecially up regulated genes"
+
+$test_0145$dataset_path
+[1] "./data/plmeso_tcga_gdc_seq_read_counts.txt"
+
+$test_0145$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0145$timestamp
+[1] "2025-10-20 15:36:01 CEST"
+
+$test_0145$success
+[1] TRUE
+
+$test_0145$error_type
+NULL
+
+$test_0145$error_message
+NULL
+
+$test_0145$execution_time
+[1] 6.592123
+
+$test_0145$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 11545 Significant genes (FDR < 0.05): 18"
+
+$test_0145$parsed_json
+$test_0145$parsed_json$functiontoberun
+[1] "differential_gene_expression_analysis"
+
+$test_0145$parsed_json$treated
+     [,1]     
+[1,] "sample1"
+[2,] "sample2"
+
+$test_0145$parsed_json$wt
+     [,1]     
+[1,] "sample3"
+[2,] "sample4"
+
+$test_0145$parsed_json$regulated
+[1] "up"
+
+
+
+$test_0146
+$test_0146$test_id
+[1] "test_0146"
+
+$test_0146$prompt
+[1] "do the analysis of the 1, 2 treated and of the 3, 4 control. I want the up expressed genes only"
+
+$test_0146$dataset_path
+[1] "./data/plmeso_tcga_gdc_seq_read_counts.txt"
+
+$test_0146$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0146$timestamp
+[1] "2025-10-20 15:36:18 CEST"
+
+$test_0146$success
+[1] TRUE
+
+$test_0146$error_type
+NULL
+
+$test_0146$error_message
+NULL
+
+$test_0146$execution_time
+[1] 5.882713
+
+$test_0146$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 11545 Significant genes (FDR < 0.05): 18"
+
+$test_0146$parsed_json
+$test_0146$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0146$parsed_json$treated
+     [,1]  
+[1,] "col1"
+[2,] "col2"
+
+$test_0146$parsed_json$wt
+     [,1]  
+[1,] "col3"
+[2,] "col4"
+
+$test_0146$parsed_json$regulated
+[1] "up"
+
+
+
+$test_0147
+$test_0147$test_id
+[1] "test_0147"
+
+$test_0147$prompt
+[1] " 1, 2 treated  3, 4 wt, de regulated"
+
+$test_0147$dataset_path
+[1] "./data/plmeso_tcga_gdc_seq_read_counts.txt"
+
+$test_0147$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0147$timestamp
+[1] "2025-10-20 15:36:34 CEST"
+
+$test_0147$success
+[1] TRUE
+
+$test_0147$error_type
+NULL
+
+$test_0147$error_message
+NULL
+
+$test_0147$execution_time
+[1] 6.159082
+
+$test_0147$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 24972 Significant genes (FDR < 0.05): 25"
+
+$test_0147$parsed_json
+$test_0147$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0147$parsed_json$treated
+     [,1]
+[1,] "1" 
+[2,] "2" 
+
+$test_0147$parsed_json$wt
+     [,1]
+[1,] "3" 
+[2,] "4" 
+
+$test_0147$parsed_json$regulated
+[1] "de"
+
+
+
+$test_0148
+$test_0148$test_id
+[1] "test_0148"
+
+$test_0148$prompt
+[1] "generate only de between 1, 2 treated  3, 4 wild type"
+
+$test_0148$dataset_path
+[1] "./data/plmeso_tcga_gdc_seq_read_counts.txt"
+
+$test_0148$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0148$timestamp
+[1] "2025-10-20 15:36:51 CEST"
+
+$test_0148$success
+[1] TRUE
+
+$test_0148$error_type
+NULL
+
+$test_0148$error_message
+NULL
+
+$test_0148$execution_time
+[1] 6.66527
+
+$test_0148$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 24972 Significant genes (FDR < 0.05): 25"
+
+$test_0148$parsed_json
+$test_0148$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0148$parsed_json$treated
+     [,1]  
+[1,] "col1"
+[2,] "col2"
+
+$test_0148$parsed_json$wt
+     [,1]  
+[1,] "col3"
+[2,] "col4"
+
+$test_0148$parsed_json$regulated
+[1] "de"
+
+
+
+$test_0149
+$test_0149$test_id
+[1] "test_0149"
+
+$test_0149$prompt
+[1] "comparison between 1, 2 and 3, 4, that are treated and wild types respectively, just up regulated genes"
+
+$test_0149$dataset_path
+[1] "./data/plmeso_tcga_gdc_seq_read_counts.txt"
+
+$test_0149$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0149$timestamp
+[1] "2025-10-20 15:37:07 CEST"
+
+$test_0149$success
+[1] TRUE
+
+$test_0149$error_type
+NULL
+
+$test_0149$error_message
+NULL
+
+$test_0149$execution_time
+[1] 5.643143
+
+$test_0149$result_summary
+[1] "Analysis completed successfully. Genes analyzed: 11545 Significant genes (FDR < 0.05): 18"
+
+$test_0149$parsed_json
+$test_0149$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0149$parsed_json$treated
+     [,1]
+[1,] "1" 
+[2,] "2" 
+
+$test_0149$parsed_json$wt
+     [,1]
+[1,] "3" 
+[2,] "4" 
+
+$test_0149$parsed_json$regulated
+[1] "up"
+
+
+
+$test_0150
+$test_0150$test_id
+[1] "test_0150"
+
+$test_0150$prompt
+[1] "I want to know de regulated between treated samples 1, 2 vs wild type samples 3, 4"
+
+$test_0150$dataset_path
+[1] "./data/plmeso_tcga_gdc_seq_read_counts.txt"
+
+$test_0150$model_name
+[1] "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+
+$test_0150$timestamp
+[1] "2025-10-20 15:37:23 CEST"
+
+$test_0150$success
+[1] FALSE
+
+$test_0150$error_type
+[1] "Invalid/unrecognized regulated"
+
+$test_0150$error_message
+[1] "Invalid/unrecognized regulated: "
+
+$test_0150$execution_time
+[1] 1.728614
+
+$test_0150$result_summary
+NULL
+
+$test_0150$parsed_json
+$test_0150$parsed_json$functiontoberun
+[1] "analysis"
+
+$test_0150$parsed_json$treated
+     [,1]     
+[1,] "sample1"
+[2,] "sample2"
+
+$test_0150$parsed_json$wt
+     [,1]     
+[1,] "sample3"
+[2,] "sample4"
+
+$test_0150$parsed_json$regulated
+[1] "de"   "down" "up"  
+
+
+

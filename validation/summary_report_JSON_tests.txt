@@ -1,0 +1,17 @@
+
+==============================================================================
+SUMMARY REPORT
+==============================================================================
+Total tests: 150 
+Successful tests: 101 ( 67.3 %)
+Failed tests: 49 ( 32.7 %)
+
+Error breakdown:
+- Execution error in R : 17 ( 34.7 % of failures)
+- Invalid/unrecognized regulated : 29 ( 59.2 % of failures)
+- Nonexistent sample reference : 3 ( 6.1 % of failures)
+
+Success rate by model:
+- meta-llama/Llama-3.3-70B-Instruct-Turbo-Free : 67.3 %
+
+==============================================================================

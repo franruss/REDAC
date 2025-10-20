@@ -500,6 +500,9 @@ comprehensive_results <- run_comprehensive_test(
 )
 # generate_summary_report(comprehensive_results)
 
+capture.output(print(comprehensive_results), file = "comprehensive_results.txt")
+save(comprehensive_results, file = "comprehensive_results.RData") 
+
 cat("Script loaded successfully!\n")
 cat("Available functions:\n")
 cat("- test_prompt_on_dataset(): Test single prompt\n") 
