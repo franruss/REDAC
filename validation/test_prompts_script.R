@@ -68,7 +68,7 @@ api_key <- Sys.getenv("API_KEY")
 
 # Modelli disponibili
 MODELS_ <- c(#"Gemma-3n" = "google/gemma-3n-E4B-it", 
-             "Llama-3.3-70B-Free" = "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free"
+             "Llama-3.3-70B-Free" = "meta-llama/Llama-3.3-70B-Instruct-Turbo"
              #,"Llama-3.2-3B" = "meta-llama/Llama-3.2-3B-Instruct-Turbo",
              #"Llama-3.3-70B" = "meta-llama/Llama-3.3-70B-Instruct-Turbo"
              #"Llama-4-Scout-17B-16E" = "meta-llama/Llama-4-Scout-17B-16E-Instruct"
