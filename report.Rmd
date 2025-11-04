@@ -1,0 +1,199 @@
+---
+title: "Report of the Analysis"
+output: word_document
+params:
+  res: NA
+  counts: NA
+  treated_samples: NA
+  wt_samples: NA
+  which_results: NA
+---
+
+```{r, fig.width=18, fig.height=12, out.width='200%', fig.dim = c(18, 16), fig.align='center'}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+library(edgeR)
+library(ggplot2)
+```
+
+## Design and Dispersion
+```{r}
+Sys.time()
+
+counts <- params$counts
+res <- params$res
+#treated_samples <- colnames(counts)[as.numeric(params$treated_samples)]
+#wt_samples <-      colnames(counts)[as.numeric(params$wt_samples)]
+#which_results <- params$which_results
+
+# Build metadata
+#treated_condition <- data.frame(patients = treated_samples, condition = 'treated')
+#wt_condition <- data.frame(patients = wt_samples, condition = 'wt')
+#samples <- rbind(wt_condition, treated_condition)
+#rownames(samples) <- samples$patients
+
+# Subset and order count matrix
+#dataset <- counts[, samples$patients]
+#samples$condition <- factor(samples$condition, levels = c('wt', 'treated'))
+
+# Create DGEList
+#dge <- DGEList(counts = dataset, group = samples$condition)
+
+# Filter low counts
+#keep <- rowSums(counts) >= dim(counts)[2]
+#dge <- dge[keep, , keep.lib.sizes = FALSE]
+
+# Normalize and estimate dispersion
+#dge <- calcNormFactors(dge)
+#dge <- estimateDisp(dge)
+
+# Differential expression
+#et <- exactTest(dge, pair = c('wt', 'treated'))
+#res <- topTags(et, n = nrow(dge))$table
+#res <- res[order(res$FDR), ]
+#res$log2FoldChange <- round(res$logFC, 4)
+#res$logFC <- NULL
+
+# Filter DE results
+#if (which_results == 'down') {
+#  DEres <- res[res$log2FoldChange < 0, ]
+#} else if (which_results == 'up') {
+#  DEres <- res[res$log2FoldChange > 0, ]
+#} else {
+#  DEres <- res
+#}
+#DEres <- na.omit(DEres)
+
+# Plot
+#plotBCV(dge)
+```
+
+## Top 100 Differentially Expressed Genes
+```{r}
+knitr::kable(head(res, 100), caption = 'Top 100 Differentially Expressed Genes')
+
+# Plot Dendrogram
+x = counts
+x = log10(x+1)
+colnames(x) <- colnames(counts)
+rownames(x) <- rownames(counts)
+clustering_used_method <- 'ward.D'
+distance_used_method <- 'euclidean'
+hclustfunc <- function(x) hclust(x, method = clustering_used_method)
+distfunc <- function(x) dist(x, method = distance_used_method)
+fit <- hclustfunc(distfunc(t(x)))
+# Convert hclust to dendrogram and then to dendrogram segments
+dend <- as.dendrogram(fit)
+p <- ggdendrogram(dend , rotate = FALSE, size = 2)
+p
+
+# Principal Component Histogram
+# Step 1: Remove genes (rows) with zero variance
+counts <-  counts[apply( counts, 1, var) != 0, ]
+pca_result <- prcomp(t(counts), scale. = TRUE)  # Transpose if samples are columns
+# Calculate variance explained
+var_explained <- pca_result$sdev^2 / sum(pca_result$sdev^2) * 100
+# Create Plotly screeplot
+counts <- counts[apply(counts, 1, var) != 0, ]
+# Perform PCA
+pca_result <- prcomp(t(counts), scale. = TRUE)
+# Calculate variance explained
+var_explained <- pca_result$sdev^2 / sum(pca_result$sdev^2) * 100
+# Create a data frame for plotting
+scree_df <- data.frame(PC = paste0('PC', 1:length(var_explained)),Variance = var_explained)
+# Create ggplot scree plot
+ggplot(scree_df, aes(x = PC, y = Variance)) +
+  geom_bar(stat = 'identity', fill = 'blue') +
+  geom_text(aes(label = paste0(round(Variance, 2), '%')), vjust = -0.5, size = 3) +
+  labs(title = 'Principal Component Histogram',x = 'Principal Components', y = 'Variance Explained (%)') +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+
+# Principal Component Analysis
+x <- counts
+# Step 1: Remove genes (rows) with zero variance
+x <- x[apply(x, 1, var) != 0, ]
+# Step 2: Transpose and run PCA
+x_t <- t(x)
+pca_result <- prcomp(x_t, scale. = TRUE)
+# Step 3: Extract PCA scores
+pca_data <- as.data.frame(pca_result$x)
+pca_data$Sample <- rownames(pca_data)
+# Step 4: Get variance explained for labels
+variance_explained <- summary(pca_result)$importance[2, 1:2] * 100
+# Step 5: Plotly PCA plot
+x_lab <- paste0('PC1 (', round(variance_explained[1], 1), '%)')
+y_lab <- paste0('PC2 (', round(variance_explained[2], 1), '%)')
+# Step 5: Create PCA scatter plot with ggplot2
+ggplot(pca_data, aes(x = PC1, y = PC2, label = Sample)) +
+geom_point(color = 'blue', size = 2) +
+geom_text(vjust = -0.5, hjust = 0.5, size = 2) +
+labs(title = 'PCA: PC1 vs PC2', x = x_lab, y = y_lab) +
+theme_minimal()
+
+# 3D Principal Component Analysis
+library(scatterplot3d)
+x <- counts
+# Step 1: Remove genes (rows) with zero variance
+x <- x[apply(x, 1, var) != 0, ]
+# Step 2: Transpose and run PCA
+x_t <- t(x)
+pca_result <- prcomp(x_t, scale. = TRUE)
+# Step 3: Extract PCA scores
+pca_data <- as.data.frame(pca_result$x)
+pca_data$Sample <- rownames(pca_data)
+# Step 4: Get variance explained for labels
+variance_explained <- summary(pca_result)$importance[2, 1:2] * 100
+s3d <- scatterplot3d(x = pca_data$PC1,y = pca_data$PC2,z = pca_result$ind$coord[, 3],pch = 19,color = 'blue',main = '3D PCA Plot',xlab = 'PC1', ylab = 'PC2', zlab = 'PC3')
+coords_2d <- s3d$xyz.convert(x = pca_data$PC1,y = pca_data$PC2,z = pca_result$ind$coord[, 3])
+text(x = coords_2d$x, y = coords_2d$y, labels = pca_data$Sample, pos = 3, cex = 0.3)
+
+# Violin Plot
+data_list <- as.list(as.data.frame(log10(counts + 1)))
+vioplot(data_list,col = rainbow(length(data_list)),main = 'Violin Plot',las=2,cex.names=0.5)
+
+# Density Plot
+library(dplyr)
+df_list <- lapply(seq_len(ncol(counts)), function(i) {data.frame(counts = counts[, i],idsample = colnames(counts)[i])})
+df <- bind_rows(df_list)
+df$log_counts <- log10(df$counts + 1)
+ggplot(df, aes(x = log_counts, color = idsample)) +
+geom_density() +
+theme_minimal() +
+labs(title = 'Densities', x = 'log(count + 1)', y = 'Density')
+
+# Heatmap of the 1000 most variable genes
+log_counts <- log10(counts + 1)
+gene_vars <- apply(counts, 1, var)
+top_genes <- names(sort(gene_vars, decreasing = TRUE))[1:1000]
+top_counts <- log_counts[top_genes, ]
+scaled_counts <- t(scale(t(top_counts)))
+heatmap.2(t(scaled_counts),main='Heatmap',scale='col',trace='none', col = colorRampPalette(c('red', 'white', 'blue'))(500),Rowv=NA,cexRow=0.5,cexCol=0.2,dendrogram = 'none',keysize=2.2,margins=c(6,6),cex.main = 0.1)
+
+# Volcano
+res_df <- res
+res_df$significant <- res_df$FDR < 0.05
+res_df$gene <- rownames(res_df)
+res_df$neg_log10_FDR <- -log10(res_df$FDR)
+ggplot(res_df, aes(x = log2FoldChange, y = neg_log10_FDR)) +
+geom_point(aes(color = significant), size = 2.5, alpha = 0.6) +
+scale_color_manual(values = c('gray', 'red')) +
+theme_minimal() +
+labs(title = 'Volcano Plot',x = 'log2 Fold Change',y = '-log10 FDR',color = 'Significant') +
+theme(plot.title = element_text(size = 16, face = 'bold'),legend.title = element_text(size = 10))
+
+#Log2FoldChange vs logCPM Plot
+res_df <- res
+res_df$significant <- res_df$FDR < 0.05
+res_df$gene <- rownames(res_df)
+res_df$neg_log10_FDR <- -log10(res_df$FDR)
+ggplot(res_df, aes(x = logCPM, y = log2FoldChange)) +
+geom_point(aes(color = significant), size = 2.5, alpha = 0.6) +
+scale_color_manual(values = c('gray', 'red')) +
+theme_minimal() +
+labs(title = 'Log2FoldChange vs logCPM Plot',x = 'logCPM',y = 'log2FoldChange',color = 'Significant') +
+theme(plot.title = element_text(size = 16, face = 'bold'),legend.title = element_text(size = 10))
+
+Sys.time()
+
+sessionInfo()
+
+```

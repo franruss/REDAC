@@ -39,6 +39,20 @@ library(readxl)
 library(janitor)
 library(rmdHelpers)
 source("definitions.R")
+library(httr)
+library(jsonlite)
+library(markdown)
+library(reactome.db)
+library(GO.db)
+library(dplyr)
+library(rentrez)
+library(text2vec)
+library(ReactomePA)
+library(DOSE)
+library(msigdbr)
+library(rWikiPathways)
+library(clusterProfiler)
+
 
 options(shiny.maxRequestSize=100*2048^2)
 options(repos = BiocManager::repositories())
@@ -72,7 +86,7 @@ shinyUI(fluidPage(theme = shinytheme("united"),
                 #trend-readme:hover {background-color: #e36a0075;}')
                   ), # end of style block
   titlePanel("REDAC: RNA-seq Expression Data Analysis Chatbot"),
-  navbarPage("A Web App for analysing bulk RNA-seq data by asking questions written in English language", 
+  navbarPage("A Web App for analysing bulk RNA-seq data by asking questions written in English language (version: 2.1.6 released the 31/October/2025)", 
        tabPanel("Perform a Complete Analysis",
           sidebarLayout(
             sidebarPanel(
@@ -91,7 +105,16 @@ shinyUI(fluidPage(theme = shinytheme("united"),
               helpText(" "),
               helpText("If you need help using REDAC or if there is an error with the data you entered, please send an email to: francesco.russo AT cnr.it"),
               helpText(" "),
-              helpText("Note that sometimes errors are caused by the Shiny server (connection issues, temporarily unavailable server resources, etc.) on which REDAC is running or by the request problems to LMMs via an API, which takes several seconds to execute and return to REDAC. In these cases, please, retry the request and wait for a response."),
+              helpText("Please note that errors are sometimes caused by the Shiny server (connection issues, temporarily unavailable server resources, etc.) on which REDAC is running, or by problems requesting LMMs via an API, which takes several seconds to execute and 
+                       return to REDAC. In these cases, please retry the request and wait for a response."),
+              helpText("---------------------------------------------------------------------------------- "),
+              helpText(" "),
+              helpText("YOU CAN TRY THIS SAMPLE FILE !!!"),
+              helpText(" "),
+              checkboxInput("use_example", "Check this box to try REDAC on a sample dataset!", value = FALSE),
+              helpText(" "),
+              helpText(" "),
+              helpText("---------------------------------------------------------------------------------- "),
               fileInput('file2', "Please, upload your bulk RNA-seq raw count data (positive integers) in a tab separated format",accept=c('text/csv','text/comma-separated-values,text/plain','.csv')),
               textInput('text2', "Please, write your request (note: do not use special characters)","Example: perform an rnaseq analysis between treated 3,4 and wt 1,2 samples, up regulated",width="800px"),
               width = 30,
@@ -99,7 +122,7 @@ shinyUI(fluidPage(theme = shinytheme("united"),
             # Show a tabset
             mainPanel(
               helpText(" "),
-              tabsetPanel(tabPanel("Your Input",DT::DTOutput('show_input_fun2'))),
+              tabsetPanel(tabPanel("The input file",DT::DTOutput('show_input_fun2'))),
               tags$hr(),
               helpText("__________________________________________________________________________________________________________________________"),
               helpText("<< DATA INSPECTION PLOTS >>"),
@@ -133,7 +156,7 @@ shinyUI(fluidPage(theme = shinytheme("united"),
               downloadButton("download_results2", "Download the Result Table"),
               helpText(" "),
               helpText("__________________________________________________________________________________________________________________________"),
-              helpText("<< RESULT INSPECTION PLOTS, DISCUSSION AND ALTERNATIVE CODE>>"),
+              helpText("<< RESULT INSPECTION PLOTS, DISCUSSIONS AND ALTERNATIVE CODES >>"),
               tabsetPanel(tabPanel("Volcano Plot", plotlyOutput("volcanoPlot2",height = '600', width = '1200')),
                           tabPanel("MA Plot", plotlyOutput("foldchangePlot2",height = '600', width = '1200')),
                           tabPanel("Code for Python developers (by Llama)", uiOutput("chat_output3")),
@@ -172,17 +195,48 @@ shinyUI(fluidPage(theme = shinytheme("united"),
                        helpText(HTML("A1CF&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;6.07&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1.1e-10&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;...")),
                        helpText(HTML("...  ...  ...")),
                        helpText(" "),
+                       helpText(HTML("Then, choose an enrichment method and click on 'Enrich!' button below.")),
+                       helpText(" "),
                        helpText("Finally, this chatbot can suggest an interpretation of your results via two LLMs: Gemma and Llama."),
                        helpText(" "),
                        helpText("You can find the user manual for local installation and a complete user guide here: https://github.com/franruss/REDAC/blob/main/docs/REDAC_user_manual.pdf"),
                        helpText(" "),
                        helpText("If you need help using REDAC or if there is an error with the data you entered, please send an email to: francesco.russo AT cnr.it"),
                        helpText(" "),
+                       helpText(" "),
+                       helpText("Please note that errors are sometimes caused by the Shiny server (connection issues, temporarily unavailable server resources, etc.) on which REDAC is running, or by problems requesting LMMs via an API, which takes several seconds to execute and 
+                       return to REDAC. In these cases, please retry the request and wait for a response."),
+                       helpText("---------------------------------------------------------------------------------- "),
+                       helpText(" "),
+                       helpText("YOU CAN TRY THIS SAMPLE FILE !!!"),
+                       helpText(" "),
+                       checkboxInput("use_example2", "Check this box to try REDAC on a sample dataset!", value = FALSE),
+                       helpText(" "),
+                       helpText(" "),
+                       helpText("---------------------------------------------------------------------------------- "),
                        fileInput('file3', "Please, upload your edgeR result file in a tab separated format",accept=c('text/csv','text/comma-separated-values,text/plain','.csv')), 
-                       textInput('text7', "Write your request for the LLMs: ","Explain these results produced from the comparison of...",width="2000px"),
-                       
-                       actionButton("run3", "Enrich!"),
-                       
+                       textInput('text7', "Please, write some keywords that can help both the LLMs understand the context and scope of your analysis 
+                                 (REDAC uses them to retrieve relevant articles from PubMed to build an RAG for the LLM interpretations):",
+                                 "Explain these results produced from the comparison of pulse-induced drug resistance in HCC827 cells against their parental cells to study the mechanisms induced by this suboptimal dose of Gefitinib",width="2000px"),
+                       radioButtons('enrich_method', 'Select an enrichment method: ',
+                                                              c(' KEGG    '='kegg',
+                                                                ' Reactome               '='enrichPathway',
+                                                                ' Disease Ontology       '='enrichDO',
+                                                                ' Wiki Pathways          '='WikiPathways',
+                                                                ' GO Biological Process  '='enrichGOBP',
+                                                                ' GO Molecular Function  '='enrichGOMF',
+                                                                ' GO Cellular Component  '='enrichGOCC',
+                                                                ' Hallmark (MSD)         '='msigdbrH',
+                                                                ' Positional (MSD)       '='msigdbrC1',
+                                                                ' Curated (MSD)          '='msigdbrC2',
+                                                                ' Regulatory target (MSD)'='msigdbrC3',
+                                                                ' Computational (MSD)    '='msigdbrC4',
+                                                                ' GO (MSD)               '='msigdbrC5',
+                                                                ' Oncogenic (MSD)        '='msigdbrC6',
+                                                                ' Immunologic (MSD)      '='msigdbrC7',
+                                                                ' Cell type (MSD)        '='msigdbrC8'
+                                                               )
+                       ),
                        width = 26,
                      ),
                      # Show a tabset
@@ -190,11 +244,22 @@ shinyUI(fluidPage(theme = shinytheme("united"),
                        helpText(" "),
                        helpText("Data Tables"),
                        tabsetPanel(
-                         tabPanel("Your Input",DT::DTOutput('inputTableEnrich')),
+                         tabPanel("The Input",DT::DTOutput('inputTableEnrich'))
+                       ), 
+                       tabsetPanel(
+                         tabPanel("Answer", verbatimTextOutput("resultsTable10"))
+                       ),
+                       helpText(" "),
+                       helpText(" "),
+                       actionButton("run3", "Enrich!"),
+                       helpText(" "),
+                       helpText(" "),
+                       tabsetPanel(  
                          tabPanel("Enrichment Results", DT::DTOutput("resultsTableEnrich")),
                          tabPanel("Dot Plot", plotlyOutput("generate_dotplot", height = '1800', width = '1300')),
-                         tabPanel("A possible interpretation (Gemma):", uiOutput('chat_output_interpretationGemma')),
-                         tabPanel("Another possible interpretation (Llama):", uiOutput('chat_output_interpretationLlama'))
+                         #tabPanel("A possible interpretation (Gemma):", uiOutput('chat_output_interpretationGemma')),
+                         tabPanel("A possible interpretation (by LlaMA powered by a PubMed-based RAG):", uiOutput('chat_output_interpretationRAG2')),
+                         tabPanel("A possible interpretation (by Gemma powered by a PubMed-based RAG):", uiOutput('chat_output_interpretationRAG'))
                        ),
                        downloadButton("download_results3", "Download Enrichment Results"),
                        helpText(" "),
@@ -222,6 +287,25 @@ shinyUI(fluidPage(theme = shinytheme("united"),
                    helpText(" "),
                    helpText("If you need help using REDAC or if there is an error with the data you entered, please send an email to: francesco.russo AT cnr.it"),
                    helpText(" "),
+                   helpText(" "),
+                   helpText("Please note that errors are sometimes caused by the Shiny server (connection issues, temporarily unavailable server resources, etc.) on which REDAC is running, or by problems requesting LMMs via an API, which takes several seconds to execute and 
+                       return to REDAC. In these cases, please retry the request and wait for a response."),
+                   helpText("---------------------------------------------------------------------------------- "),
+                   helpText(" "),
+                   helpText("YOU CAN EITHER TRY THIS COUNT SAMPLE FILE... "),
+                   helpText(" "),
+                   checkboxInput("use_example3", "Check this box to try these functions: boxplot, violin, heatmap, correlation heatmap, 
+                                 pca, 3Dpca, dendrogram, density, pca components, network, surface.", value = FALSE),
+                   helpText(" "),
+                   helpText(" "),
+                   helpText("---------------------------------------------------------------------------------- "),
+                   helpText(" "),
+                   helpText(" ...OR YOU CAN TRY THIS EDGER RESULT SAMPLE FILE !!!"),
+                   helpText(" "),
+                   checkboxInput("use_example4", "Check this box to try these functions: volcano, maplot, dotplot, KEGGnet. ", value = FALSE),
+                   helpText(" "),
+                   helpText(" "),
+                   helpText("---------------------------------------------------------------------------------- "),
                    fileInput('file6', "Please, upload a file",accept=c('text/csv','text/comma-separated-values,text/plain','.csv')),
                    textInput('text6', "Please, write your request:","Example: create a heatmap",width="800px"),
                    helpText(" "),
@@ -233,13 +317,20 @@ shinyUI(fluidPage(theme = shinytheme("united"),
                  mainPanel( 
                      helpText(" "),
                      #tabsetPanel(tabPanel("Your Input", DT::DTOutput('show_input_fun3'))),
-                     #helpText("__________________________________________________________________________________________________________________________"),
+                     tabsetPanel(
+                       tabPanel("Answer", verbatimTextOutput("resultsTable11"))
+                     ),
+                     helpText(" "),
+                     helpText(" "),
+                     helpText("__________________________________________________________________________________________________________________________"),
                      tabsetPanel(    
                            tabPanel("Default Plot", plotlyOutput("generate_plot3", height = '1800', width = '1300'))
                      ),
                      helpText(" "),
                      helpText("__________________________________________________________________________________________________________________________"),
-                     tabsetPanel(tabPanel("Alternative code for R developers (Llama)", uiOutput("chat_output"))),
+                     tabsetPanel(tabPanel("Alternative code for Python developers (Llama)", uiOutput("chat_outputPythonDev")),
+                                 tabPanel("Alternative code for R developers (Llama)", uiOutput("chat_outputRDev"))
+                                ),
                    tags$head(tags$style( HTML(".shiny-notification {background-color:yellow;position:fixed;top: 50%;left: 5%;right: 5%;}"))),
                    tags$hr(),
                    width = 26,

@@ -112,7 +112,7 @@ shinyServer(function(input, output, session) {
         
         body <- list(
           #model = "google/gemma-3n-E4B-it",
-          model = "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free",
+          model = "meta-llama/Llama-3.3-70B-Instruct-Turbo",
           messages = list(
             list(role = "system", content = "Respond only in JSON format. The JSON must have this structure: 
                {\"functiontoberun\":[\"box\",\"violin\",\"heat\",\"corr heat\",\"volcano\",\"pca\",\"cluster\",
@@ -407,9 +407,12 @@ shinyServer(function(input, output, session) {
     })
   
   get_response_table <- function(prompt,inDataFile) {
-   
-    if (is.null(inDataFile) || (prompt=="")){return(NULL)}else{
-      my_data <- read_and_clean_colnames(inDataFile$datapath, sep = "\t", header = TRUE, rownames = 1 )
+    if ((prompt=="")){return(NULL)}else{
+     if (is.atomic(inDataFile)){
+       my_data <- read_and_clean_colnames(inDataFile, sep = "\t", header = TRUE, rownames = 1 )
+     }else{
+       my_data <- read_and_clean_colnames(inDataFile$datapath, sep = "\t", header = TRUE, rownames = 1 )
+     }
       #   my_data <- read.table("C:/Users/f.russo.ENGIBBC/Desktop/REDAC_submission/expression_file.txt", header = TRUE, sep = "\t", row.names = 1)
       #   prompt = "Example: perform an rnaseq analysis between treated 3,4 and wt 1,2 samples, up regulated"
       #   prompt = " compare treated_1, treated_2 vs control_1, control_2, up-regulated genes”
@@ -421,7 +424,7 @@ shinyServer(function(input, output, session) {
       
       body <- list(
         #model = "google/gemma-3n-E4B-it", 
-        model = "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free",
+        model = "meta-llama/Llama-3.3-70B-Instruct-Turbo",
         messages = list(
           list(role = "system", content = "Respond only in JSON format. The JSON must have this structure: 
                {\"functiontoberun\":[\"analysis\"],
@@ -505,9 +508,7 @@ shinyServer(function(input, output, session) {
     content = function(fname){write.table(get_response_table(input$text2, input$file2)$result, fname, col.names = TRUE,row.names = FALSE,quote=FALSE, sep = "\t")}
   )
 
-
-  
-  output$chat_output <- renderUI({
+  output$chat_outputRDev <- renderUI({
     inDataFile = input$file6
     prompt = input$text6
     if ((is.null(inDataFile)) || (prompt=="")){return(NULL)}else{
@@ -521,9 +522,47 @@ shinyServer(function(input, output, session) {
       url <- "https://api.together.xyz/v1/chat/completions"
       body <- list(
         #model = "google/gemma-3n-E4B-it",
-        model = "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free",
+        model = "meta-llama/Llama-3.3-70B-Instruct-Turbo",
         messages = list(
           list(role = "system", content = "use a Chain of Thought and Act as an expert data analyst in R programming language"),
+          list(role = "user", content = paste(prompt," on a dataset that have: ", dim(my_data)[1]," rows, and ",dim(my_data)[2]," columns. 
+                                              Here are the first 3 rows:\n", data_text)
+          )
+        ),
+        max_tokens = 1500
+      )
+      response <- POST(
+        url,
+        add_headers(
+          Authorization = paste("Bearer", api_key),
+          `Content-Type` = "application/json"
+        ),
+        body = toJSON(body, auto_unbox = TRUE),
+        encode = "json"
+      )
+      content <- httr::content(response, as = "text")
+      parsed <- fromJSON(content)
+      HTML(markdown::markdownToHTML(parsed$choices$message[2]$content))
+    }
+  })
+  
+  output$chat_outputPythonDev <- renderUI({
+    inDataFile = input$file6
+    prompt = input$text6
+    if ((is.null(inDataFile)) || (prompt=="")){return(NULL)}else{
+      print("answer")
+      my_data <- read_and_clean_colnames(inDataFile$datapath, sep = "\t", header = TRUE, rownames = 1 )
+      #   prompt = "Plot a heatmap"
+      data_text <- paste(capture.output(head(my_data, 3)), collapse = "\n")  # Only show top 20 rows
+      api_key <- Sys.getenv("API_KEY")
+      if (api_key == "") stop("NO API key found!")
+      #api_key <-   # Replace with your API key
+      url <- "https://api.together.xyz/v1/chat/completions"
+      body <- list(
+        #model = "google/gemma-3n-E4B-it",
+        model = "meta-llama/Llama-3.3-70B-Instruct-Turbo",
+        messages = list(
+          list(role = "system", content = "use a Chain of Thought and Act as an expert data analyst in Python programming language"),
           list(role = "user", content = paste(prompt," on a dataset that have: ", dim(my_data)[1]," rows, and ",dim(my_data)[2]," columns. 
                                               Here are the first 3 rows:\n", data_text)
           )
@@ -558,7 +597,7 @@ shinyServer(function(input, output, session) {
       url <- "https://api.together.xyz/v1/chat/completions"
       body <- list(
         model = "google/gemma-3n-E4B-it",
-        #model = "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free",
+        #model = "meta-llama/Llama-3.3-70B-Instruct-Turbo",
         messages = list(
           list(role = "system", content = "Act as an expert data analyst suggesting a general way to perform the request. Do not write code."),
           list(role = "user", content = paste(prompt," on a dataset that have ", dim(my_data)[1]," rows, and ",dim(my_data)[2]," columns. 
@@ -584,7 +623,7 @@ shinyServer(function(input, output, session) {
   
   output$chat_output_interpretationGemma <- renderUI({
       my_data <- enrichment_function()$results
-      print(my_data[,1:5])
+      #print(my_data[,1:5])
       my_data= my_data$Description
       Text7 = input$text7
       data_text = my_data
@@ -616,7 +655,415 @@ shinyServer(function(input, output, session) {
       HTML(markdown::markdownToHTML(parsed$choices$message[2]$content))
   })
   
-  output$chat_output_interpretationLlama <- renderUI({
+  # context-aware RAG module for biology
+  output$chat_output_interpretationRAG <- renderUI({ 
+    # Suppose enrichment_function() returns an enrichment table
+    my_data <- enrichment_function()$results
+    my_data <- my_data$Description  # List of enriched pathways
+    user_query <- input$text7
+    # user_query = "Explain these results produced from the comparison of pulse-induced drug resistance in HCC827 cells against their parental cells to study the mechanisms induced by this suboptimal dose of Gefitinib"
+    # user_phrase = user_query
+    # my_data = c("TNF signaling pathway", "MAPK signaling pathway","IL-17 signaling pathway","Human papillomavirus infection")
+    print((my_data[1:5]))
+    print(user_query)
+    
+    # ---- Step 1: Retrieve PubMed abstracts for each pathway
+    get_pubmed_context_rag <- function(user_phrase = user_phrase, max_papers = 5,min_keywords = 2) {
+
+      all_terms <- paste(c(user_phrase), collapse = " ")
+      
+      message("\n[get_pubmed_context_rag] Building query from:")
+      message("  user_phrase: ", user_phrase)
+      
+      # --- Extract keywords ---
+      words <- unlist(strsplit(tolower(all_terms), "\\W+"))
+        stopwords <- c("the","of","in","and","to","from","for","these","this","their","against",
+                       "by","under","with","study","results","produced","comparison","mechanisms",
+                       "dose","induced","data","made","cell","cells","explain","explanation",
+                       "analysis","pathway","pathways","explain","parental","drug")
+  keywords <- setdiff(words, stopwords)
+  keywords <- keywords[nchar(keywords) > 2]
+  keywords <- unique(keywords)
+
+  if (length(keywords) < min_keywords) {
+    message(" Not enough keywords extracted, using all words instead.")
+    keywords <- words
+  }
+
+  # --- Adaptive query fallback ---
+  found <- FALSE
+  search_res <- NULL
+  k <- length(keywords)
+
+  while (!found && k >= min_keywords) {
+    query <- paste(paste0(keywords[(length(keywords)-k+1):length(keywords)], "[Title/Abstract]"), collapse = " AND ")
+    message("  → Trying query with ", k, " keywords: ", query)
+
+    search_res <- tryCatch(
+      entrez_search(db = "pubmed", term = query, retmax = max_papers),
+      error = function(e) NULL
+    )
+
+    if (!is.null(search_res) && length(search_res$ids) > 0) {
+      found <- TRUE
+      message(" Found ", length(search_res$ids), " papers.")
+    } else {
+      message(" No hits. Retrying with fewer keywords...")
+      k <- k - 1
+    }
+  }
+
+  if (!found || is.null(search_res) || length(search_res$ids) == 0) {
+    message("No PubMed results found, even after fallback.")
+    return(NULL)
+  }
+
+  # --- Fetch and clean abstracts ---
+  ids <- search_res$ids
+  abstracts <- vapply(ids, FUN.VALUE = "", FUN = function(id) {
+    Sys.sleep(0.34)
+    abs_text <- tryCatch(
+      entrez_fetch(db = "pubmed", id = id, rettype = "abstract", retmode = "text"),
+      error = function(e) NA_character_
+    )
+    if (is.na(abs_text)) return(NA_character_)
+    abs_text <- gsub("\n+", " ", abs_text)
+    trimws(abs_text)
+  })
+
+  abstracts <- abstracts[!is.na(abstracts)]
+  if (length(abstracts) == 0) {
+    message("No abstracts retrievable.")
+    return(NULL)
+  }
+
+  # --- Merge and clean for LLM context ---
+  combined_context <- paste(
+    "Experimental context:", user_phrase, "\n",
+    "Relevant PubMed abstracts:\n",
+    paste(abstracts, collapse = "\n\n---\n\n")
+  )
+
+  message("\n[get_pubmed_context_rag] Context ready for LLM prompt.")
+  return(combined_context)
+ }
+    
+    # Robust PubMed retrieval helper
+
+    pubmed_contexts <- get_pubmed_context_rag(user_query)
+    print(pubmed_contexts)
+    # ---- Step 2: Create retrieval summary text
+    #context_text <- paste(sapply(names(pubmed_contexts), function(k) paste(k, ":", pubmed_contexts[[k]])),collapse = "\n\n")
+    
+    if (length(my_data) > 40){
+      my_data = my_data[1:40]
+    }
+    
+    # ---- Step 3: Compose RAG-style prompt
+    data_text <- paste(
+      "User query:", user_query,
+      "\n\nPathways:", paste(my_data, collapse = ", "),
+      "\n\nRelevant PubMed findings:\n", pubmed_contexts
+    )
+    
+    # ---- Step 4: Send to Together API (Gemma model)
+    api_key <- Sys.getenv("API_KEY")
+    if (api_key == "") stop("NO API key found!")
+    
+    url <- "https://api.together.xyz/v1/chat/completions"
+    body <- list(
+      model = "google/gemma-3n-E4B-it",
+      messages = list(
+        list(role = "system", content =
+               "You are a molecular biologist interpreting transcriptomic pathway enrichment results.
+            Use the provided PubMed context to ground your explanations in real literature.
+            Output structured reasoning by grouping pathways into functional categories,
+            describing plausible mechanisms, and suggesting future experiments. Cite all papers found."),
+        list(role = "user", content = data_text)
+      ),
+      max_tokens = 4500
+    )
+    
+    response <- POST(
+      url,
+      add_headers(
+        Authorization = paste("Bearer", api_key),
+        `Content-Type` = "application/json"
+      ),
+      body = toJSON(body, auto_unbox = TRUE),
+      encode = "json"
+    )
+    
+    parsed <- fromJSON(httr::content(response, as = "text"))
+    HTML(markdown::markdownToHTML(parsed$choices$message[2]$content))
+  })  
+  
+  # context-aware RAG module for biology
+  output$chat_output_interpretationRAG2 <- renderUI({ 
+    # Suppose enrichment_function() returns an enrichment table
+    my_data <- enrichment_function()$results
+    my_data <- my_data$Description  # List of enriched pathways
+    user_query <- input$text7
+    # user_query = "Explain these results produced from the comparison of pulse-induced drug resistance in HCC827 cells against their parental cells to study the mechanisms induced by this suboptimal dose of Gefitinib"
+    # user_phrase = user_query
+    # my_data = c("TNF signaling pathway", "MAPK signaling pathway","IL-17 signaling pathway","Human papillomavirus infection")
+    print((my_data[1:5]))
+    print(user_query)
+    
+    # ---- Step 1: Retrieve PubMed abstracts for each pathway
+    get_pubmed_context_rag <- function(user_phrase = user_phrase, max_papers = 5,min_keywords = 2) {
+      
+      all_terms <- paste(c(user_phrase), collapse = " ")
+      
+      message("\n[get_pubmed_context_rag] Building query from:")
+      message("  user_phrase: ", user_phrase)
+      
+      # --- Extract keywords ---
+      words <- unlist(strsplit(tolower(all_terms), "\\W+"))
+      stopwords <- c("the","of","in","and","to","from","for","these","this","their","against",
+                     "by","under","with","study","results","produced","comparison","mechanisms",
+                     "dose","induced","data","made","cell","cells","explain","explanation",
+                     "analysis","pathway","pathways","explain","parental","drug")
+      keywords <- setdiff(words, stopwords)
+      keywords <- keywords[nchar(keywords) > 2]
+      keywords <- unique(keywords)
+      
+      if (length(keywords) < min_keywords) {
+        message(" Not enough keywords extracted, using all words instead.")
+        keywords <- words
+      }
+      
+      # --- Adaptive query fallback ---
+      found <- FALSE
+      search_res <- NULL
+      k <- length(keywords)
+      
+      while (!found && k >= min_keywords) {
+        query <- paste(paste0(keywords[(length(keywords)-k+1):length(keywords)], "[Title/Abstract]"), collapse = " AND ")
+        message("  → Trying query with ", k, " keywords: ", query)
+        
+        search_res <- tryCatch(
+          entrez_search(db = "pubmed", term = query, retmax = max_papers),
+          error = function(e) NULL
+        )
+        
+        if (!is.null(search_res) && length(search_res$ids) > 0) {
+          found <- TRUE
+          message(" Found ", length(search_res$ids), " papers.")
+        } else {
+          message(" No hits. Retrying with fewer keywords...")
+          k <- k - 1
+        }
+      }
+      
+      if (!found || is.null(search_res) || length(search_res$ids) == 0) {
+        message("No PubMed results found, even after fallback.")
+        return(NULL)
+      }
+      
+      # --- Fetch and clean abstracts ---
+      ids <- search_res$ids
+      abstracts <- vapply(ids, FUN.VALUE = "", FUN = function(id) {
+        Sys.sleep(0.34)
+        abs_text <- tryCatch(
+          entrez_fetch(db = "pubmed", id = id, rettype = "abstract", retmode = "text"),
+          error = function(e) NA_character_
+        )
+        if (is.na(abs_text)) return(NA_character_)
+        abs_text <- gsub("\n+", " ", abs_text)
+        trimws(abs_text)
+      })
+      
+      abstracts <- abstracts[!is.na(abstracts)]
+      if (length(abstracts) == 0) {
+        message("No abstracts retrievable.")
+        return(NULL)
+      }
+      
+      # --- Merge and clean for LLM context ---
+      combined_context <- paste(
+        "Experimental context:", user_phrase, "\n",
+        "Relevant PubMed abstracts:\n",
+        paste(abstracts, collapse = "\n\n---\n\n")
+      )
+      
+      message("\n[get_pubmed_context_rag] Context ready for LLM prompt.")
+      return(combined_context)
+    }
+    
+    # Robust PubMed retrieval helper
+    
+    pubmed_contexts <- get_pubmed_context_rag(user_query)
+    print(pubmed_contexts)
+    # ---- Step 2: Create retrieval summary text
+    #context_text <- paste(sapply(names(pubmed_contexts), function(k) paste(k, ":", pubmed_contexts[[k]])),collapse = "\n\n")
+    
+    if (length(my_data) > 40){
+      my_data = my_data[1:40]
+    }
+    
+    # ---- Step 3: Compose RAG-style prompt
+    data_text <- paste(
+      "User query:", user_query,
+      "\n\nPathways:", paste(my_data, collapse = ", "),
+      "\n\nRelevant PubMed findings:\n", pubmed_contexts
+    )
+    
+    # ---- Step 4: Send to Together API (Gemma model)
+    api_key <- Sys.getenv("API_KEY")
+    if (api_key == "") stop("NO API key found!")
+    
+    url <- "https://api.together.xyz/v1/chat/completions"
+    body <- list(
+      model = "meta-llama/Llama-3.3-70B-Instruct-Turbo",
+      messages = list(
+        list(role = "system", content =
+               "You are a molecular biologist interpreting transcriptomic pathway enrichment results.
+            Use the provided PubMed context to ground your explanations in real literature.
+            Output structured reasoning by grouping pathways into functional categories,
+            describing plausible mechanisms, and suggesting future experiments. Cite all papers found."),
+        list(role = "user", content = data_text)
+      ),
+      max_tokens = 4500
+    )
+    
+    response <- POST(
+      url,
+      add_headers(
+        Authorization = paste("Bearer", api_key),
+        `Content-Type` = "application/json"
+      ),
+      body = toJSON(body, auto_unbox = TRUE),
+      encode = "json"
+    )
+    
+    parsed <- fromJSON(httr::content(response, as = "text"))
+    HTML(markdown::markdownToHTML(parsed$choices$message[2]$content))
+  })  
+  
+
+output$chat_output_interpretationLlama_old2 <- renderUI({ 
+  # Suppose enrichment_function() returns an enrichment table
+  my_data <- enrichment_function()$results
+  my_data <- my_data$Description  # List of enriched pathways
+  user_query <- input$text7
+  # user_query = "explain these data"
+   pathways=my_data
+  
+  # ---- Step 1: Retrieve PubMed abstracts for each pathway
+  
+  # Robust PubMed retrieval helper
+  get_pubmed_context <- function(terms, max_papers = 2, max_pathways = 4, use_review_filter = FALSE) {
+    
+    abstracts_list <- list()
+    terms <- head(unique(terms), max_pathways)
+    
+    for (term in terms) {
+      message("[get_pubmed_context] Searching PubMed for: ", term)
+      # Build a conservative query; avoid overly strict filters by default
+      query <- paste0(term, "[Title/Abstract]")
+      
+      if (use_review_filter) {
+        query <- paste0(query, " AND review[PT]")
+      }
+      
+      # Search
+      search_res <- tryCatch(
+        entrez_search(db = "pubmed", term = query, retmax = max_papers),
+        error = function(e) {
+          message("[get_pubmed_context] Search error for term '", term, "': ", e$message)
+          return(NULL)
+        }
+      )
+      
+      # No IDs -> continue
+      if (is.null(search_res) || length(search_res$ids) == 0) {
+        message("[get_pubmed_context] No PubMed hits for: ", term)
+        next
+      }
+      
+      ids <- search_res$ids
+      # Fetch each id separately to preserve mapping and to be robust
+      fetched_texts <- vapply(ids, FUN.VALUE = "", FUN = function(id) {
+        Sys.sleep(0.34) # gentle rate-limit
+        txt <- tryCatch(
+          entrez_fetch(db = "pubmed", id = id, rettype = "abstract", retmode = "text"),
+          error = function(e) {
+            message("[get_pubmed_context] Fetch error for id ", id, ": ", e$message)
+            return(NA_character_)
+          }
+        )
+        # Minimal cleanup: remove newlines and trim
+        if (is.na(txt)) return(NA_character_)
+        txt <- gsub("\n+", " ", txt)
+        txt <- trimws(txt)
+        return(txt)
+      })
+      
+      fetched_texts <- fetched_texts[!is.na(fetched_texts)]
+      if (length(fetched_texts) == 0) {
+        message("[get_pubmed_context] No abstracts fetched for: ", term)
+        next
+      }
+      abstracts_list[[term]] <- fetched_texts
+    }
+    
+    if (length(abstracts_list) == 0) {
+      message("[get_pubmed_context] No abstracts found for any input terms.")
+    } else {
+      message("[get_pubmed_context] Retrieved abstracts for ", length(abstracts_list), " terms.")
+    }
+    abstracts_list
+  }
+  
+  pubmed_contexts <- get_pubmed_context(my_data)
+  
+  # ---- Step 2: Create retrieval summary text
+  context_text <- paste(
+    sapply(names(pubmed_contexts), function(k) paste(k, ":", pubmed_contexts[[k]])),
+    collapse = "\n\n"
+  )
+  
+  # ---- Step 3: Compose RAG-style prompt
+  data_text <- paste(
+    "User query:", user_query,
+    "\n\nPathways:", paste(my_data, collapse = ", "),
+    "\n\nRelevant PubMed findings:\n", context_text
+  )
+  
+  # ---- Step 4: Send to Together API (Gemma model)
+  api_key <- Sys.getenv("API_KEY")
+  if (api_key == "") stop("NO API key found!")
+  
+  url <- "https://api.together.xyz/v1/chat/completions"
+  body <- list(
+    model = "google/gemma-3n-E4B-it",
+    messages = list(
+      list(role = "system", content =
+             "You are a molecular biologist interpreting transcriptomic pathway enrichment results.
+            Use the provided PubMed context to ground your explanations in real literature.
+            Output structured reasoning by grouping pathways into functional categories,
+            describing plausible mechanisms, and suggesting future experiments."),
+      list(role = "user", content = data_text)
+    ),
+    max_tokens = 4500
+  )
+  
+  response <- POST(
+    url,
+    add_headers(
+      Authorization = paste("Bearer", api_key),
+      `Content-Type` = "application/json"
+    ),
+    body = toJSON(body, auto_unbox = TRUE),
+    encode = "json"
+  )
+  
+  parsed <- fromJSON(httr::content(response, as = "text"))
+  HTML(markdown::markdownToHTML(parsed$choices$message[2]$content))
+})  
+  
+  output$chat_output_interpretationLlama_old <- renderUI({
       my_data <- enrichment_function()$results
       print(my_data[,1:5])
       my_data= my_data$Description
@@ -628,13 +1075,13 @@ shinyServer(function(input, output, session) {
       #api_key <-   # Replace with your API key
       url <- "https://api.together.xyz/v1/chat/completions"
       body <- list(
-        model = "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free",
+        model = "meta-llama/Llama-3.3-70B-Instruct-Turbo",
         messages = list(
           list(role = "system", content = "Interpret data by giving possible explanations of the biological processes involved as an expert biologist"),
-          list(role = "user", content = paste("Suggest some plausible cellular mechanistic explanations for these pathways by grouping them for category. At the end suggest future investigations.", data_text)
+          list(role = "user", content = paste("Suggest some plausible cellular mechanistic explanations for these pathways as an expert biologist. At the end suggest future investigations.", data_text)
           )
         ),
-        max_tokens = 2500
+        max_tokens = 5000
       )
       response <- POST(
         url,
@@ -670,52 +1117,168 @@ shinyServer(function(input, output, session) {
   
   # Function for pathway enrichment analysis
   gene_pathway_enrichment <- function(gene_list) {
-    
+    in_enrich_method <- input$enrich_method
     if (all(grepl("^[A-Za-z0-9.-]+$", gene_list[1:10]))) { #we have gene symbols
-    
       # Convert gene symbols to Entrez IDs
+      #print(gene_list)
       entrez_ids <- mapIds(org.Hs.eg.db, keys = gene_list, column = "ENTREZID", keytype = "SYMBOL", multiVals = "first")
       entrez_ids <- na.omit(entrez_ids)
       #print(entrez_ids)
-    
-    if (length(entrez_ids) == 0) {
-      stop("No valid Entrez IDs found for the given gene symbols.")
+      if (length(entrez_ids) == 0) {
+        stop("No valid Entrez IDs found for the given gene symbols.")
+      }
     }
-    
-    # Perform KEGG pathway enrichment analysis
-    kegg_enrichment <- enrichKEGG(gene = entrez_ids,  organism = 'hsa', pAdjustMethod="BH",qvalueCutoff = 0.001)
-    #kegg_enrichment <- enrichGO(gene = entrez_ids, OrgDb= org.Hs.eg.db, keyType= "ENTREZID", ont= "BP", pAdjustMethod = "BH", qvalueCutoff  = 0.00001)
-    #kegg_enrichment <- enrichPathway(gene = entrez_ids, organism = "human", pAdjustMethod = "BH", qvalueCutoff  = 0.0001, readable = TRUE)
-    
-    if (is.null(kegg_enrichment)) {
-      return("No significant pathways found.")
+    withProgress(message = 'Running, Please Wait!', detail = 'This may take a while...', value = 0, {     
+    if(in_enrich_method=="kegg"){
+          # Perform KEGG pathway enrichment analysis
+          enrichment <- enrichKEGG(gene = entrez_ids,  organism = 'hsa', pAdjustMethod="BH",qvalueCutoff = 0.001)
+          enrichmentDE <- as.data.frame(enrichment)
+          enrichmentDE = enrichmentDE[,c(4,2,5,11,12,13,14)]
     }
-    
-    }else{
-      # Perform KEGG pathway enrichment analysis
-      kegg_enrichment <- enrichKEGG(gene = entrez_ids,  organism = 'hsa', pAdjustMethod="BH",qvalueCutoff = 0.001)
+    if(in_enrich_method=="enrichGOBP"){
+         enrichment <- enrichGO(gene = entrez_ids,OrgDb = org.Hs.eg.db,ont = "BP", keyType= "ENTREZID", pAdjustMethod = "BH",qvalueCutoff = 0.001,readable = TRUE)
+         enrichmentDE <- as.data.frame(enrichment)
+         enrichmentDE = enrichmentDE[,c(2,3,9,10,11,12)]
     }
-      # Convert results to a data frame
-      enrichmentDE <- as.data.frame(kegg_enrichment)
-      enrichmentDE[,c(4,2,5,11,12,13,14)]
-      #enrichmentDE
+      if(in_enrich_method=="enrichGOMF"){
+        enrichment <- enrichGO(gene = entrez_ids,OrgDb = org.Hs.eg.db,ont = "MF", keyType= "ENTREZID", pAdjustMethod = "BH",qvalueCutoff = 0.001,readable = TRUE)
+        enrichmentDE <- as.data.frame(enrichment)
+        enrichmentDE = enrichmentDE[,c(2,3,9,10,11,12)]
+      }
+      if(in_enrich_method=="enrichGOCC"){
+        enrichment <- enrichGO(gene = entrez_ids,OrgDb = org.Hs.eg.db,ont = "CC", keyType= "ENTREZID", pAdjustMethod = "BH",qvalueCutoff = 0.001,readable = TRUE)
+        enrichmentDE <- as.data.frame(enrichment)
+        enrichmentDE = enrichmentDE[,c(2,3,9,10,11,12)]
+      }
+    if(in_enrich_method=="enrichPathway"){
+         enrichment <- enrichPathway(gene = entrez_ids,organism = "human",pAdjustMethod = "BH",qvalueCutoff = 0.001,readable = TRUE)
+         enrichmentDE <- as.data.frame(enrichment)
+         enrichmentDE = enrichmentDE[,c(2,3,9,10,11,12)]
+    }
+    if(in_enrich_method=="enrichDO"){
+      print("enrichDO")
+         enrichment <- enrichDO(gene = entrez_ids,pAdjustMethod = "BH",qvalueCutoff = 0.05,readable = TRUE)
+         enrichmentDE <- as.data.frame(enrichment)
+         enrichmentDE = enrichmentDE[,c(2,3,9,10,11,12)]
+    }
+    if(in_enrich_method=="msigdbrH"){   #Hallmark gene sets
+          m_df <- msigdbr(species = "Homo sapiens", collection = "H")
+          enrichment <- enricher(gene = entrez_ids,TERM2GENE = m_df[, c("gs_name", "ncbi_gene")],pAdjustMethod = "BH",qvalueCutoff = 0.001)
+          enrichmentDE <- as.data.frame(enrichment)
+          enrichmentDE = enrichmentDE[,c(2,3,9,10,11,12)]
+    }
+    if(in_enrich_method=="msigdbrC1"){  #Positional gene sets
+      m_df <- msigdbr(species = "Homo sapiens", collection = "C1")
+      enrichment <- enricher(gene = entrez_ids,TERM2GENE = m_df[, c("gs_name", "ncbi_gene")],pAdjustMethod = "BH",qvalueCutoff = 0.001)
+      enrichmentDE <- as.data.frame(enrichment)
+      enrichmentDE = enrichmentDE[,c(2,3,9,10,11,12)]
+    }  
+      if(in_enrich_method=="msigdbrC2"){  #Curated gene sets (e.g. KEGG, Reactome, BioCarta)
+        m_df <- msigdbr(species = "Homo sapiens", collection = "C2")
+        enrichment <- enricher(gene = entrez_ids,TERM2GENE = m_df[, c("gs_name", "ncbi_gene")],pAdjustMethod = "BH",qvalueCutoff = 0.001)
+        enrichmentDE <- as.data.frame(enrichment)
+        enrichmentDE = enrichmentDE[,c(2,3,9,10,11,12)]
+      }
+      if(in_enrich_method=="msigdbrC3"){  #Curated gene sets (e.g. KEGG, Reactome, BioCarta)
+        m_df <- msigdbr(species = "Homo sapiens", collection = "C3")
+        enrichment <- enricher(gene = entrez_ids,TERM2GENE = m_df[, c("gs_name", "ncbi_gene")],pAdjustMethod = "BH",qvalueCutoff = 0.001)
+        enrichmentDE <- as.data.frame(enrichment)
+        enrichmentDE = enrichmentDE[,c(2,3,9,10,11,12)]
+      }
+      if(in_enrich_method=="msigdbrC4"){  #Curated gene sets (e.g. KEGG, Reactome, BioCarta)
+        m_df <- msigdbr(species = "Homo sapiens", collection = "C4")
+        enrichment <- enricher(gene = entrez_ids,TERM2GENE = m_df[, c("gs_name", "ncbi_gene")],pAdjustMethod = "BH",qvalueCutoff = 0.001)
+        enrichmentDE <- as.data.frame(enrichment)
+        enrichmentDE = enrichmentDE[,c(2,3,9,10,11,12)]
+      }
+      if(in_enrich_method=="msigdbrC5"){  #GO gene sets
+        m_df <- msigdbr(species = "Homo sapiens", collection = "C5") 
+        enrichment <- enricher(gene = entrez_ids,TERM2GENE = m_df[, c("gs_name", "ncbi_gene")],pAdjustMethod = "BH",qvalueCutoff = 0.001)
+        enrichmentDE <- as.data.frame(enrichment)
+        enrichmentDE = enrichmentDE[,c(2,3,9,10,11,12)]
+      }
+      if(in_enrich_method=="msigdbrC6"){  #Oncogenic signatures
+        m_df <- msigdbr(species = "Homo sapiens", collection = "C6") 
+        enrichment <- enricher(gene = entrez_ids,TERM2GENE = m_df[, c("gs_name", "ncbi_gene")],pAdjustMethod = "BH",qvalueCutoff = 0.001)
+        enrichmentDE <- as.data.frame(enrichment)
+        enrichmentDE = enrichmentDE[,c(2,3,9,10,11,12)]
+      }
+      if(in_enrich_method=="msigdbrC7"){  #Immunologic signatures
+        m_df <- msigdbr(species = "Homo sapiens", collection = "C7") 
+        enrichment <- enricher(gene = entrez_ids,TERM2GENE = m_df[, c("gs_name", "ncbi_gene")],pAdjustMethod = "BH",qvalueCutoff = 0.001)
+        enrichmentDE <- as.data.frame(enrichment)
+        enrichmentDE = enrichmentDE[,c(2,3,9,10,11,12)]
+      }
+      if(in_enrich_method=="msigdbrC8"){  #Cell type signatures
+        m_df <- msigdbr(species = "Homo sapiens", collection = "C8") 
+        enrichment <- enricher(gene = entrez_ids,TERM2GENE = m_df[, c("gs_name", "ncbi_gene")],pAdjustMethod = "BH",qvalueCutoff = 0.001)
+        enrichmentDE <- as.data.frame(enrichment)
+        enrichmentDE = enrichmentDE[,c(2,3,9,10,11,12)]
+      }
+    if(in_enrich_method=="WikiPathways"){   
+       wp <- downloadPathwayArchive(organism = "Homo sapiens", format = "gmt")
+       TERM2GENE <- read.gmt(wp)
+       enrichment<- enricher(gene = entrez_ids, TERM2GENE = TERM2GENE)
+       enrichmentDE <- as.data.frame(enrichment)
+       enrichmentDE = enrichmentDE[,c(2,3,9,10,11,12)]
+    }
+      n <- 100
+      for (i in 1:n) {
+        # Increment the progress bar, and update the detail text.
+        incProgress(1/n, detail = paste("\n  ",i, "% completed!"))
+        # Pause for 0.1 seconds to simulate a long computation.
+        Sys.sleep(0.0005)
+      }
+    })
+    if(is.null(enrichment)) {
+            return("No significant pathways found.")
+    }
+    # Convert results to a data frame
+    enrichmentDE 
   }
   
   enrichment_function <- eventReactive(input$run3, {
-    inFile3 = input$file3
-    result_de <- read_and_clean_colnames(inFile3$datapath, header = TRUE, sep = "\t", rownames = 1)
-    gene_list <- rownames(subset(result_de, as.numeric(result_de$FDR) < 0.05)) #dagli solo quelli significativi
-    print(head(gene_list))
-    final_result = gene_pathway_enrichment(as.character(gene_list))
-    print(head(final_result))
-    write.table(final_result, paste("enrichment_on_",input$file3$name ,sep=""), row.names = TRUE, sep="\t",quote=FALSE, col.names = TRUE)
-    return(list(results = final_result, counts = result_de))
+    if (isTRUE(input$use_example2) && is.null(input$file3)) {
+      result_de <- read_and_clean_colnames("result_test_file.txt", header = TRUE, sep = "\t", rownames = 1)
+      gene_list <- rownames(subset(result_de, as.numeric(result_de$FDR) < 0.05)) #dagli solo quelli significativi
+      print(head(gene_list))
+      final_result = gene_pathway_enrichment(as.character(gene_list))
+      print(head(final_result))
+      write.table(final_result, paste("enrichment_on_result_test_file.txt" ,sep=""), row.names = TRUE, sep="\t",quote=FALSE, col.names = TRUE)
+      return(list(results = final_result, counts = result_de))
+    }else{
+      inFile3 = input$file3
+      result_de <- read_and_clean_colnames(inFile3$datapath, header = TRUE, sep = "\t", rownames = 1)
+      gene_list <- rownames(subset(result_de, as.numeric(result_de$FDR) < 0.05)) #dagli solo quelli significativi
+      print(head(gene_list))
+      final_result = gene_pathway_enrichment(as.character(gene_list))
+      print(head(final_result))
+      write.table(final_result, paste("enrichment_on_",input$file3$name ,sep=""), row.names = TRUE, sep="\t",quote=FALSE, col.names = TRUE)
+      return(list(results = final_result, counts = result_de))
+    }
   })
   
+# output$download_results3 <- downloadHandler(
+#    filename = function() { paste("enrichment_on_",input$file3$name ,sep="") },
+#   content = function(file) {
+#      file.copy(paste("enrichment_on_",input$file3$name ,sep=""), file)
+#    }
+#  )
+  
   output$download_results3 <- downloadHandler(
-    filename = function() { paste("enrichment_on_",input$file3$name ,sep="") },
+    filename = function() { 
+      if (isTRUE(input$use_example2) && is.null(input$file3)) {
+        paste("enrichment_on_result_test_file.txt",sep="") 
+      }else{
+        paste("enrichment_on_",input$file3$name ,sep="") 
+      }
+    },
     content = function(file) {
-      file.copy(paste("enrichment_on_",input$file3$name ,sep=""), file)
+      if (isTRUE(input$use_example2) && is.null(input$file3)) {
+        file.copy(paste("enrichment_on_result_test_file.txt",sep=""), file)
+      }else{
+        file.copy(paste("enrichment_on_",input$file3$name ,sep=""),file)
+      }
     }
   )
   
@@ -725,40 +1288,98 @@ shinyServer(function(input, output, session) {
   
   output$inputTableEnrich <- renderDT({
     #datatable(enrichment_function()$counts)
-    inDataFile = input$file3
-    if (is.null(inDataFile)){
-      counts = matrix(data=" ",nrow=2,ncol=2)
-      colnames(counts) = c(" "," ")
+    if (isTRUE(input$use_example2) && is.null(input$file3)) {
+      counts <- read.table("result_test_file.txt", header = TRUE, sep = "\t", row.names = 1)
       datatable(counts)
     }else{
-      counts <- read.table(inDataFile$datapath, header = TRUE, sep = "\t", row.names = 1)
-      datatable(counts)
+      inDataFile = input$file3
+      if (is.null(inDataFile)){
+        counts = matrix(data=" ",nrow=2,ncol=2)
+        colnames(counts) = c(" "," ")
+        datatable(counts)
+      }else{
+        counts <- read.table(inDataFile$datapath, header = TRUE, sep = "\t", row.names = 1)
+        datatable(counts)
+      }
+    }
+  })
+  
+  
+  output$resultsTable10 <- renderText({
+    if (isTRUE(input$use_example2) && is.null(input$file7)) {
+      answer = paste(paste("\n",sep=""),
+                     paste("\n",sep=""),
+                     paste("NOTE: YOU ARE USING THE SAMPLE FILE!",sep=""),
+                     paste("\n",sep=""),
+                     paste("\n",sep=""))
+      return(answer)
+    }else{
+      answer = paste(paste("\n",sep=""),
+                     paste("\n",sep=""),
+                     paste("You are using your file named: ",input$file3$name,sep=""),
+                     paste("\n",sep=""),
+                     paste("\n",sep=""))
+      return(answer)
+    }
+  })
+  
+  output$resultsTable11 <- renderText({
+    if (isTRUE(input$use_example3) && is.null(input$file6) && !isTRUE(input$use_example4)) {
+      answer = paste(paste("\n",sep=""), 
+                     paste("\n",sep=""),
+                     paste("NOTE: YOU ARE USING THE COUNT SAMPLE FILE!",sep=""),
+                     paste("\n",sep=""),
+                     paste("\n",sep=""))
+      return(answer)
+    }
+    if (isTRUE(input$use_example4) && is.null(input$file6) && !isTRUE(input$use_example3)) {
+      answer = paste(paste("\n",sep=""), 
+                     paste("\n",sep=""),
+                     paste("NOTE: YOU ARE USING THE EDGER RESULT SAMPLE FILE!",sep=""),
+                     paste("\n",sep=""),
+                     paste("\n",sep=""))
+      return(answer)
+    }
+    if (isTRUE(input$use_example4) && is.null(input$file6) && isTRUE(input$use_example3)) {
+      answer = paste(paste("\n",sep=""), 
+                     paste("\n",sep=""),
+                     paste("NOTE: YOU CANNOT USE BOTH SAMPLE FILES!",sep=""),
+                     paste("\n",sep=""),
+                     paste("\n",sep=""),
+                     paste("PLEASE, DESELECT ONE OT THE TWO SAMPLE FILES OR UPLOAD A FILE!",sep=""),
+                     paste("\n",sep=""),
+                     paste("\n",sep=""))
+      return(answer)
+    }
+    if(!is.null(input$file6)){
+      answer = paste(paste("\n",sep=""),
+                     paste("\n",sep=""),
+                     paste("You are using your file named: ",input$file6$name,sep=""),
+                     paste("\n",sep=""),
+                     paste("\n",sep=""))
+      return(answer)
     }
   })
   
   output$generate_dotplot <- renderPlotly({
-   inFile3 = input$file3
+#   inFile3 = input$file3
+
    #counts <- read.table("C:/Users/f.russo.ENGIBBC/Desktop/REDAC_submission/results_expression_file.txt", header = TRUE, sep = "\t", row.names = 1)
-   counts <- read_and_clean_colnames(inFile3$datapath, header = TRUE, sep = "\t", rownames = 1)
-   print(head(counts))
-   gene_symbol_list <- rownames(subset(counts, as.numeric(counts$FDR) < 0.05))
-   entrez_ids <- mapIds(
-    org.Hs.eg.db,
-    keys = as.character(gene_symbol_list),
-    column = "ENTREZID",
-    keytype = "SYMBOL",
-    multiVals = "first"
-   )
-   entrez_ids <- na.omit(entrez_ids)
-   de <- as.character(entrez_ids)
-   print(head(de))
+#   counts <- read_and_clean_colnames(inFile3$datapath, header = TRUE, sep = "\t", rownames = 1)
+#   print(head(counts))
+#   gene_symbol_list <- rownames(subset(counts, as.numeric(counts$FDR) < 0.05))
+   #entrez_ids <- mapIds(org.Hs.eg.db,keys = as.character(gene_symbol_list), column = "ENTREZID",keytype = "SYMBOL",multiVals = "first")
+   #entrez_ids <- na.omit(entrez_ids)
+   #de <- as.character(entrez_ids)
+   #print(head(de))
    # KEGG enrichment
    #x = gene_pathway_enrichment(as.character(de))
-   x <- enrichKEGG(gene = de,organism = 'hsa',pAdjustMethod = "BH",qvalueCutoff = 0.001)
+   #x <- enrichKEGG(gene = de,organism = 'hsa',pAdjustMethod = "BH",qvalueCutoff = 0.001)
   
+   x <- enrichment_function()$results
   # Convert to data frame
   x_df <- as.data.frame(x)
-  print(x_df[,c(1,2,3,4,5,6,7,8,9,10,11)])
+  print(head(x_df))
   # Keep only top N results (optional)
   x_df <- x_df %>% arrange(qvalue) #%>% head(20)
   
@@ -797,11 +1418,25 @@ shinyServer(function(input, output, session) {
   
   
   dea_results2 <- eventReactive(input$run2, {
-    req(input$file2)
+    #req(input$file2) #se non si commenta questa linea non funzione l0'if qui sotto
     req(input$text2)
-    #print(input$file2)
-    #print(input$text2)
-    result_list = get_response_table(input$text2, input$file2)
+    if (isTRUE(input$use_example) && is.null(input$file2)) {
+      file_path <- "expression_test_file.txt"
+      result_list = get_response_table(input$text2, file_path)
+      res = result_list$result
+      parsed = result_list$parsed
+      ids_wt = result_list$ids_wt
+      ids_treated = result_list$ids_treated
+      regulated = result_list$which_results
+      print("Here parsed")
+      print(parsed)
+      res_df <- as.data.frame(res) #%>% rownames_to_column("Gene")
+      # Save locally
+      print("write locally the test file") #write it otherwise the downloadHandler does not work
+      write.table(res_df, paste("result_of_",input$text2,"_on_the_test_file.txt",sep=""), row.names = TRUE, sep="\t",quote=FALSE, col.names = TRUE)
+      counts <- read_and_clean_colnames(file_path, header=T,rownames = 1, sep="\t")
+    }else{
+      result_list = get_response_table(input$text2, input$file2)
     res = result_list$result
     parsed = result_list$parsed
     ids_wt = result_list$ids_wt
@@ -811,30 +1446,59 @@ shinyServer(function(input, output, session) {
     print(parsed)
     res_df <- as.data.frame(res) #%>% rownames_to_column("Gene")
     # Save locally
+    print("write locally the input file") #write it otherwise the downloadHandler does not work
     write.table(res_df, paste("result_of_",input$text2,"_on_",input$file2$name,sep=""), row.names = TRUE, sep="\t",quote=FALSE, col.names = TRUE)
     counts <- read_and_clean_colnames(input$file2$datapath, header=T,rownames = 1, sep="\t")
+    }
     return(list(results = res_df, counts = counts, text=input$text2, parsed=parsed, ids_treated = ids_treated, ids_wt = ids_wt, regulated= regulated))
+    
   })
   
   output$download_results2 <- downloadHandler(
-    filename = function() { paste("result_of_",input$text2,"_on_",input$file2$name,sep="") },
+    filename = function() { 
+      if (isTRUE(input$use_example) && is.null(input$file2)) {
+         paste("result_of_",input$text2,"_on_the_test_file.txt",sep="") 
+      }else{
+        paste("result_of_",input$text2,"_on_",input$file2$name,sep="") 
+      }
+    },
     content = function(file) {
-      file.copy(paste("result_of_",input$text2,"_on_",input$file2$name,sep=""), file)
+      if (isTRUE(input$use_example) && is.null(input$file2)) {
+         file.copy(paste("result_of_",input$text2,"_on_the_test_file.txt",sep=""), file)
+      }else{
+         file.copy(paste("result_of_",input$text2,"_on_",input$file2$name,sep=""),file)
+      }
     }
   )
-  
+
  output$resultsTable6 <- renderText({
    ids_treated = dea_results2()$ids_treated
    ids_wt = dea_results2()$ids_wt
    regulated = dea_results2()$regulated
    text = dea_results2()$text
    if(regulated == "de"){regulated = "differentially"}
-   answer = paste(paste("You asked: <<",text,">>.",sep=""), 
+   if (isTRUE(input$use_example) && is.null(input$file2)) {
+   answer = paste(paste("   ",sep=""), 
+                  paste("NOTE: YOU ARE USING THE SAMPLE FILE!",sep=""),
+                  paste("   ",sep=""), 
+                  paste("You asked: <<",text,">>.",sep=""), 
                   paste("I interpreted as treated samples these ones: ", printList(ids_treated), ". And as wild types these samples: ",printList(ids_wt),".", sep=""),
                   paste("I think you are looking for ",regulated, " regulated genes.", sep=""),
-                  paste("Hope my interpretation is correct.","Otherwise, please refrase the request above and click on 'Run Analysis!' button again.", sep="\n")
+                  paste("Hope my interpretation is correct.","Otherwise, please rephrase the request above and click on 'Run Analysis!' button again.", sep="\n"),
+                  paste("   ",sep="")
             , sep="\n")
-   answer
+   return(answer)
+   }else{
+     answer = paste(paste("   ",sep=""), 
+                    paste("You asked: <<",text,">>.",sep=""), 
+                    paste("   ",sep=""), 
+                    paste("I interpreted as treated samples these ones: ", printList(ids_treated), ". And as wild types these samples: ",printList(ids_wt),".", sep=""),
+                    paste("I think you are looking for ",regulated, " regulated genes.", sep=""),
+                    paste("Hope my interpretation is correct.","Otherwise, please rephrase the above request and click on 'Run Analysis!' button again.", sep="\n"),
+                    paste("   ",sep="")
+                    , sep="\n")
+    return(answer)
+   }
   })
   
   output$resultsTable2 <- renderDT({
@@ -848,6 +1512,10 @@ shinyServer(function(input, output, session) {
   })
   
   output$show_input_fun2 <- renderDT({
+    if (isTRUE(input$use_example) && is.null(input$file2)) {
+      counts <- read.table("expression_test_file.txt", sep = "\t", header = TRUE, row.names = 1)
+      datatable(counts)
+    }else{
       inDataFile = input$file2
       if (is.null(inDataFile)){
         counts = matrix(data=" ",nrow=2,ncol=2)
@@ -855,10 +1523,9 @@ shinyServer(function(input, output, session) {
         datatable(counts)
       }else{
         counts <- read_and_clean_colnames(inDataFile$datapath, sep = "\t", header = TRUE, rownames = 1 )
-        #counts <- read.table(inDataFile$datapath, header = TRUE, sep = "\t", row.names = 1)
-        #datatable(dea_results2()$counts)
         datatable(counts)
       }
+    }
   })
   
   output$chat_output2 <- renderUI({
@@ -877,7 +1544,7 @@ shinyServer(function(input, output, session) {
       url <- "https://api.together.xyz/v1/chat/completions"
       body <- list(
         #model = "google/gemma-3n-E4B-it",
-        model = "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free",
+        model = "meta-llama/Llama-3.3-70B-Instruct-Turbo",
         messages = list(
           list(role = "system", content = "use a Chain of Thought and Act as an expert data analyst in R programming language that uses DESEQ2 package"),
           list(role = "user", content = paste(prompt," on a dataset that have: ", dim(my_data)[1]," rows, and ",dim(my_data)[2]," columns. 
@@ -917,7 +1584,7 @@ shinyServer(function(input, output, session) {
     url <- "https://api.together.xyz/v1/chat/completions"
     body <- list(
       #model = "google/gemma-3n-E4B-it",
-      model = "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free",
+      model = "meta-llama/Llama-3.3-70B-Instruct-Turbo",
       messages = list(
         list(role = "system", content = "use a Chain of Thought and Act as an expert data analyst in Python programming language"),
         list(role = "user", content = paste(prompt," on a dataset that have: ", dim(my_data)[1]," rows, and ",dim(my_data)[2]," columns. 
@@ -956,7 +1623,7 @@ shinyServer(function(input, output, session) {
       url <- "https://api.together.xyz/v1/chat/completions"
       body <- list(
         model = "google/gemma-3n-E4B-it",
-        #model = "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free",
+        #model = "meta-llama/Llama-3.3-70B-Instruct-Turbo",
         messages = list(
           list(role = "system", content = "Act as an expert rnaseq data analyst suggesting a general way to perform the request (suggesting the use of DESEQ2, EdgeR, limma, for de genes identification) 
                     and the generation of several plots such as PCA, densities, heatmap, dendrogram, violin, et cetera to explore input data and MAplot, volcano plot, et cetera to explore results. Do not write code."),
@@ -1048,9 +1715,49 @@ shinyServer(function(input, output, session) {
     ma_plot
   })
   
+  pcaPlot2fun <- function(x=x){
+  # Step 1: Remove genes (rows) with zero variance
+  x <- x[apply(x, 1, var) != 0, ]
+  
+  # Step 2: Transpose and run PCA
+  x_t <- t(x)
+  pca_result <- prcomp(x_t, scale. = TRUE)
+  
+  # Step 3: Extract PCA scores
+  pca_data <- as.data.frame(pca_result$x)
+  pca_data$Sample <- rownames(pca_data)
+  
+  # Step 4: Get variance explained for labels
+  variance_explained <- summary(pca_result)$importance[2, 1:2] * 100
+  
+  # Step 5: Plotly PCA plot
+  fig <- plot_ly(
+    data = pca_data,
+    x = ~PC1,
+    y = ~PC2,
+    type = 'scatter',
+    mode = 'markers+text',
+    text = ~Sample,
+    hoverinfo = 'text',
+    textposition = 'top right',
+    marker = list(size = 6, color = 'blue')
+  ) %>%
+    layout(
+      title = "PCA: PC1 vs PC2",
+      xaxis = list(title = paste0("PC1 (", round(variance_explained[1], 1), "%)")),
+      yaxis = list(title = paste0("PC2 (", round(variance_explained[2], 1), "%)")),
+      showlegend = FALSE
+    )
+  fig
+  }
+  
   output$pcaPlot2 <- renderPlotly({
-    #datatable(dea_results2()$counts)
-    #x <- dea_results2()$counts
+    if (isTRUE(input$use_example) && is.null(input$file2)) {
+      req(file.exists("expression_test_file.txt"))
+      counts <- read.delim("expression_test_file.txt", header = TRUE, sep = "\t", row.names = 1)
+      fig = pcaPlot2fun(counts)
+      fig
+    }  else {
     inDataFile = input$file2
     if (is.null(inDataFile)){
       # Create an empty plot
@@ -1071,41 +1778,10 @@ shinyServer(function(input, output, session) {
     }else{
       #x <- dea_results2()$counts
     x =  read_and_clean_colnames(inDataFile$datapath, sep = "\t", header = TRUE, rownames = 1 )
-    
-    # Step 1: Remove genes (rows) with zero variance
-    x <- x[apply(x, 1, var) != 0, ]
-    
-    # Step 2: Transpose and run PCA
-    x_t <- t(x)
-    pca_result <- prcomp(x_t, scale. = TRUE)
-    
-    # Step 3: Extract PCA scores
-    pca_data <- as.data.frame(pca_result$x)
-    pca_data$Sample <- rownames(pca_data)
-    
-    # Step 4: Get variance explained for labels
-    variance_explained <- summary(pca_result)$importance[2, 1:2] * 100
-    
-    # Step 5: Plotly PCA plot
-    fig <- plot_ly(
-      data = pca_data,
-      x = ~PC1,
-      y = ~PC2,
-      type = 'scatter',
-      mode = 'markers+text',
-      text = ~Sample,
-      hoverinfo = 'text',
-      textposition = 'top right',
-      marker = list(size = 6, color = 'blue')
-    ) %>%
-      layout(
-        title = "PCA: PC1 vs PC2",
-        xaxis = list(title = paste0("PC1 (", round(variance_explained[1], 1), "%)")),
-        yaxis = list(title = paste0("PC2 (", round(variance_explained[2], 1), "%)")),
-        showlegend = FALSE
-      )
+    fig = pcaPlot2fun(x)
     fig
     }
+   }
   })
   
   output$integration_network <- renderPlotly({
@@ -1211,9 +1887,38 @@ shinyServer(function(input, output, session) {
     fig
   })
   
+  pcaCompPlotfun <- function(counts=counts){
+  # Step 1: Remove genes (rows) with zero variance
+  counts <-  counts[apply( counts, 1, var) != 0, ]
+  pca_result <- prcomp(t(counts), scale. = TRUE)  # Transpose if samples are columns
+  
+  # Calculate variance explained
+  var_explained <- pca_result$sdev^2 / sum(pca_result$sdev^2) * 100
+  
+  # Create Plotly screeplot
+  fig <- plot_ly(
+    x = paste0("PC", 1:length(var_explained)),
+    y = var_explained,
+    type = "bar",
+    marker = list(color = 'blue'),
+    text = ~paste0(round(var_explained, 2), "%"),
+    hoverinfo = 'text'
+  ) %>%
+    layout(
+      title = "Principal Component Histogram",
+      xaxis = list(title = "Principal Components"),
+      yaxis = list(title = "Variance Explained (%)")
+    )
+  fig
+  }
+  
   output$pcaCompPlot2 <- renderPlotly({
-    #datatable(dea_results2()$counts)
-    #counts <- dea_results2()$counts
+    if (isTRUE(input$use_example) && is.null(input$file2)) {
+      req(file.exists("expression_test_file.txt"))
+      counts <- read.delim("expression_test_file.txt", header = TRUE, sep = "\t", row.names = 1)
+      fig = pcaCompPlotfun(counts)
+      fig
+    }  else {
     inDataFile = input$file2
     if (is.null(inDataFile)){
       # Create an empty plot
@@ -1232,88 +1937,123 @@ shinyServer(function(input, output, session) {
       
       fig
     }else{
-    #x <- dea_results2()$counts
     counts =  read_and_clean_colnames(inDataFile$datapath, sep = "\t", header = TRUE, rownames = 1 )
-    
-    # Step 1: Remove genes (rows) with zero variance
-    counts <-  counts[apply( counts, 1, var) != 0, ]
-    pca_result <- prcomp(t(counts), scale. = TRUE)  # Transpose if samples are columns
-    
-    # Calculate variance explained
-    var_explained <- pca_result$sdev^2 / sum(pca_result$sdev^2) * 100
-    
-    # Create Plotly screeplot
-    fig <- plot_ly(
-      x = paste0("PC", 1:length(var_explained)),
-      y = var_explained,
-      type = "bar",
-      marker = list(color = 'blue'),
-      text = ~paste0(round(var_explained, 2), "%"),
-      hoverinfo = 'text'
-    ) %>%
-      layout(
-        title = "Principal Component Histogram",
-        xaxis = list(title = "Principal Components"),
-        yaxis = list(title = "Variance Explained (%)")
-      )
+    fig = pcaCompPlotfun(counts)
     fig
+    }
     }
   })
   
-  output$violinPlot2 <- renderPlotly({
-    #datatable(dea_results2()$counts)
-    #counts <- dea_results2()$counts
-    inDataFile = input$file2
-    if (is.null(inDataFile)){
-      # Create an empty plot
-      fig <- plot_ly() %>%
-        layout(
-          xaxis = list(showticklabels = FALSE, zeroline = FALSE),
-          yaxis = list(showticklabels = FALSE, zeroline = FALSE),
-          annotations = list(
-            text = "",
-            xref = "", yref = "",
-            showarrow = FALSE,
-            font = list(size = 20),
-            x = 0.5, y = 0.5
-          )
-        )
-      
-      fig
-    }else{
-      #x <- dea_results2()$counts
-      counts =  read_and_clean_colnames(inDataFile$datapath, sep = "\t", header = TRUE, rownames = 1 )
+  violinPlot2fun <- function(counts=counts){
     # Step 1: Log-transform counts
     log_counts <- log10(counts + 1)
     # Step 2: Add gene names as a column before melting
     log_counts$Gene <- rownames(log_counts)
     # Step 3: Melt into long format
     log_counts_long <- melt(log_counts, id.vars = "Gene", variable.name = "Sample", value.name = "Expression")
-      violin_plot <- plot_ly(      
-        data = log_counts_long,
-        x = ~Sample,
-        y = ~Expression,
-        type = 'violin',
-        split = ~Sample,
-        box = list(
-          visible = T
-        ),
-        meanline = list(
-          visible = T
-        )
-      )%>%
+    violin_plot <- plot_ly(      
+      data = log_counts_long,
+      x = ~Sample,
+      y = ~Expression,
+      type = 'violin',
+      split = ~Sample,
+      box = list(
+        visible = T
+      ),
+      meanline = list(
+        visible = T
+      )
+    )%>%
       layout(
         title = "Violin Plot of log10(counts + 1)",
         xaxis = list(title = "Sample", tickangle = 90),
         yaxis = list(title = "log10(Expression + 1)")
       )
     violin_plot
+  }
+  
+  output$violinPlot2 <- renderPlotly({
+    if (isTRUE(input$use_example) && is.null(input$file2)) {
+      req(file.exists("expression_test_file.txt"))
+      counts <- read.delim("expression_test_file.txt", header = TRUE, sep = "\t", row.names = 1)
+      fig = violinPlot2fun(counts)
+      fig
+    }  else {
+    inDataFile = input$file2
+    if (is.null(inDataFile)){
+      # Create an empty plot
+      fig <- plot_ly() %>%
+        layout(
+          xaxis = list(showticklabels = FALSE, zeroline = FALSE),
+          yaxis = list(showticklabels = FALSE, zeroline = FALSE),
+          annotations = list(
+            text = "",
+            xref = "", yref = "",
+            showarrow = FALSE,
+            font = list(size = 20),
+            x = 0.5, y = 0.5
+          )
+        )
+      fig
+    }else{
+      #x <- dea_results2()$counts
+      counts =  read_and_clean_colnames(inDataFile$datapath, sep = "\t", header = TRUE, rownames = 1 )
+      fig = violinPlot2fun(counts)
+      fig
     }
+   }
   })
   
+  densityPlot2fun <- function(counts= counts){
+  # Prepare the dataframe
+  df_list <- lapply(seq_len(ncol(counts)), function(i) {
+    data.frame(
+      counts = counts[, i],
+      idsample = colnames(counts)[i]
+    )
+  })
+  
+  df <- bind_rows(df_list)
+  
+  # Log-transform counts
+  df$log_counts <- log(df$counts + 1)
+  
+  # Initialize plotly object
+  p <- plot_ly()
+  
+  # Add a density curve per sample
+  for (sample_name in unique(df$idsample)) {
+    sample_data <- df %>% filter(idsample == sample_name)
+    d <- density(sample_data$log_counts)
+    
+    p <- p %>%
+      add_trace(
+        x = d$x,
+        y = d$y,
+        type = "scatter",
+        mode = "lines",
+        name = sample_name
+      )
+  }
+  
+  # Add layout
+  p <- p %>%
+    layout(
+      title = "Log Gene Count Densities by Sample",
+      xaxis = list(title = "log(count + 1)"),
+      yaxis = list(title = "Density"),
+      legend = list(title = list(text = "Sample"))
+    )
+  p
+  }
+  
   output$densityPlot2 <- renderPlotly({
-    #datatable(dea_results2()$counts)
-    #counts <- dea_results2()$counts
+    if (isTRUE(input$use_example) && is.null(input$file2)) {
+      req(file.exists("expression_test_file.txt"))
+      counts <- read.delim("expression_test_file.txt", header = TRUE, sep = "\t", row.names = 1)
+      fig = densityPlot2fun(counts)
+      fig
+    }  else {
     inDataFile = input$file2
     if (is.null(inDataFile)){
       # Create an empty plot
@@ -1334,72 +2074,13 @@ shinyServer(function(input, output, session) {
     }else{
       #x <- dea_results2()$counts
       counts =  read_and_clean_colnames(inDataFile$datapath, sep = "\t", header = TRUE, rownames = 1 )
-    print("density")
-    # Prepare the dataframe
-    df_list <- lapply(seq_len(ncol(counts)), function(i) {
-      data.frame(
-        counts = counts[, i],
-        idsample = colnames(counts)[i]
-      )
-    })
-    
-    df <- bind_rows(df_list)
-    
-    # Log-transform counts
-    df$log_counts <- log(df$counts + 1)
-    
-    # Initialize plotly object
-    p <- plot_ly()
-    
-    # Add a density curve per sample
-    for (sample_name in unique(df$idsample)) {
-      sample_data <- df %>% filter(idsample == sample_name)
-      d <- density(sample_data$log_counts)
-      
-      p <- p %>%
-        add_trace(
-          x = d$x,
-          y = d$y,
-          type = "scatter",
-          mode = "lines",
-          name = sample_name
-        )
+      fig = densityPlot2fun(counts)
+      fig
     }
-    
-    # Add layout
-    p <- p %>%
-      layout(
-        title = "Log Gene Count Densities by Sample",
-        xaxis = list(title = "log(count + 1)"),
-        yaxis = list(title = "Density"),
-        legend = list(title = list(text = "Sample"))
-      )
-    p
     }
   })
   
-  output$dendroPlot2 <- renderPlotly({
-    #datatable(dea_results2()$counts)
-    inDataFile = input$file2
-    if (is.null(inDataFile)){
-      # Create an empty plot
-      fig <- plot_ly() %>%
-        layout(
-          xaxis = list(showticklabels = FALSE, zeroline = FALSE),
-          yaxis = list(showticklabels = FALSE, zeroline = FALSE),
-          annotations = list(
-            text = "",
-            xref = "", yref = "",
-            showarrow = FALSE,
-            font = list(size = 20),
-            x = 0.5, y = 0.5
-          )
-        )
-      
-      fig
-    }else{
-    #x <- dea_results2()$counts
-    x =  read_and_clean_colnames(inDataFile$datapath, sep = "\t", header = TRUE, rownames = 1 )
+  dendroPlotfun <- function(x=x,flag=flag){
     x = log10(x+1)
     counts <- x
     #print("Clustering!")
@@ -1417,15 +2098,119 @@ shinyServer(function(input, output, session) {
     
     # Convert hclust to dendrogram and then to dendrogram segments
     dend <- as.dendrogram(fit)
-    p <- ggdendrogram(dend , rotate = FALSE, size = 2)
+    if(flag=="FALSE"){
+    p <- ggdendrogram(dend , rotate = FALSE, size = 2) + 
+      labs(title = "Dendrogram on your input file")
+    }else{
+      p <- ggdendrogram(dend , rotate = FALSE, size = 2) + 
+        labs(title = "Dendrogram on the SAMPLE FILE")
+    }
     fig=ggplotly(p)
-    fig
+    return(fig)
+  }
+  
+  output$dendroPlot2 <- renderPlotly({
+    #datatable(dea_results2()$counts)
+    if (isTRUE(input$use_example) && is.null(input$file2)) {
+        req(file.exists("expression_test_file.txt"))
+        x <- read.delim("expression_test_file.txt", header = TRUE, sep = "\t", row.names = 1)
+        fig = dendroPlotfun(x=x,flag=TRUE)
+        fig
+    }  else {
+      inDataFile = input$file2
+      if (is.null(inDataFile)){
+        # Create an empty plot
+        fig <- plot_ly() %>%
+          layout(
+            xaxis = list(showticklabels = FALSE, zeroline = FALSE),
+            yaxis = list(showticklabels = FALSE, zeroline = FALSE),
+            annotations = list(
+              text = "",
+              xref = "", yref = "",
+              showarrow = FALSE,
+              font = list(size = 20),
+              x = 0.5, y = 0.5
+            )
+          )
+        fig
+      }else{
+       x = read_and_clean_colnames(inDataFile$datapath, sep = "\t", header = TRUE, rownames = 1 )
+       fig = dendroPlotfun(x=x,flag=FALSE)
+       fig
+      }
     }
   })
   
+  heatmapPlot2fun <- function(counts = counts){
+  if(dim(counts)[1]<1000){
+    # Step 1: Compute log-transformed expression matrix
+    tog_counts <- log(as.matrix(counts + 1))
+    # Step 3: Scale by row (z-score normalization per gene)
+    scale_rows <- function(x) {
+      t(scale(t(x)))
+    }
+    scaled_counts <- scale_rows(top_counts)
+    
+    # Step 4: Create Plotly heatmap
+    heatmap_plot <- plot_ly(
+      y = colnames(scaled_counts),
+      x = rownames(scaled_counts),
+      z = t(scaled_counts),
+      type = "heatmap",
+      colors = colorRampPalette(c("red", "white", "blue"))(500),
+      showscale = TRUE
+    ) %>%
+      layout(
+        title = list(text = "Heatmap of the Most Variable 1000 Genes", font = list(size = 12)),
+        xaxis = list(title = "", tickangle = 90 ,tickfont = list(size = 10)),
+        yaxis = list(title = "", tickfont = list(size = 10)),
+        margin = list(l = 100, r = 50, b = 100, t = 50)
+      )
+    
+    fig = heatmap_plot
+  }else{
+    # Step 1: Compute log-transformed expression matrix
+    log_counts <- log(as.matrix(counts + 1))
+    
+    # Step 2: Select top 50 most variable genes
+    gene_variances <- apply(log_counts, 1, var)
+    top_genes <- names(sort(gene_variances, decreasing = TRUE))[1:1000]
+    top_counts <- log_counts[top_genes, ]
+    
+    # Step 3: Scale by row (z-score normalization per gene)
+    scale_rows <- function(x) {
+      t(scale(t(x)))
+    }
+    scaled_counts <- scale_rows(top_counts)
+    
+    # Step 4: Create Plotly heatmap
+    heatmap_plot <- plot_ly(
+      y = colnames(scaled_counts),
+      x = rownames(scaled_counts),
+      z = t(scaled_counts),
+      type = "heatmap",
+      colors = colorRampPalette(c("red", "white", "blue"))(500),
+      showscale = TRUE
+    ) %>%
+      layout(
+        title = list(text = "Heatmap of the Most Variable 1000 Genes", font = list(size = 12)),
+        xaxis = list(title = "", tickangle = 90 ,tickfont = list(size = 10)),
+        yaxis = list(title = "", tickfont = list(size = 10)),
+        margin = list(l = 100, r = 50, b = 100, t = 50)
+      )
+    
+    fig = heatmap_plot
+  } 
+  fig
+}
+  
   output$heatmapPlot2 <- renderPlotly({
-    #datatable(dea_results2()$counts)
-    #counts <- dea_results2()$counts
+    if (isTRUE(input$use_example) && is.null(input$file2)) {
+      req(file.exists("expression_test_file.txt"))
+      counts <- read.delim("expression_test_file.txt", header = TRUE, sep = "\t", row.names = 1)
+      fig = heatmapPlot2fun(counts)
+      fig
+    }  else {
     inDataFile = input$file2
     if (is.null(inDataFile)){
       # Create an empty plot
@@ -1446,72 +2231,50 @@ shinyServer(function(input, output, session) {
     }else{
       #x <- dea_results2()$counts
       counts =  read_and_clean_colnames(inDataFile$datapath, sep = "\t", header = TRUE, rownames = 1 )
-      if(dim(counts)[1]<1000){
-        # Step 1: Compute log-transformed expression matrix
-        tog_counts <- log(as.matrix(counts + 1))
-        # Step 3: Scale by row (z-score normalization per gene)
-        scale_rows <- function(x) {
-          t(scale(t(x)))
-        }
-        scaled_counts <- scale_rows(top_counts)
-        
-        # Step 4: Create Plotly heatmap
-        heatmap_plot <- plot_ly(
-          y = colnames(scaled_counts),
-          x = rownames(scaled_counts),
-          z = t(scaled_counts),
-          type = "heatmap",
-          colors = colorRampPalette(c("red", "white", "blue"))(500),
-          showscale = TRUE
-        ) %>%
-          layout(
-            title = list(text = "Heatmap of the Most Variable 1000 Genes", font = list(size = 12)),
-            xaxis = list(title = "", tickangle = 90 ,tickfont = list(size = 10)),
-            yaxis = list(title = "", tickfont = list(size = 10)),
-            margin = list(l = 100, r = 50, b = 100, t = 50)
-          )
-        
-        fig = heatmap_plot
-      }else{
-        # Step 1: Compute log-transformed expression matrix
-        log_counts <- log(as.matrix(counts + 1))
-        
-        # Step 2: Select top 50 most variable genes
-        gene_variances <- apply(log_counts, 1, var)
-        top_genes <- names(sort(gene_variances, decreasing = TRUE))[1:1000]
-        top_counts <- log_counts[top_genes, ]
-        
-        # Step 3: Scale by row (z-score normalization per gene)
-        scale_rows <- function(x) {
-          t(scale(t(x)))
-        }
-        scaled_counts <- scale_rows(top_counts)
-        
-        # Step 4: Create Plotly heatmap
-        heatmap_plot <- plot_ly(
-          y = colnames(scaled_counts),
-          x = rownames(scaled_counts),
-          z = t(scaled_counts),
-          type = "heatmap",
-          colors = colorRampPalette(c("red", "white", "blue"))(500),
-          showscale = TRUE
-        ) %>%
-          layout(
-            title = list(text = "Heatmap of the Most Variable 1000 Genes", font = list(size = 12)),
-            xaxis = list(title = "", tickangle = 90 ,tickfont = list(size = 10)),
-            yaxis = list(title = "", tickfont = list(size = 10)),
-            margin = list(l = 100, r = 50, b = 100, t = 50)
-          )
-        
-        fig = heatmap_plot
-      } 
-     fig
+      fig = heatmapPlot2fun(counts)
+      fig
+     }
     }
   })
   
+  pca3DPlot2fun <- function(counts=counts){
+  # Perform PCA (transpose if samples are columns!)
+  pca_result <- PCA(t(counts), graph = FALSE)  # Note the transpose 't()' if samples are columns
+  # Extract the PCA scores (rows are now samples after transposing)
+  pca_data <- data.frame(
+    Sample = colnames(counts),
+    PC1 = pca_result$ind$coord[, 1],
+    PC2 = pca_result$ind$coord[, 2],
+    PC3 = pca_result$ind$coord[, 3]
+  )
+  # Create interactive 3D plot with sample labels as hover text
+  p <- plot_ly(
+    data = pca_data,
+    x = ~PC1, y = ~PC2, z = ~PC3,
+    type = 'scatter3d',
+    mode = 'markers+text',
+    text = ~Sample,
+    hoverinfo = 'text',
+    marker = list(size = 5, color = 'blue')
+  )
+  p <- p %>% layout(
+    title = "3D PCA Plot",
+    scene = list(
+      xaxis = list(title = "PC1"),
+      yaxis = list(title = "PC2"),
+      zaxis = list(title = "PC3")
+    )
+  )
+  p
+  }
+  
   output$pca3DPlot2 <- renderPlotly({
-   # datatable(dea_results2()$counts)
-   # counts <- dea_results2()$counts
+    if (isTRUE(input$use_example) && is.null(input$file2)) {
+      req(file.exists("expression_test_file.txt"))
+      counts <- read.delim("expression_test_file.txt", header = TRUE, sep = "\t", row.names = 1)
+      fig = pca3DPlot2fun(counts)
+      fig
+    }  else {
     inDataFile = input$file2
     if (is.null(inDataFile)){
       # Create an empty plot
@@ -1527,39 +2290,13 @@ shinyServer(function(input, output, session) {
             x = 0.5, y = 0.5
           )
         )
-      
       p
     }else{
       #x <- dea_results2()$counts
       counts =  read_and_clean_colnames(inDataFile$datapath, sep = "\t", header = TRUE, rownames = 1 )
-    # Perform PCA (transpose if samples are columns!)
-    pca_result <- PCA(t(counts), graph = FALSE)  # Note the transpose 't()' if samples are columns
-    # Extract the PCA scores (rows are now samples after transposing)
-    pca_data <- data.frame(
-      Sample = colnames(counts),
-      PC1 = pca_result$ind$coord[, 1],
-      PC2 = pca_result$ind$coord[, 2],
-      PC3 = pca_result$ind$coord[, 3]
-    )
-    # Create interactive 3D plot with sample labels as hover text
-    p <- plot_ly(
-      data = pca_data,
-      x = ~PC1, y = ~PC2, z = ~PC3,
-      type = 'scatter3d',
-      mode = 'markers+text',
-      text = ~Sample,
-      hoverinfo = 'text',
-      marker = list(size = 5, color = 'blue')
-    )
-    p <- p %>% layout(
-      title = "3D PCA Plot",
-      scene = list(
-        xaxis = list(title = "PC1"),
-        yaxis = list(title = "PC2"),
-        zaxis = list(title = "PC3")
-      )
-    )
-    p
+      fig = pca3DPlot2fun(counts)
+      fig
+    }
     }
   })
   
@@ -1574,773 +2311,762 @@ shinyServer(function(input, output, session) {
   }
 
   dea_results3 <- eventReactive(input$run6, {
-    req(input$file6)
-    counts <- read_and_clean_colnames(input$file6$datapath, header=T,rownames = 1)
-    return(list(counts = counts))
-  })
-  
+    #req(input$file6)  #devo commentare questa linea altrimenti dea_results3 non funziona perchè aspetta sempre il file6
+    req(input$text6)
+    prompt <-input$text6
+    if (isTRUE(input$use_example3) && is.null(input$file6) && isFALSE(input$use_example4)) {
+      req(file.exists("expression_test_file.txt"))
+      my_data <- read.delim("expression_test_file.txt", header = TRUE, sep = "\t", row.names = 1)
+    }  else if(isTRUE(input$use_example4) && is.null(input$file6) && isFALSE(input$use_example3)) {
+        req(file.exists("expression_test_file.txt"))
+        my_data <- read.delim("result_test_file.txt", header = TRUE, sep = "\t", row.names = 1)
+    }  else {
+      inDataFile = input$file6
+      my_data <- read_and_clean_colnames(inDataFile$datapath, sep = "\t", header = TRUE, rownames = 1 )
+    }  
+   counts = my_data
+        print(head(counts))
+        api_key <- Sys.getenv("API_KEY")
+        if (api_key == "") stop("NO API key found!")
+        #api_key <-   # Replace with your API key
+        url <- "https://api.together.xyz/v1/chat/completions"
+        
+        body <- list(
+          #model = "google/gemma-3n-E4B-it", 
+          model = "meta-llama/Llama-3.3-70B-Instruct-Turbo",
+          messages = list(
+            list(role = "system", content = "Respond only in JSON format. The JSON must have this structure: 
+               {\"functiontoberun\"::[\"box\",\"surface\",\"density\",\"violin\",\"heat\",\"corrheat\",\"volcano\",\"pca\",\"cluster\",\"dendro\",\"integration\",\"pcacomp\",\"MAplot\",\"dot\",\"KEGG\",\"net\",\"3Dpca\"],
+                \"treated\":[[\"col1\"],[\"col2\"]],\"wt\":[[\"col3\"],[\"col4\"]],
+                \"regulated\":[\"de\",\"down\",\"up\"]}. Do not add explanations or other text."),
+            list(role = "user", content = prompt)
+          ),
+          max_tokens = 500
+        )
+        response <- POST(
+          url,
+          add_headers(
+            Authorization = paste("Bearer", api_key),
+            `Content-Type` = "application/json"
+          ),
+          body = toJSON(body, auto_unbox = TRUE),
+          encode = "json"
+        )
+        content <- httr::content(response, as = "text")
+        #print(content)
+        parsed <- fromJSON(content)
+        #parsed <- tryCatch(fromJSON(content), error = function(e) NULL)
+        #print(parsed$choices$message$content)
+        # the output is in this format:
+        # parsed$choices$message$content = "```json\n{\"function to be run\": [\"violin\"], \"columns to use\": [[\"1\", \"2\", \"3\"]]}\n```"
+        # but it should be in this format:
+        # parsed$choices$message$content = '{\"function to be run\": [\"violin\"], \"columns to use\": [[\"col1\"], [\"col2\"], [\"col3\"]]}'
+        #content = strsplit(parsed$choices$message$content,"\n" )[[1]][2] ## questa linea solo se usi Gemma LLM
+        content = parsed$choices$message$content
+        #print(content)
+        #[1] "{\"function to be run\": [\"violin\"], \"columns\": [[\"1\"], [\"2\"], [\"3\"]]}"
+        parsed <- fromJSON(content)
+        print(parsed)
+        
+        #$`function to be run`
+        #[1] "violin"
+        if (is.null(parsed) || !is.list(parsed)) {
+          ("Error: Failed to parse JSON response")
+        }
+        
+        withProgress(message = 'Running, Please Wait!', detail = 'This may take a while...', value = 0, {     
+          #print("parsed$functiontoberun")
+          #print(parsed$functiontoberun)
+          if (!is.null(parsed$functiontoberun) && !is.null(content)) {
+            # Eseguire le funzioni sui dati specificati
+            func_name <- parsed$functiontoberun[1]
+            cols <- unlist(parsed$columnstouse)
+            #scegli qui le funzioni da usare
+            if      (func_name == "pca")      {
+              # Step 1: Remove genes (rows) with zero variance
+              x <- counts
+              x <- x[apply(x, 1, var) != 0, ]
+              
+              # Step 2: Transpose and run PCA
+              x_t <- t(x)
+              pca_result <- prcomp(x_t, scale. = TRUE)
+              
+              # Step 3: Extract PCA scores
+              pca_data <- as.data.frame(pca_result$x)
+              pca_data$Sample <- rownames(pca_data)
+              
+              # Step 4: Get variance explained for labels
+              variance_explained <- summary(pca_result)$importance[2, 1:2] * 100
+              
+              # Step 5: Plotly PCA plot
+              library(plotly)
+              
+              pca_plot <- plot_ly(
+                data = pca_data,
+                x = ~PC1,
+                y = ~PC2,
+                type = 'scatter',
+                mode = 'markers+text',
+                text = ~Sample,
+                hoverinfo = 'text',
+                textposition = 'top right',
+                marker = list(size = 6, color = 'blue')
+              ) %>%
+                layout(
+                  title = "PCA: PC1 vs PC2",
+                  xaxis = list(title = paste0("PC1 (", round(variance_explained[1], 1), "%)")),
+                  yaxis = list(title = paste0("PC2 (", round(variance_explained[2], 1), "%)")),
+                  showlegend = FALSE
+                )
+              print("plot")
+              fig=pca_plot
+            } 
+            else if (func_name == "3Dpca")   {
+              # Perform PCA (transpose if samples are columns!)
+              # Perform PCA (transpose if samples are columns!)
+              pca_result <- PCA(t(counts), graph = FALSE)  # Note the transpose 't()' if samples are columns
+              
+              # Extract the PCA scores (rows are now samples after transposing)
+              pca_data <- data.frame(
+                Sample = colnames(counts),
+                PC1 = pca_result$ind$coord[, 1],
+                PC2 = pca_result$ind$coord[, 2],
+                PC3 = pca_result$ind$coord[, 3]
+              )
+              
+              # Create interactive 3D plot with sample labels as hover text
+              p <- plot_ly(
+                data = pca_data,
+                x = ~PC1, y = ~PC2, z = ~PC3,
+                type = 'scatter3d',
+                mode = 'markers+text',
+                text = ~Sample,
+                hoverinfo = 'text',
+                marker = list(size = 5, color = 'blue')
+              )
+              
+              p <- p %>% layout(
+                title = "3D PCA Plot",
+                scene = list(
+                  xaxis = list(title = "PC1"),
+                  yaxis = list(title = "PC2"),
+                  zaxis = list(title = "PC3")
+                )
+              )
+              print("PCA 3dim")
+              fig = p
+            }
+            else if (func_name == "heat")     {
+              if(dim(counts)[1]<1000){
+                # Step 1: Compute log-transformed expression matrix
+                log_counts <- log(as.matrix(counts + 1))
+                
+                # Step 2: Select top 50 most variable genes
+                #gene_variances <- apply(log_counts, 1, var)
+                #top_genes <- names(sort(gene_variances, decreasing = TRUE))[1:50]
+                top_counts <- log_counts
+                
+                # Step 3: Scale by row (z-score normalization per gene)
+                scale_rows <- function(x) {
+                  t(scale(t(x)))
+                }
+                scaled_counts <- scale_rows(top_counts)
+                
+                # Step 4: Create Plotly heatmap
+                heatmap_plot <- plot_ly(
+                  y = colnames(scaled_counts),
+                  x = rownames(scaled_counts),
+                  z = t(scaled_counts),
+                  type = "heatmap",
+                  colors = colorRampPalette(c("red", "white", "blue"))(500),
+                  showscale = TRUE
+                ) %>%
+                  layout(
+                    title = list(text = "Heatmap of the Most Variable 1000 Genes", font = list(size = 12)),
+                    xaxis = list(title = "", tickangle = 90 ,tickfont = list(size = 10)),
+                    yaxis = list(title = "", tickfont = list(size = 10)),
+                    margin = list(l = 100, r = 50, b = 100, t = 50)
+                  )
+                
+                fig = heatmap_plot
+              }else{
+                # Step 1: Compute log-transformed expression matrix
+                log_counts <- log(as.matrix(counts + 1))
+                
+                # Step 2: Select top 50 most variable genes
+                gene_variances <- apply(log_counts, 1, var)
+                top_genes <- names(sort(gene_variances, decreasing = TRUE))[1:1000]
+                top_counts <- log_counts[top_genes, ]
+                
+                # Step 3: Scale by row (z-score normalization per gene)
+                scale_rows <- function(x) {
+                  t(scale(t(x)))
+                }
+                scaled_counts <- scale_rows(top_counts)
+                
+                # Step 4: Create Plotly heatmap
+                heatmap_plot <- plot_ly(
+                  y = colnames(scaled_counts),
+                  x = rownames(scaled_counts),
+                  z = t(scaled_counts),
+                  type = "heatmap",
+                  colors = colorRampPalette(c("red", "white", "blue"))(500),
+                  showscale = TRUE
+                ) %>%
+                  layout(
+                    title = list(text = "Heatmap of the Most Variable 1000 Genes", font = list(size = 12)),
+                    xaxis = list(title = "", tickangle = 90 ,tickfont = list(size = 10)),
+                    yaxis = list(title = "", tickfont = list(size = 10)),
+                    margin = list(l = 100, r = 50, b = 100, t = 50)
+                  )
+                
+                fig = heatmap_plot
+              } 
+            }
+            else if (func_name == "box")      {
+              # Step 1: Log-transform counts
+              log_counts <- log10(counts + 1)
+              # Step 2: Add gene names as a column before melting
+              log_counts$Gene <- rownames(log_counts)
+              # Step 3: Melt into long format
+              log_counts_long <- melt(log_counts, id.vars = "Gene", variable.name = "Sample", value.name = "Expression")
+              box_plot <- plot_ly(      
+                data = log_counts_long,
+                x = ~Sample,
+                y = ~Expression,
+                type = 'box',
+                split = ~Sample
+              )%>%
+                layout(
+                  title = "BoxPlot of log10(counts + 1)",
+                  xaxis = list(title = "Sample", tickangle = 90),
+                  yaxis = list(title = "log10(Expression + 1)")
+                )
+              fig = box_plot
+            } 
+            else if (func_name == "surface")  {
+              if ( dim(counts)[1]>100 ){
+                log_counts <- log10(counts + 1)
+                gene_variances <- apply(log_counts, 1, var)
+                top_genes <- names(sort(gene_variances, decreasing = TRUE))[1:100]
+                gene_expression <- as.matrix(log_counts[top_genes, ])
+                
+                # Create surface plot
+                fig = plot_ly(
+                  z = ~gene_expression,
+                  x = colnames(gene_expression),
+                  y = rownames(gene_expression),
+                  type = "surface"
+                ) %>%
+                  layout(
+                    scene = list(
+                      xaxis = list(title = ""),
+                      yaxis = list(title = ""),
+                      zaxis = list(title = "Log10 Level")
+                    ),
+                    title = "3D Surface of the 100 most variable genes"
+                  )
+              }else{
+                log_counts <- log10(counts + 1)
+                gene_variances <- apply(log_counts, 1, var)
+                top_genes <- names(sort(gene_variances, decreasing = TRUE))
+                gene_expression <- as.matrix(log_counts[top_genes, ])
+                # Create surface plot
+                fig = plot_ly(
+                  z = ~gene_expression,
+                  x = colnames(gene_expression),
+                  y = rownames(gene_expression),
+                  type = "surface"
+                ) %>%
+                  layout(
+                    scene = list(
+                      xaxis = list(title = ""),
+                      yaxis = list(title = ""),
+                      zaxis = list(title = "Log10 Level")
+                    ),
+                    title = "3D Surface"
+                  )
+              }
+            }
+            else if (func_name == "violin")   {
+              # Step 1: Log-transform counts
+              log_counts <- log10(counts + 1)
+              # Step 2: Add gene names as a column before melting
+              log_counts$Gene <- rownames(log_counts)
+              # Step 3: Melt into long format
+              log_counts_long <- melt(log_counts, id.vars = "Gene", variable.name = "Sample", value.name = "Expression")
+              violin_plot <- plot_ly(      
+                data = log_counts_long,
+                x = ~Sample,
+                y = ~Expression,
+                type = 'violin',
+                split = ~Sample,
+                box = list(
+                  visible = T
+                ),
+                meanline = list(
+                  visible = T
+                )
+              )%>%
+                layout(
+                  title = "Violin Plot of log10(counts + 1)",
+                  xaxis = list(title = "Sample", tickangle = 90),
+                  yaxis = list(title = "log10(Expression + 1)")
+                )
+              fig = violin_plot
+            } 
+            else if (func_name == "corrheat"){
+              top_counts <- cor(counts)
+              # Step 3: Scale by row (z-score normalization per gene)
+              scaled_counts <- top_counts
+              # Step 4: Create Plotly heatmap
+              heatmap_plot <- plot_ly(
+                x = colnames(scaled_counts),
+                y = rownames(scaled_counts),
+                z = scaled_counts,
+                type = "heatmap",
+                colors = colorRampPalette(c("white","blue"))(500),
+                showscale = TRUE,
+              ) %>%
+                layout(
+                  title = list(text = "Correlation Heatmap", font = list(size = 12)),
+                  xaxis = list(title = "", tickangle = 45),
+                  yaxis = list(title = "", tickfont = list(size = 8)),
+                  margin = list(l = 100, r = 50, b = 100, t = 50)
+                )
+              fig = heatmap_plot
+            }
+            else if (func_name == "volcano")  {
+              res_df = counts
+              print(res_df)
+              res_df$significant <- res_df$FDR < 0.05
+              res_df$gene <- rownames(res_df)
+              volcano_plot <- plot_ly(
+                data = res_df,
+                x = ~log2FoldChange,
+                y = ~-log10(FDR),
+                type = 'scatter',
+                mode = 'markers',
+                color = ~significant,
+                colors = c("gray", "red"),  # or customize your color scheme
+                text = ~paste(
+                  "Gene: ", gene,
+                  "<br>log2FC: ", round(log2FoldChange, 2),
+                  "<br>-log10(p): ", round(-log10(FDR), 2)
+                ),
+                hoverinfo = 'text',
+                marker = list(size = 6, opacity = 0.6)
+              ) %>%
+                layout(
+                  title = list(text = "Volcano Plot", font = list(size = 16)),
+                  xaxis = list(title = "log2 Fold Change"),
+                  yaxis = list(title = "-log10 FDR"),
+                  legend = list(title = list(text = "Significance"))
+                )
+              fig = volcano_plot
+            }
+            else if ((func_name == "cluster") || (func_name == "dendro")){
+              x = counts
+              x = log10(x+1)
+              #print("Clustering!")
+              #x <- normalize.quantiles(as.matrix(x), copy = TRUE)
+              colnames(x) <- colnames(counts)
+              rownames(x) <- rownames(counts)
+              
+              clustering_used_method <- "ward.D"
+              distance_used_method <- "euclidean"
+              
+              hclustfunc <- function(x) hclust(x, method = clustering_used_method)
+              distfunc <- function(x) dist(x, method = distance_used_method)
+              
+              fit <- hclustfunc(distfunc(t(x)))
+              
+              # Convert hclust to dendrogram and then to dendrogram segments
+              dend <- as.dendrogram(fit)
+              p <- ggdendrogram(dend , rotate = FALSE, size = 2)
+              fig=ggplotly(p)
+            }
+            else if (func_name == "density") {
+              print("density")
+              # Prepare the dataframe
+              df_list <- lapply(seq_len(ncol(counts)), function(i) {
+                data.frame(
+                  counts = counts[, i],
+                  idsample = colnames(counts)[i]
+                )
+              })
+              
+              df <- bind_rows(df_list)
+              
+              # Log-transform counts
+              df$log_counts <- log(df$counts + 1)
+              
+              # Initialize plotly object
+              p <- plot_ly()
+              
+              # Add a density curve per sample
+              for (sample_name in unique(df$idsample)) {
+                sample_data <- df %>% filter(idsample == sample_name)
+                d <- density(sample_data$log_counts)
+                
+                p <- p %>%
+                  add_trace(
+                    x = d$x,
+                    y = d$y,
+                    type = "scatter",
+                    mode = "lines",
+                    name = sample_name
+                  )
+              }
+              
+              # Add layout
+              p <- p %>%
+                layout(
+                  title = "Log Gene Count Densities by Sample",
+                  xaxis = list(title = "log(count + 1)"),
+                  yaxis = list(title = "Density"),
+                  legend = list(title = list(text = "Sample"))
+                )
+              fig = p
+            }
+            else if (func_name =="pcacomp"){
+              # Step 1: Remove genes (rows) with zero variance
+              counts <-  counts[apply( counts, 1, var) != 0, ]
+              pca_result <- prcomp(t(counts), scale. = TRUE)  # Transpose if samples are columns
+              # Calculate variance explained
+              var_explained <- pca_result$sdev^2 / sum(pca_result$sdev^2) * 100
+              # Create Plotly screeplot
+              fig <- plot_ly(
+                x = paste0("PC", 1:length(var_explained)),
+                y = var_explained,
+                type = "bar",
+                marker = list(color = 'blue'),
+                text = ~paste0(round(var_explained, 2), "%"),
+                hoverinfo = 'text'
+              ) %>%
+                layout(
+                  title = "Principal Component Histogram",
+                  xaxis = list(title = "Principal Components"),
+                  yaxis = list(title = "Variance Explained (%)")
+                )
+              fig
+            }
+            else if (func_name == "MAplot")  {
+              res_df = counts
+              print(res_df)
+              res_df$significant <- res_df$FDR < 0.05
+              #plot(log2(res$baseMean + 1) , res$log2FoldChange ,col = "black", main="DESeq2 Fold Change Plot", xlab='Mean of Normalized Counts', ylab='log2FoldChange',pch=19,cex=0.3) 
+              res_df$gene <- rownames(res_df)
+              print(head(res_df))
+              
+              # Step 3: Create interactive MA plot
+              ma_plot <- plot_ly(
+                data = res_df,
+                x = ~logCPM,
+                y = ~log2FoldChange,
+                type = 'scatter',
+                mode = 'markers',
+                color = ~significant,
+                colors = c("gray", "red"),  # Customize colors if needed
+                text = ~paste(
+                  "Gene: ", gene,
+                  "<br>logCPM: ", round(logCPM, 2),
+                  "<br>log2FC: ", round(log2FoldChange, 2)
+                ),
+                hoverinfo = 'text',
+                marker = list(size = 6, opacity = 0.6)
+              ) %>%
+                layout(
+                  title = list(text =  "MA Plot", font = list(size = 16)),
+                  xaxis = list(title = "logCPM"),
+                  yaxis = list(title = "log2 Fold Change"),
+                  legend = list(title = list(text = "Significance"))
+                )
+              fig = ma_plot
+            }
+            else if (func_name == "dot")     {
+              gene_symbol_list <- rownames(subset(counts, as.numeric(counts$FDR) < 0.05))
+              entrez_ids <- mapIds(
+                org.Hs.eg.db,
+                keys = as.character(gene_symbol_list),
+                column = "ENTREZID",
+                keytype = "SYMBOL",
+                multiVals = "first"
+              )
+              entrez_ids <- na.omit(entrez_ids)
+              de <- as.character(entrez_ids)
+              
+              # KEGG enrichment
+              x <- enrichKEGG(
+                gene = de,
+                organism = 'hsa',
+                pAdjustMethod = "BH",
+                qvalueCutoff = 0.001
+              )
+              
+              # Convert to data frame
+              x_df <- as.data.frame(x)
+              
+              # Keep only top N results (optional)
+              x_df <- x_df %>% arrange(qvalue) #%>% head(20)
+              
+              # Create Plotly dot plot
+              fig = plot_ly(
+                data = x_df,
+                x = ~GeneRatio,
+                y = ~reorder(Description, -qvalue),
+                type = 'scatter',
+                mode = 'markers',
+                marker = list(
+                  size = ~Count * 0.7,
+                  color = ~qvalue,
+                  colorscale = 'Magma',
+                  colorbar = list(title = "qvalue"),
+                  reversescale = TRUE,
+                  showscale = TRUE
+                ),
+                text = ~paste(
+                  "Pathway:", Description,
+                  "<br>Gene Ratio:", GeneRatio,
+                  "<br>Count:", Count,
+                  "<br>qvalue:", signif(qvalue, 4)
+                ),
+                hoverinfo = "text"
+              ) %>%
+                layout(
+                  title = "KEGG Pathway Enrichment (Interactive)",
+                  xaxis = list(title = "Gene Ratio"),
+                  yaxis = list(title = ""),
+                  margin = list(l = 150)  # for long pathway names
+                )
+            }
+            else if (func_name == "KEGG") {
+              # Step 1: Filter genes with padj < 0.05
+              gene_symbol_list <- rownames(subset(counts, as.numeric(counts$FDR) < 0.05))
+              entrez_ids <- mapIds(
+                org.Hs.eg.db,
+                keys = as.character(gene_symbol_list),
+                column = "ENTREZID",
+                keytype = "SYMBOL",
+                multiVals = "first"
+              )
+              entrez_ids <- na.omit(entrez_ids)
+              de <- as.character(entrez_ids)
+              
+              # Step 2: KEGG enrichment
+              x <- enrichKEGG(
+                gene = de,
+                organism = 'hsa',
+                pAdjustMethod = "BH",
+                qvalueCutoff = 0.001
+              )
+              edox <- setReadable(x, "org.Hs.eg.db", "ENTREZID")
+              
+              # Step 3: Build edges and nodes (top 5 terms)
+              top_n <- 10
+              top_terms <- head(edox@result$Description, top_n)
+              
+              edges <- data.frame(from = character(), to = character(), stringsAsFactors = FALSE)
+              nodes <- data.frame(id = character(), type = character(), stringsAsFactors = FALSE)
+              
+              for (term in top_terms) {
+                genes <- strsplit(edox@result$geneID[edox@result$Description == term], "/")[[1]]
+                edges <- rbind(edges, data.frame(from = term, to = genes))
+                nodes <- rbind(nodes, data.frame(id = term, type = "pathway"))
+                nodes <- rbind(nodes, data.frame(id = genes, type = "gene"))
+              }
+              
+              nodes <- distinct(nodes)
+              
+              # Step 4: Graph layout
+              g <- graph_from_data_frame(edges, vertices = nodes, directed = FALSE)
+              lay <- layout_with_fr(g)
+              
+              # Assign layout coordinates to nodes
+              node_coords <- data.frame(
+                id = V(g)$name,
+                x = lay[, 1],
+                y = lay[, 2],
+                type = V(g)$type
+              )
+              
+              # Extract edges with coordinates
+              edge_coords <- data.frame(
+                x = numeric(),
+                y = numeric(),
+                xend = numeric(),
+                yend = numeric()
+              )
+              
+              for (e in 1:ecount(g)) {
+                ends_ids <- ends(g, E(g)[e])
+                from_coord <- node_coords[node_coords$id == ends_ids[1], c("x", "y")]
+                to_coord <- node_coords[node_coords$id == ends_ids[2], c("x", "y")]
+                edge_coords <- rbind(edge_coords, data.frame(
+                  x = from_coord$x,
+                  y = from_coord$y,
+                  xend = to_coord$x,
+                  yend = to_coord$y
+                ))
+              }
+              
+              # Step 5: Plot with Plotly
+              p <- plot_ly(type = 'scatter', mode = 'lines')
+              
+              # Add edges
+              for (i in 1:nrow(edge_coords)) {
+                p <- add_segments(p,
+                                  x = edge_coords$x[i],
+                                  y = edge_coords$y[i],
+                                  xend = edge_coords$xend[i],
+                                  yend = edge_coords$yend[i],
+                                  line = list(color = 'blue', width = 0.5),
+                                  showlegend = FALSE
+                )
+              }
+              
+              # Add nodes
+              p <- add_trace(p,
+                             x = node_coords$x,
+                             y = node_coords$y,
+                             text = node_coords$id,
+                             mode = 'markers+text',
+                             textposition = 'top center',
+                             marker = list(
+                               size = 10,
+                               color = ifelse(node_coords$type == "pathway", "black", "red")
+                             ),
+                             hoverinfo = "text",
+                             showlegend = FALSE
+              )
+              
+              p <- layout(p,
+                          title = "Interactive KEGG cnetplot (Plotly)",
+                          xaxis = list(title = "", showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+                          yaxis = list(title = "", showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE)
+              )
+              
+              fig = p
+            }
+            else if ((func_name == "net")|| (func_name == "integration")){
+              
+              # counts <- read.table("C:/Users/f.russo.ENGIBBC/Desktop/REDAC_submission/expression_file.txt", header = TRUE, sep = "\t", row.names = 1)
+              # ppi_data  <- read.table("C:/Users/f.russo.ENGIBBC/Desktop/REDAC_submission/protein_protein_interaction_data.txt", header = TRUE, sep = "\t", stringsAsFactors = FALSE)
+              ppi_data  <- read.table(file ="9606.protein.physical.links.detailed.v12.0_with_gene_symbols_.txt", header = TRUE,sep = "\t")
+              protein_info <- read.table(file ="9606.protein.info.v12.0.txt", header = TRUE,sep = "\t")
+              colnames(ppi_data) <- c("protein_code_2", "protein_code_1", "experimental", "Protein1", "Protein2")
+              # colnames(ppi_data) <- c("Protein1", "Protein2")
+              #Adesso elimino i conteggi nulli o quelli inferiori a 10 su tutti i campioni
+              #keep <- rowSums(counts > dim(counts)[2])
+              #counts <- counts[keep,]
+              gene_expr = counts
+              interaction_threshold = 980
+              ppi_data = subset(ppi_data, ppi_data$experimental > interaction_threshold)
+              print(dim(ppi_data))
+              # Ensure genes in PPI match those in the gene expression dataset
+              valid_genes <- rownames(gene_expr)
+              ppi_filtered <- ppi_data %>% filter(Protein1 %in% valid_genes & Protein2 %in% valid_genes)
+              # Function to compute Pearson correlation between two interacting proteins
+              compute_correlation2 <- function(protein1, protein2, gene_expr) {
+                expr1 <- gene_expr[protein1, ]
+                expr2 <- gene_expr[protein2, ]
+                
+                if (sd(expr1) == 0 || sd(expr2) == 0) {
+                  return(NA)  # Avoid zero variance issue
+                }
+                
+                cor_value <- cor(as.numeric(expr1), as.numeric(expr2), method = "pearson", use = "complete.obs")
+                cor_value 
+              }
+              
+              ppi_filtered <- ppi_filtered[,3:5]
+              ppi_filtered <- ppi_filtered[,c(2,3,1)]
+              
+              # Compute correlation for each interaction
+              ppi_filtered <- ppi_filtered %>%
+                rowwise() %>%
+                mutate(Correlation = compute_correlation2(Protein1,Protein2, gene_expr) ) %>%
+                drop_na()  # Remove NA values due to zero variance
+              
+              # Create a weighted graph
+              ppi_graph <- graph_from_data_frame(ppi_filtered, directed = FALSE)
+              
+              # Generate layout
+              layout <- layout_with_fr(ppi_graph)
+              V(ppi_graph)$x <- layout[,1]
+              V(ppi_graph)$y <- layout[,2]
+              
+              # Get edge and node data
+              edges <- get.data.frame (ppi_graph)
+              nodes <- data.frame(id = V(ppi_graph)$name,
+                                  x = V(ppi_graph)$x,
+                                  y = V(ppi_graph)$y)
+              
+              # Start plot
+              fig <- plot_ly()
+              
+              # Add edge traces
+              for (i in 1:nrow(edges)) {
+                edge <- edges[i, ]
+                v0 <- which(V(ppi_graph)$name == edge$from)
+                v1 <- which(V(ppi_graph)$name == edge$to)
+                
+                fig <- fig %>% add_trace(
+                  type = "scatter",
+                  mode = "lines",  
+                  x = c(V(ppi_graph)$x[v0], V(ppi_graph)$x[v1]),
+                  y = c(V(ppi_graph)$y[v0], V(ppi_graph)$y[v1]),
+                  line = list(
+                    width = abs(edge$Correlation) * 2,
+                    color = ifelse(edge$Correlation > 0, "red", "blue"),
+                    opacity = 0.5
+                  ),
+                  hoverinfo = "text",
+                  text = paste0(edge$from, " - ", edge$to, "<br>Correlation: ", round(edge$Correlation, 2)),
+                  showlegend = FALSE
+                )
+              }
+              
+              # Add node trace
+              fig <- fig %>% add_trace(
+                type = "scatter",
+                mode = "markers+text",
+                x = nodes$x,
+                y = nodes$y,
+                text = nodes$id,
+                textposition = "top center",
+                marker = list(size = 2, color = 'skyblue'),
+                hoverinfo = "text",
+                showlegend = FALSE
+              )
+              
+              # Final layout
+              fig <- fig %>% layout(
+                title = 'Gene Expression Weighted PPI Network',
+                xaxis = list(title = "", showgrid = FALSE, zeroline = FALSE),
+                yaxis = list(title = "", showgrid = FALSE, zeroline = FALSE)
+              )
+            }
+            
+          }
+          n <- 100
+          for (i in 1:n) {
+            # Increment the progress bar, and update the detail text.
+            incProgress(1/n, detail = paste("\n  ",i, "% completed!"))
+            # Pause for 0.1 seconds to simulate a long computation.
+            Sys.sleep(0.0005)
+          }
+        }) 
+        fig
+    })
+    
   output$show_input_fun3 <- renderDT({
     datatable(dea_results3()$counts)
   })
   
   output$generate_plot3 <- renderPlotly({ #questa deve chiamare una funzione che dipende da run6
-    req(input$text6)
-    prompt <-input$text6
-    inDataFile = input$file6
-    #counts <- datatable(dea_results3()$counts)
-    if (is.null(inDataFile)){
-      # Create an empty plot
-      fig <- plot_ly() %>%
-        layout(
-          xaxis = list(showticklabels = FALSE, zeroline = FALSE),
-          yaxis = list(showticklabels = FALSE, zeroline = FALSE),
-          annotations = list(
-            text = "",
-            xref = "", yref = "",
-            showarrow = FALSE,
-            font = list(size = 20),
-            x = 0.5, y = 0.5
-          )
-        )
-      
-      fig
-    }else{
-      my_data <- read_and_clean_colnames(inDataFile$datapath, sep = "\t", header = TRUE, rownames = 1 )
-      counts = my_data
-      print(head(counts))
-      api_key <- Sys.getenv("API_KEY")
-      if (api_key == "") stop("NO API key found!")
-      #api_key <-   # Replace with your API key
-      url <- "https://api.together.xyz/v1/chat/completions"
-      
-      body <- list(
-        #model = "google/gemma-3n-E4B-it", 
-        model = "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free",
-        messages = list(
-          list(role = "system", content = "Respond only in JSON format. The JSON must have this structure: 
-               {\"functiontoberun\"::[\"box\",\"surface\",\"density\",\"violin\",\"heat\",\"corrheat\",\"volcano\",\"pca\",\"cluster\",\"dendro\",\"integration\",\"pcacomp\",\"MAplot\",\"dot\",\"KEGG\",\"net\",\"3Dpca\"],
-                \"treated\":[[\"col1\"],[\"col2\"]],\"wt\":[[\"col3\"],[\"col4\"]],
-                \"regulated\":[\"de\",\"down\",\"up\"]}. Do not add explanations or other text."),
-          list(role = "user", content = prompt)
-        ),
-        max_tokens = 500
-      )
-      response <- POST(
-        url,
-        add_headers(
-          Authorization = paste("Bearer", api_key),
-          `Content-Type` = "application/json"
-        ),
-        body = toJSON(body, auto_unbox = TRUE),
-        encode = "json"
-      )
-      content <- httr::content(response, as = "text")
-      #print(content)
-      parsed <- fromJSON(content)
-      #parsed <- tryCatch(fromJSON(content), error = function(e) NULL)
-      #print(parsed$choices$message$content)
-      # the output is in this format:
-      # parsed$choices$message$content = "```json\n{\"function to be run\": [\"violin\"], \"columns to use\": [[\"1\", \"2\", \"3\"]]}\n```"
-      # but it should be in this format:
-      # parsed$choices$message$content = '{\"function to be run\": [\"violin\"], \"columns to use\": [[\"col1\"], [\"col2\"], [\"col3\"]]}'
-      #content = strsplit(parsed$choices$message$content,"\n" )[[1]][2] ## questa linea solo se usi Gemma LLM
-      content = parsed$choices$message$content
-      #print(content)
-      #[1] "{\"function to be run\": [\"violin\"], \"columns\": [[\"1\"], [\"2\"], [\"3\"]]}"
-      parsed <- fromJSON(content)
-      print(parsed)
-      
-      #$`function to be run`
-      #[1] "violin"
-      if (is.null(parsed) || !is.list(parsed)) {
-        ("Error: Failed to parse JSON response")
-      }
-      
-      withProgress(message = 'Running, Please Wait!', detail = 'This may take a while...', value = 0, {     
-        #print("parsed$functiontoberun")
-        #print(parsed$functiontoberun)
-        if (!is.null(parsed$functiontoberun) && !is.null(content)) {
-          # Eseguire le funzioni sui dati specificati
-          func_name <- parsed$functiontoberun[1]
-          cols <- unlist(parsed$columnstouse)
-          #scegli qui le funzioni da usare
-          if      (func_name == "pca")      {
-            # Step 1: Remove genes (rows) with zero variance
-            x <- counts
-            x <- x[apply(x, 1, var) != 0, ]
-            
-            # Step 2: Transpose and run PCA
-            x_t <- t(x)
-            pca_result <- prcomp(x_t, scale. = TRUE)
-            
-            # Step 3: Extract PCA scores
-            pca_data <- as.data.frame(pca_result$x)
-            pca_data$Sample <- rownames(pca_data)
-            
-            # Step 4: Get variance explained for labels
-            variance_explained <- summary(pca_result)$importance[2, 1:2] * 100
-            
-            # Step 5: Plotly PCA plot
-            library(plotly)
-            
-            pca_plot <- plot_ly(
-              data = pca_data,
-              x = ~PC1,
-              y = ~PC2,
-              type = 'scatter',
-              mode = 'markers+text',
-              text = ~Sample,
-              hoverinfo = 'text',
-              textposition = 'top right',
-              marker = list(size = 6, color = 'blue')
-            ) %>%
-              layout(
-                title = "PCA: PC1 vs PC2",
-                xaxis = list(title = paste0("PC1 (", round(variance_explained[1], 1), "%)")),
-                yaxis = list(title = paste0("PC2 (", round(variance_explained[2], 1), "%)")),
-                showlegend = FALSE
-              )
-            print("plot")
-            fig=pca_plot
-          } 
-          else if (func_name == "3Dpca")   {
-            # Perform PCA (transpose if samples are columns!)
-            # Perform PCA (transpose if samples are columns!)
-            pca_result <- PCA(t(counts), graph = FALSE)  # Note the transpose 't()' if samples are columns
-            
-            # Extract the PCA scores (rows are now samples after transposing)
-            pca_data <- data.frame(
-              Sample = colnames(counts),
-              PC1 = pca_result$ind$coord[, 1],
-              PC2 = pca_result$ind$coord[, 2],
-              PC3 = pca_result$ind$coord[, 3]
-            )
-            
-            # Create interactive 3D plot with sample labels as hover text
-            p <- plot_ly(
-              data = pca_data,
-              x = ~PC1, y = ~PC2, z = ~PC3,
-              type = 'scatter3d',
-              mode = 'markers+text',
-              text = ~Sample,
-              hoverinfo = 'text',
-              marker = list(size = 5, color = 'blue')
-            )
-            
-            p <- p %>% layout(
-              title = "3D PCA Plot",
-              scene = list(
-                xaxis = list(title = "PC1"),
-                yaxis = list(title = "PC2"),
-                zaxis = list(title = "PC3")
-              )
-            )
-            print("PCA 3dim")
-            fig = p
-          }
-          else if (func_name == "heat")     {
-            if(dim(counts)[1]<1000){
-              # Step 1: Compute log-transformed expression matrix
-              log_counts <- log(as.matrix(counts + 1))
-              
-              # Step 2: Select top 50 most variable genes
-              #gene_variances <- apply(log_counts, 1, var)
-              #top_genes <- names(sort(gene_variances, decreasing = TRUE))[1:50]
-              top_counts <- log_counts
-              
-              # Step 3: Scale by row (z-score normalization per gene)
-              scale_rows <- function(x) {
-                t(scale(t(x)))
-              }
-              scaled_counts <- scale_rows(top_counts)
-              
-              # Step 4: Create Plotly heatmap
-              heatmap_plot <- plot_ly(
-                y = colnames(scaled_counts),
-                x = rownames(scaled_counts),
-                z = t(scaled_counts),
-                type = "heatmap",
-                colors = colorRampPalette(c("red", "white", "blue"))(500),
-                showscale = TRUE
-              ) %>%
-                layout(
-                  title = list(text = "Heatmap of the Most Variable 1000 Genes", font = list(size = 12)),
-                  xaxis = list(title = "", tickangle = 90 ,tickfont = list(size = 10)),
-                  yaxis = list(title = "", tickfont = list(size = 10)),
-                  margin = list(l = 100, r = 50, b = 100, t = 50)
-                )
-              
-              fig = heatmap_plot
-            }else{
-              # Step 1: Compute log-transformed expression matrix
-              log_counts <- log(as.matrix(counts + 1))
-              
-              # Step 2: Select top 50 most variable genes
-              gene_variances <- apply(log_counts, 1, var)
-              top_genes <- names(sort(gene_variances, decreasing = TRUE))[1:1000]
-              top_counts <- log_counts[top_genes, ]
-              
-              # Step 3: Scale by row (z-score normalization per gene)
-              scale_rows <- function(x) {
-                t(scale(t(x)))
-              }
-              scaled_counts <- scale_rows(top_counts)
-              
-              # Step 4: Create Plotly heatmap
-              heatmap_plot <- plot_ly(
-                y = colnames(scaled_counts),
-                x = rownames(scaled_counts),
-                z = t(scaled_counts),
-                type = "heatmap",
-                colors = colorRampPalette(c("red", "white", "blue"))(500),
-                showscale = TRUE
-              ) %>%
-                layout(
-                  title = list(text = "Heatmap of the Most Variable 1000 Genes", font = list(size = 12)),
-                  xaxis = list(title = "", tickangle = 90 ,tickfont = list(size = 10)),
-                  yaxis = list(title = "", tickfont = list(size = 10)),
-                  margin = list(l = 100, r = 50, b = 100, t = 50)
-                )
-              
-              fig = heatmap_plot
-            } 
-          }
-          else if (func_name == "box")      {
-            # Step 1: Log-transform counts
-            log_counts <- log10(counts + 1)
-            # Step 2: Add gene names as a column before melting
-            log_counts$Gene <- rownames(log_counts)
-            # Step 3: Melt into long format
-            log_counts_long <- melt(log_counts, id.vars = "Gene", variable.name = "Sample", value.name = "Expression")
-            box_plot <- plot_ly(      
-              data = log_counts_long,
-              x = ~Sample,
-              y = ~Expression,
-              type = 'box',
-              split = ~Sample
-            )%>%
-              layout(
-                title = "BoxPlot of log10(counts + 1)",
-                xaxis = list(title = "Sample", tickangle = 90),
-                yaxis = list(title = "log10(Expression + 1)")
-              )
-            fig = box_plot
-          } 
-          else if (func_name == "surface")  {
-            if ( dim(counts)[1]>100 ){
-              log_counts <- log10(counts + 1)
-              gene_variances <- apply(log_counts, 1, var)
-              top_genes <- names(sort(gene_variances, decreasing = TRUE))[1:100]
-              gene_expression <- as.matrix(log_counts[top_genes, ])
-              
-              # Create surface plot
-              fig = plot_ly(
-                z = ~gene_expression,
-                x = colnames(gene_expression),
-                y = rownames(gene_expression),
-                type = "surface"
-              ) %>%
-                layout(
-                  scene = list(
-                    xaxis = list(title = ""),
-                    yaxis = list(title = ""),
-                    zaxis = list(title = "Log10 Level")
-                  ),
-                  title = "3D Surface of the 100 most variable genes"
-                )
-            }else{
-              log_counts <- log10(counts + 1)
-              gene_variances <- apply(log_counts, 1, var)
-              top_genes <- names(sort(gene_variances, decreasing = TRUE))
-              gene_expression <- as.matrix(log_counts[top_genes, ])
-              # Create surface plot
-              fig = plot_ly(
-                z = ~gene_expression,
-                x = colnames(gene_expression),
-                y = rownames(gene_expression),
-                type = "surface"
-              ) %>%
-                layout(
-                  scene = list(
-                    xaxis = list(title = ""),
-                    yaxis = list(title = ""),
-                    zaxis = list(title = "Log10 Level")
-                  ),
-                  title = "3D Surface"
-                )
-            }
-          }
-          else if (func_name == "violin")   {
-            # Step 1: Log-transform counts
-            log_counts <- log10(counts + 1)
-            # Step 2: Add gene names as a column before melting
-            log_counts$Gene <- rownames(log_counts)
-            # Step 3: Melt into long format
-            log_counts_long <- melt(log_counts, id.vars = "Gene", variable.name = "Sample", value.name = "Expression")
-            violin_plot <- plot_ly(      
-              data = log_counts_long,
-              x = ~Sample,
-              y = ~Expression,
-              type = 'violin',
-              split = ~Sample,
-              box = list(
-                visible = T
-              ),
-              meanline = list(
-                visible = T
-              )
-            )%>%
-              layout(
-                title = "Violin Plot of log10(counts + 1)",
-                xaxis = list(title = "Sample", tickangle = 90),
-                yaxis = list(title = "log10(Expression + 1)")
-              )
-            fig = violin_plot
-          } 
-          else if (func_name == "corrheat"){
-            top_counts <- cor(counts)
-            # Step 3: Scale by row (z-score normalization per gene)
-            scaled_counts <- top_counts
-            # Step 4: Create Plotly heatmap
-            heatmap_plot <- plot_ly(
-              x = colnames(scaled_counts),
-              y = rownames(scaled_counts),
-              z = scaled_counts,
-              type = "heatmap",
-              colors = colorRampPalette(c("white","blue"))(500),
-              showscale = TRUE,
-            ) %>%
-              layout(
-                title = list(text = "Correlation Heatmap", font = list(size = 12)),
-                xaxis = list(title = "", tickangle = 45),
-                yaxis = list(title = "", tickfont = list(size = 8)),
-                margin = list(l = 100, r = 50, b = 100, t = 50)
-              )
-            fig = heatmap_plot
-          }
-          else if (func_name == "volcano")  {
-            res_df = counts
-            print(res_df)
-            res_df$significant <- res_df$FDR < 0.05
-            res_df$gene <- rownames(res_df)
-            volcano_plot <- plot_ly(
-              data = res_df,
-              x = ~log2FoldChange,
-              y = ~-log10(FDR),
-              type = 'scatter',
-              mode = 'markers',
-              color = ~significant,
-              colors = c("gray", "red"),  # or customize your color scheme
-              text = ~paste(
-                "Gene: ", gene,
-                "<br>log2FC: ", round(log2FoldChange, 2),
-                "<br>-log10(p): ", round(-log10(FDR), 2)
-              ),
-              hoverinfo = 'text',
-              marker = list(size = 6, opacity = 0.6)
-            ) %>%
-              layout(
-                title = list(text = "Volcano Plot", font = list(size = 16)),
-                xaxis = list(title = "log2 Fold Change"),
-                yaxis = list(title = "-log10 FDR"),
-                legend = list(title = list(text = "Significance"))
-              )
-            fig = volcano_plot
-          }
-          else if ((func_name == "cluster") || (func_name == "dendro")){
-            x = counts
-            x = log10(x+1)
-            #print("Clustering!")
-            #x <- normalize.quantiles(as.matrix(x), copy = TRUE)
-            colnames(x) <- colnames(counts)
-            rownames(x) <- rownames(counts)
-            
-            clustering_used_method <- "ward.D"
-            distance_used_method <- "euclidean"
-            
-            hclustfunc <- function(x) hclust(x, method = clustering_used_method)
-            distfunc <- function(x) dist(x, method = distance_used_method)
-            
-            fit <- hclustfunc(distfunc(t(x)))
-            
-            # Convert hclust to dendrogram and then to dendrogram segments
-            dend <- as.dendrogram(fit)
-            p <- ggdendrogram(dend , rotate = FALSE, size = 2)
-            fig=ggplotly(p)
-          }
-          else if (func_name == "density") {
-            print("density")
-            # Prepare the dataframe
-            df_list <- lapply(seq_len(ncol(counts)), function(i) {
-              data.frame(
-                counts = counts[, i],
-                idsample = colnames(counts)[i]
-              )
-            })
-            
-            df <- bind_rows(df_list)
-            
-            # Log-transform counts
-            df$log_counts <- log(df$counts + 1)
-            
-            # Initialize plotly object
-            p <- plot_ly()
-            
-            # Add a density curve per sample
-            for (sample_name in unique(df$idsample)) {
-              sample_data <- df %>% filter(idsample == sample_name)
-              d <- density(sample_data$log_counts)
-              
-              p <- p %>%
-                add_trace(
-                  x = d$x,
-                  y = d$y,
-                  type = "scatter",
-                  mode = "lines",
-                  name = sample_name
-                )
-            }
-            
-            # Add layout
-            p <- p %>%
-              layout(
-                title = "Log Gene Count Densities by Sample",
-                xaxis = list(title = "log(count + 1)"),
-                yaxis = list(title = "Density"),
-                legend = list(title = list(text = "Sample"))
-              )
-            fig = p
-          }
-          else if (func_name =="pcacomp"){
-            # Step 1: Remove genes (rows) with zero variance
-            counts <-  counts[apply( counts, 1, var) != 0, ]
-            pca_result <- prcomp(t(counts), scale. = TRUE)  # Transpose if samples are columns
-            # Calculate variance explained
-            var_explained <- pca_result$sdev^2 / sum(pca_result$sdev^2) * 100
-            # Create Plotly screeplot
-            fig <- plot_ly(
-              x = paste0("PC", 1:length(var_explained)),
-              y = var_explained,
-              type = "bar",
-              marker = list(color = 'blue'),
-              text = ~paste0(round(var_explained, 2), "%"),
-              hoverinfo = 'text'
-            ) %>%
-              layout(
-                title = "Principal Component Histogram",
-                xaxis = list(title = "Principal Components"),
-                yaxis = list(title = "Variance Explained (%)")
-              )
-            fig
-          }
-          else if (func_name == "MAplot")  {
-            res_df = counts
-            print(res_df)
-            res_df$significant <- res_df$FDR < 0.05
-            #plot(log2(res$baseMean + 1) , res$log2FoldChange ,col = "black", main="DESeq2 Fold Change Plot", xlab='Mean of Normalized Counts', ylab='log2FoldChange',pch=19,cex=0.3) 
-            res_df$gene <- rownames(res_df)
-            print(head(res_df))
-            
-            # Step 3: Create interactive MA plot
-            ma_plot <- plot_ly(
-              data = res_df,
-              x = ~logCPM,
-              y = ~log2FoldChange,
-              type = 'scatter',
-              mode = 'markers',
-              color = ~significant,
-              colors = c("gray", "red"),  # Customize colors if needed
-              text = ~paste(
-                "Gene: ", gene,
-                "<br>logCPM: ", round(logCPM, 2),
-                "<br>log2FC: ", round(log2FoldChange, 2)
-              ),
-              hoverinfo = 'text',
-              marker = list(size = 6, opacity = 0.6)
-            ) %>%
-              layout(
-                title = list(text =  "MA Plot", font = list(size = 16)),
-                xaxis = list(title = "logCPM"),
-                yaxis = list(title = "log2 Fold Change"),
-                legend = list(title = list(text = "Significance"))
-              )
-            fig = ma_plot
-          }
-          else if (func_name == "dot")     {
-            gene_symbol_list <- rownames(subset(counts, as.numeric(counts$FDR) < 0.05))
-            entrez_ids <- mapIds(
-              org.Hs.eg.db,
-              keys = as.character(gene_symbol_list),
-              column = "ENTREZID",
-              keytype = "SYMBOL",
-              multiVals = "first"
-            )
-            entrez_ids <- na.omit(entrez_ids)
-            de <- as.character(entrez_ids)
-            
-            # KEGG enrichment
-            x <- enrichKEGG(
-              gene = de,
-              organism = 'hsa',
-              pAdjustMethod = "BH",
-              qvalueCutoff = 0.001
-            )
-            
-            # Convert to data frame
-            x_df <- as.data.frame(x)
-            
-            # Keep only top N results (optional)
-            x_df <- x_df %>% arrange(qvalue) #%>% head(20)
-            
-            # Create Plotly dot plot
-            fig = plot_ly(
-              data = x_df,
-              x = ~GeneRatio,
-              y = ~reorder(Description, -qvalue),
-              type = 'scatter',
-              mode = 'markers',
-              marker = list(
-                size = ~Count * 0.7,
-                color = ~qvalue,
-                colorscale = 'Magma',
-                colorbar = list(title = "qvalue"),
-                reversescale = TRUE,
-                showscale = TRUE
-              ),
-              text = ~paste(
-                "Pathway:", Description,
-                "<br>Gene Ratio:", GeneRatio,
-                "<br>Count:", Count,
-                "<br>qvalue:", signif(qvalue, 4)
-              ),
-              hoverinfo = "text"
-            ) %>%
-              layout(
-                title = "KEGG Pathway Enrichment (Interactive)",
-                xaxis = list(title = "Gene Ratio"),
-                yaxis = list(title = ""),
-                margin = list(l = 150)  # for long pathway names
-              )
-          }
-          else if (func_name == "KEGG") {
-            # Step 1: Filter genes with padj < 0.05
-            gene_symbol_list <- rownames(subset(counts, as.numeric(counts$FDR) < 0.05))
-            entrez_ids <- mapIds(
-              org.Hs.eg.db,
-              keys = as.character(gene_symbol_list),
-              column = "ENTREZID",
-              keytype = "SYMBOL",
-              multiVals = "first"
-            )
-            entrez_ids <- na.omit(entrez_ids)
-            de <- as.character(entrez_ids)
-            
-            # Step 2: KEGG enrichment
-            x <- enrichKEGG(
-              gene = de,
-              organism = 'hsa',
-              pAdjustMethod = "BH",
-              qvalueCutoff = 0.001
-            )
-            edox <- setReadable(x, "org.Hs.eg.db", "ENTREZID")
-            
-            # Step 3: Build edges and nodes (top 5 terms)
-            top_n <- 10
-            top_terms <- head(edox@result$Description, top_n)
-            
-            edges <- data.frame(from = character(), to = character(), stringsAsFactors = FALSE)
-            nodes <- data.frame(id = character(), type = character(), stringsAsFactors = FALSE)
-            
-            for (term in top_terms) {
-              genes <- strsplit(edox@result$geneID[edox@result$Description == term], "/")[[1]]
-              edges <- rbind(edges, data.frame(from = term, to = genes))
-              nodes <- rbind(nodes, data.frame(id = term, type = "pathway"))
-              nodes <- rbind(nodes, data.frame(id = genes, type = "gene"))
-            }
-            
-            nodes <- distinct(nodes)
-            
-            # Step 4: Graph layout
-            g <- graph_from_data_frame(edges, vertices = nodes, directed = FALSE)
-            lay <- layout_with_fr(g)
-            
-            # Assign layout coordinates to nodes
-            node_coords <- data.frame(
-              id = V(g)$name,
-              x = lay[, 1],
-              y = lay[, 2],
-              type = V(g)$type
-            )
-            
-            # Extract edges with coordinates
-            edge_coords <- data.frame(
-              x = numeric(),
-              y = numeric(),
-              xend = numeric(),
-              yend = numeric()
-            )
-            
-            for (e in 1:ecount(g)) {
-              ends_ids <- ends(g, E(g)[e])
-              from_coord <- node_coords[node_coords$id == ends_ids[1], c("x", "y")]
-              to_coord <- node_coords[node_coords$id == ends_ids[2], c("x", "y")]
-              edge_coords <- rbind(edge_coords, data.frame(
-                x = from_coord$x,
-                y = from_coord$y,
-                xend = to_coord$x,
-                yend = to_coord$y
-              ))
-            }
-            
-            # Step 5: Plot with Plotly
-            p <- plot_ly(type = 'scatter', mode = 'lines')
-            
-            # Add edges
-            for (i in 1:nrow(edge_coords)) {
-              p <- add_segments(p,
-                                x = edge_coords$x[i],
-                                y = edge_coords$y[i],
-                                xend = edge_coords$xend[i],
-                                yend = edge_coords$yend[i],
-                                line = list(color = 'blue', width = 0.5),
-                                showlegend = FALSE
-              )
-            }
-            
-            # Add nodes
-            p <- add_trace(p,
-                           x = node_coords$x,
-                           y = node_coords$y,
-                           text = node_coords$id,
-                           mode = 'markers+text',
-                           textposition = 'top center',
-                           marker = list(
-                             size = 10,
-                             color = ifelse(node_coords$type == "pathway", "black", "red")
-                           ),
-                           hoverinfo = "text",
-                           showlegend = FALSE
-            )
-            
-            p <- layout(p,
-                        title = "Interactive KEGG cnetplot (Plotly)",
-                        xaxis = list(title = "", showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
-                        yaxis = list(title = "", showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE)
-            )
-            
-            fig = p
-          }
-          else if ((func_name == "net")|| (func_name == "integration")){
-            
-            # counts <- read.table("C:/Users/f.russo.ENGIBBC/Desktop/REDAC_submission/expression_file.txt", header = TRUE, sep = "\t", row.names = 1)
-            # ppi_data  <- read.table("C:/Users/f.russo.ENGIBBC/Desktop/REDAC_submission/protein_protein_interaction_data.txt", header = TRUE, sep = "\t", stringsAsFactors = FALSE)
-            ppi_data  <- read.table(file ="9606.protein.physical.links.detailed.v12.0_with_gene_symbols_.txt", header = TRUE,sep = "\t")
-            protein_info <- read.table(file ="9606.protein.info.v12.0.txt", header = TRUE,sep = "\t")
-            colnames(ppi_data) <- c("protein_code_2", "protein_code_1", "experimental", "Protein1", "Protein2")
-            # colnames(ppi_data) <- c("Protein1", "Protein2")
-            #Adesso elimino i conteggi nulli o quelli inferiori a 10 su tutti i campioni
-            #keep <- rowSums(counts > dim(counts)[2])
-            #counts <- counts[keep,]
-            gene_expr = counts
-            interaction_threshold = 980
-            ppi_data = subset(ppi_data, ppi_data$experimental > interaction_threshold)
-            print(dim(ppi_data))
-            # Ensure genes in PPI match those in the gene expression dataset
-            valid_genes <- rownames(gene_expr)
-            ppi_filtered <- ppi_data %>% filter(Protein1 %in% valid_genes & Protein2 %in% valid_genes)
-            # Function to compute Pearson correlation between two interacting proteins
-            compute_correlation2 <- function(protein1, protein2, gene_expr) {
-              expr1 <- gene_expr[protein1, ]
-              expr2 <- gene_expr[protein2, ]
-              
-              if (sd(expr1) == 0 || sd(expr2) == 0) {
-                return(NA)  # Avoid zero variance issue
-              }
-              
-              cor_value <- cor(as.numeric(expr1), as.numeric(expr2), method = "pearson", use = "complete.obs")
-              cor_value 
-            }
-            
-            ppi_filtered <- ppi_filtered[,3:5]
-            ppi_filtered <- ppi_filtered[,c(2,3,1)]
-            
-            # Compute correlation for each interaction
-            ppi_filtered <- ppi_filtered %>%
-              rowwise() %>%
-              mutate(Correlation = compute_correlation2(Protein1,Protein2, gene_expr) ) %>%
-              drop_na()  # Remove NA values due to zero variance
-            
-            # Create a weighted graph
-            ppi_graph <- graph_from_data_frame(ppi_filtered, directed = FALSE)
-            
-            # Generate layout
-            layout <- layout_with_fr(ppi_graph)
-            V(ppi_graph)$x <- layout[,1]
-            V(ppi_graph)$y <- layout[,2]
-            
-            # Get edge and node data
-            edges <- get.data.frame (ppi_graph)
-            nodes <- data.frame(id = V(ppi_graph)$name,
-                                x = V(ppi_graph)$x,
-                                y = V(ppi_graph)$y)
-            
-            # Start plot
-            fig <- plot_ly()
-            
-            # Add edge traces
-            for (i in 1:nrow(edges)) {
-              edge <- edges[i, ]
-              v0 <- which(V(ppi_graph)$name == edge$from)
-              v1 <- which(V(ppi_graph)$name == edge$to)
-              
-              fig <- fig %>% add_trace(
-                type = "scatter",
-                mode = "lines",  
-                x = c(V(ppi_graph)$x[v0], V(ppi_graph)$x[v1]),
-                y = c(V(ppi_graph)$y[v0], V(ppi_graph)$y[v1]),
-                line = list(
-                  width = abs(edge$Correlation) * 2,
-                  color = ifelse(edge$Correlation > 0, "red", "blue"),
-                  opacity = 0.5
-                ),
-                hoverinfo = "text",
-                text = paste0(edge$from, " - ", edge$to, "<br>Correlation: ", round(edge$Correlation, 2)),
-                showlegend = FALSE
-              )
-            }
-            
-            # Add node trace
-            fig <- fig %>% add_trace(
-              type = "scatter",
-              mode = "markers+text",
-              x = nodes$x,
-              y = nodes$y,
-              text = nodes$id,
-              textposition = "top center",
-              marker = list(size = 2, color = 'skyblue'),
-              hoverinfo = "text",
-              showlegend = FALSE
-            )
-            
-            # Final layout
-            fig <- fig %>% layout(
-              title = 'Gene Expression Weighted PPI Network',
-              xaxis = list(title = "", showgrid = FALSE, zeroline = FALSE),
-              yaxis = list(title = "", showgrid = FALSE, zeroline = FALSE)
-            )
-          }
-          
-        }
-        n <- 100
-        for (i in 1:n) {
-          # Increment the progress bar, and update the detail text.
-          incProgress(1/n, detail = paste("\n  ",i, "% completed!"))
-          # Pause for 0.1 seconds to simulate a long computation.
-          Sys.sleep(0.0005)
-        }
-      }) 
-      fig
-    }
+    fig <- dea_results3()
+    fig
   })
   
   
@@ -2376,7 +3102,7 @@ shinyServer(function(input, output, session) {
       
       body <- list(
         #model = "google/gemma-3n-E4B-it", 
-        model = "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free",
+        model = "meta-llama/Llama-3.3-70B-Instruct-Turbo",
         messages = list(
           list(role = "system", content = "Respond only in JSON format. The JSON must have this structure: 
                {\"functiontoberun\"::[\"box\",\"surface\",\"density\",\"violin\",\"heat\",\"corrheat\",\"volcano\",\"pca\",\"cluster\",\"dendro\",\"integration\",\"pcacomp\",\"MAplot\",\"dot\",\"KEGG\",\"net\",\"3Dpca\"],
