@@ -819,13 +819,35 @@ shinyServer(function(input, output, session) {
       message("  user_phrase: ", user_phrase)
       
       # --- Extract keywords ---
-      words <- unlist(strsplit(tolower(all_terms), "\\W+"))
-      stopwords <- c("the","of","in","and","to","from","for","these","this","their","against",
-                     "by","under","with","study","results","produced","comparison","mechanisms",
-                     "dose","induced","data","made","cell","cells","explain","explanation",
-                     "analysis","pathway","pathways","explain","parental","drug")
-      keywords <- setdiff(words, stopwords)
-      keywords <- keywords[nchar(keywords) > 2]
+      #words <- unlist(strsplit(tolower(all_terms), "\\W+"))
+      #stopwords <- c("the","of","in","and","to","from","for","these","this","their","against",
+      #               "by","under","with","study","results","produced","comparison","mechanisms",
+      #               "dose","induced","data","made","cell","cells","explain","explanation",
+      #               "analysis","pathway","pathways","explain","parental","drug")
+      #keywords <- setdiff(words, stopwords)
+      #keywords <- keywords[nchar(keywords) > 2]
+      #keywords <- unique(keywords)
+      
+      
+      # Tokenizzazione veloce con stringi
+      words <- stri_extract_all_words(stri_trans_tolower(all_terms), simplify = TRUE)
+      words <- as.vector(words)
+      
+      # Usa stopwords package invece di lista manuale
+      stopwords_en <- stopwords::stopwords("en", source = "snowball")
+      biomedical_stops <- c("study", "results", "produced", "comparison", "mechanisms",
+                            "dose", "induced", "data", "made", "cell", "cells", "explain", 
+                            "explanation", "analysis", "pathway", "pathways", "parental", "drug",
+                            "the","of","in","and","to","from","for","these","this","their","against",
+                            "by","under","with","study","results","produced","comparison","mechanisms",
+                            "dose","induced","data","made","cell","cells","explain","explanation",
+                            "analysis","pathway","pathways","explain","parental","drug")
+      
+      # Combinazione efficiente
+      all_stops <- c(stopwords_en, biomedical_stops)
+      
+      # Filtraggio in un'unica passata
+      keywords <- words[!words %in% all_stops & nchar(words) > 2]
       keywords <- unique(keywords)
       
       if (length(keywords) < min_keywords) {
