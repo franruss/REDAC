@@ -1115,19 +1115,60 @@ output$chat_output_interpretationLlama_old2 <- renderUI({
     }
   })
   
+  clean_ensembl_ids <- function(ids) {
+    ids <- gsub("\\..*$", "", ids)      # remove version number
+    ids <- gsub("_PAR_Y$", "", ids)     # remove suffix
+    return(ids)
+  }
+  
+  clean_refseq_ids <- function(ids) {
+    ids <- gsub("\\..*$", "", ids)      # remove version number
+    return(ids)
+  }
+  
   # Function for pathway enrichment analysis
   gene_pathway_enrichment <- function(gene_list) {
     in_enrich_method <- input$enrich_method
-    if (all(grepl("^[A-Za-z0-9.-]+$", gene_list[1:10]))) { #we have gene symbols
+    #Add here the possibility to convert ensembl gene id refseq gene id
+   # if (all(grepl("^[A-Za-z0-9.-]+$", gene_list[1:10]))) { #we have gene symbols
       # Convert gene symbols to Entrez IDs
       #print(gene_list)
-      entrez_ids <- mapIds(org.Hs.eg.db, keys = gene_list, column = "ENTREZID", keytype = "SYMBOL", multiVals = "first")
-      entrez_ids <- na.omit(entrez_ids)
+  #    entrez_ids <- mapIds(org.Hs.eg.db, keys = gene_list, column = "ENTREZID", keytype = "SYMBOL", multiVals = "first")
+  #    entrez_ids <- na.omit(entrez_ids)
       #print(entrez_ids)
-      if (length(entrez_ids) == 0) {
-        stop("No valid Entrez IDs found for the given gene symbols.")
+  #    if (length(entrez_ids) == 0) {
+  #      stop("No valid Entrez IDs found for the given gene symbols.")
+  #    }
+  #  }
+    gene_list <- na.omit(gene_list)
+    print(gene_list[1:5])
+    # Detect input type automatically and map to Entrez IDs
+      if (all(grepl("^ENSG[0-9]+\\.?[0-9]*$", gene_list[1:5], ignore.case = FALSE))) {
+        input_type <- "ENSEMBL"    # Ensembl IDs
+        clean_ids <- clean_ensembl_ids(gene_list)
+      } else if (all( grepl("^(NM_|NR_|XM_|XR_)", gene_list[1:5]))) {
+        input_type <- "REFSEQ"     # RefSeq IDs (e.g., NM_001256.4)
+        clean_ids <- clean_refseq_ids(gene_list)
+      } else if (all(grepl("^[A-Za-z0-9.-]+$", gene_list[1:5]))) {
+        input_type <- "SYMBOL"     # Default: gene symbols
+        clean_ids <- gene_list
+      } else {
+        stop("Unable to detect gene ID type. Please provide SYMBOL, ENSEMBL, or REFSEQ IDs.")
       }
-    }
+      
+      message("Detected gene ID type: ", input_type)
+      
+      # Map to Entrez -----------------------------------------------------------
+      entrez_ids <- mapIds(org.Hs.eg.db, keys = clean_ids, column = "ENTREZID", keytype = input_type, multiVals = "first")
+      
+      # Remove NAs
+      entrez_ids <- na.omit(entrez_ids)
+      
+      # Error if nothing returned
+      if (length(entrez_ids) == 0) {
+        stop("No valid Entrez IDs found after conversion.")
+      }
+
     withProgress(message = 'Running, Please Wait!', detail = 'This may take a while...', value = 0, {     
     if(in_enrich_method=="kegg"){
           # Perform KEGG pathway enrichment analysis
