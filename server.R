@@ -656,11 +656,27 @@ shinyServer(function(input, output, session) {
   })
   
   # context-aware RAG module for biology
-  output$chat_output_interpretationRAG <- renderUI({ 
+  output$chat_output_interpretationRAGGemma <- renderUI({ 
     # Suppose enrichment_function() returns an enrichment table
     my_data <- enrichment_function()$results
     my_data <- my_data$Description  # List of enriched pathways
     user_query <- input$text7
+    
+    if (isTRUE(input$use_example2) && is.null(input$file3)) { # you are using the sample file
+      result_de <- read_and_clean_colnames("result_test_file.txt", header = TRUE, sep = "\t", rownames = 1)
+    }else{
+      inFile3 = input$file3
+      result_de <- read_and_clean_colnames(inFile3$datapath, header = TRUE, sep = "\t", rownames = 1)
+    }
+    res <- subset(result_de, as.numeric(result_de$FDR) < 0.05) #dagli solo quelli significativi
+    res_sorted <- res[order(res$FDR), ]
+    significant_gene_list <- rownames(res_sorted)
+    if (length(significant_gene_list)>20){
+      significant_gene_list <- significant_gene_list[1:20]
+    }
+    print("Most significant genes")
+    print(significant_gene_list)
+    
     # user_query = "Explain these results produced from the comparison of pulse-induced drug resistance in HCC827 cells against their parental cells to study the mechanisms induced by this suboptimal dose of Gefitinib"
     # user_phrase = user_query
     # my_data = c("TNF signaling pathway", "MAPK signaling pathway","IL-17 signaling pathway","Human papillomavirus infection")
@@ -676,13 +692,34 @@ shinyServer(function(input, output, session) {
       message("  user_phrase: ", user_phrase)
       
       # --- Extract keywords ---
-      words <- unlist(strsplit(tolower(all_terms), "\\W+"))
-        stopwords <- c("the","of","in","and","to","from","for","these","this","their","against",
-                       "by","under","with","study","results","produced","comparison","mechanisms",
-                       "dose","induced","data","made","cell","cells","explain","explanation",
-                       "analysis","pathway","pathways","explain","parental","drug")
-  keywords <- setdiff(words, stopwords)
-  keywords <- keywords[nchar(keywords) > 2]
+    #  words <- unlist(strsplit(tolower(all_terms), "\\W+"))
+    #    stopwords <- c("the","of","in","and","to","from","for","these","this","their","against",
+    #                   "by","under","with","study","results","produced","comparison","mechanisms",
+    #                   "dose","induced","data","made","cell","cells","explain","explanation",
+    #                   "analysis","pathway","pathways","explain","parental","drug")
+  #keywords <- setdiff(words, stopwords)
+  #keywords <- keywords[nchar(keywords) > 2]
+  #keywords <- unique(keywords)
+  
+  # Tokenizzazione veloce con stringi
+  words <- stri_extract_all_words(stri_trans_tolower(all_terms), simplify = TRUE)
+  words <- as.vector(words)
+  
+  # Usa stopwords package invece di lista manuale
+  stopwords_en <- stopwords::stopwords("en", source = "snowball")
+  biomedical_stops <- c("study", "results", "produced", "comparison", "mechanisms",
+                        "dose", "induced", "data", "made", "cell", "cells", "explain", 
+                        "explanation", "analysis", "pathway", "pathways", "parental", "drug",
+                        "the","of","in","and","to","from","for","these","this","their","against",
+                        "by","under","with","study","results","produced","comparison","mechanisms",
+                        "dose","induced","data","made","cell","cells","explain","explanation",
+                        "analysis","pathway","pathways","explain","parental","drug")
+  
+  # Combinazione efficiente
+  all_stops <- c(stopwords_en, biomedical_stops)
+  
+  # Filtraggio in un'unica passata
+  keywords <- words[!words %in% all_stops & nchar(words) > 2]
   keywords <- unique(keywords)
 
   if (length(keywords) < min_keywords) {
@@ -762,6 +799,7 @@ shinyServer(function(input, output, session) {
     # ---- Step 3: Compose RAG-style prompt
     data_text <- paste(
       "User query:", user_query,
+      "\n\nMost Significant Genes:", paste(significant_gene_list, collapse = ", "),
       "\n\nPathways:", paste(my_data, collapse = ", "),
       "\n\nRelevant PubMed findings:\n", pubmed_contexts
     )
@@ -778,7 +816,7 @@ shinyServer(function(input, output, session) {
                "You are a molecular biologist interpreting transcriptomic pathway enrichment results.
             Use the provided PubMed context to ground your explanations in real literature.
             Output structured reasoning by grouping pathways into functional categories,
-            describing plausible mechanisms, and suggesting future experiments. Cite all papers found."),
+            describing plausible mechanisms, and suggesting future experiments. Cite only the papers found in Relevant PubMed findings and show the Most Significant Genes."),
         list(role = "user", content = data_text)
       ),
       max_tokens = 4500
@@ -799,11 +837,27 @@ shinyServer(function(input, output, session) {
   })  
   
   # context-aware RAG module for biology
-  output$chat_output_interpretationRAG2 <- renderUI({ 
+  output$chat_output_interpretationRAGLlaMA <- renderUI({ 
     # Suppose enrichment_function() returns an enrichment table
     my_data <- enrichment_function()$results
     my_data <- my_data$Description  # List of enriched pathways
     user_query <- input$text7
+    
+    if (isTRUE(input$use_example2) && is.null(input$file3)) { # you are using the sample file
+       result_de <- read_and_clean_colnames("result_test_file.txt", header = TRUE, sep = "\t", rownames = 1)
+    }else{
+       inFile3 = input$file3
+       result_de <- read_and_clean_colnames(inFile3$datapath, header = TRUE, sep = "\t", rownames = 1)
+    }
+    res <- subset(result_de, as.numeric(result_de$FDR) < 0.05) #dagli solo quelli significativi
+    res_sorted <- res[order(res$FDR), ]
+    significant_gene_list <- rownames(res_sorted)
+    if (length(significant_gene_list)>20){
+      significant_gene_list <- significant_gene_list[1:20]
+    }
+    print("Most significant genes")
+    print(significant_gene_list)
+    
     # user_query = "Explain these results produced from the comparison of pulse-induced drug resistance in HCC827 cells against their parental cells to study the mechanisms induced by this suboptimal dose of Gefitinib"
     # user_phrase = user_query
     # my_data = c("TNF signaling pathway", "MAPK signaling pathway","IL-17 signaling pathway","Human papillomavirus infection")
@@ -927,11 +981,12 @@ shinyServer(function(input, output, session) {
     # ---- Step 3: Compose RAG-style prompt
     data_text <- paste(
       "User query:", user_query,
+      "\n\nMost Significant Genes:", paste(significant_gene_list, collapse = ", "),
       "\n\nPathways:", paste(my_data, collapse = ", "),
       "\n\nRelevant PubMed findings:\n", pubmed_contexts
     )
     
-    # ---- Step 4: Send to Together API (Gemma model)
+    # ---- Step 4: Send to Together API (LLAMA model)
     api_key <- Sys.getenv("API_KEY")
     if (api_key == "") stop("NO API key found!")
     
@@ -943,7 +998,7 @@ shinyServer(function(input, output, session) {
                "You are a molecular biologist interpreting transcriptomic pathway enrichment results.
             Use the provided PubMed context to ground your explanations in real literature.
             Output structured reasoning by grouping pathways into functional categories,
-            describing plausible mechanisms, and suggesting future experiments. Cite all papers found."),
+            describing plausible mechanisms, and suggesting future experiments. Cite only the papers in Relevant PubMed findings and show the Most Significant Genes."),
         list(role = "user", content = data_text)
       ),
       max_tokens = 4500
@@ -963,8 +1018,7 @@ shinyServer(function(input, output, session) {
     HTML(markdown::markdownToHTML(parsed$choices$message[2]$content))
   })  
   
-
-output$chat_output_interpretationLlama_old2 <- renderUI({ 
+  output$chat_output_interpretationLlama_old2 <- renderUI({ 
   # Suppose enrichment_function() returns an enrichment table
   my_data <- enrichment_function()$results
   my_data <- my_data$Description  # List of enriched pathways

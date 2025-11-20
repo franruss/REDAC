@@ -83,7 +83,7 @@ shinyUI(fluidPage(theme = shinytheme("united"),
                 #trend-readme:hover {background-color: #e36a0075;}')
                   ), # end of style block
   titlePanel("REDAC: RNA-seq Expression Data Analysis Chatbot"),
-  navbarPage("A Web App for analysing bulk RNA-seq data by asking questions written in English language (version: 2.3.8 released the 17/November/2025)", 
+  navbarPage("A Web App for analysing bulk RNA-seq data by asking questions written in English language (version: 2.3.9 released the 20/November/2025)", 
        tabPanel("Perform a Complete Analysis",
           sidebarLayout(
             sidebarPanel(
@@ -114,7 +114,7 @@ shinyUI(fluidPage(theme = shinytheme("united"),
               helpText(" "),
               helpText("---------------------------------------------------------------------------------- "),
               fileInput('file2', "Please, upload your bulk RNA-seq raw count data (positive integers) in a tab separated format",accept=c('text/csv','text/comma-separated-values,text/plain','.csv')),
-              textInput('text2', "Please, write your request (note: do not use special characters)","Example: perform an rnaseq analysis between treated 3,4 and wt 1,2 samples, up regulated",width="800px"),
+              textInput('text2', "Please, write your request (note: do not use special characters)","Example: perform an rnaseq analysis between treated 3,4 and wt 1,2 samples, to find up regulated genes",width="800px"),
               width = 30,
             ),
             # Show a tabset
@@ -213,9 +213,9 @@ shinyUI(fluidPage(theme = shinytheme("united"),
                        helpText(" "),
                        helpText("---------------------------------------------------------------------------------- "),
                        fileInput('file3', "Please, upload your edgeR result file in a tab separated format",accept=c('text/csv','text/comma-separated-values,text/plain','.csv')), 
-                       textInput('text7', "Please, write some keywords that can help both the LLMs understand the context and scope of your analysis 
+                       textInput('text7', "Please, write some keywords that can help both the LLMs understand the context and the scope of your analysis 
                                  (REDAC uses them to retrieve relevant articles from PubMed to build an RAG for the LLM interpretations):",
-                                 "Explain these results produced from the comparison of pulse-induced drug resistance in HCC827 cells against their parental cells to study the mechanisms induced by this suboptimal dose of Gefitinib",width="2000px"),
+                                 "Example: Explain these results obtained by comparing... to test this hypothesis... to study these mechanisms... in this context... in order to understand... ",width="2000px"),
                        radioButtons('enrich_method', 'Select an enrichment method: ',
                                                               c(' KEGG    '='kegg',
                                                                 ' Reactome               '='enrichPathway',
@@ -256,8 +256,8 @@ shinyUI(fluidPage(theme = shinytheme("united"),
                          tabPanel("Enrichment Results", DT::DTOutput("resultsTableEnrich")),
                          tabPanel("Dot Plot", plotlyOutput("generate_dotplot", height = '1800', width = '1300')),
                          #tabPanel("A possible interpretation (Gemma):", uiOutput('chat_output_interpretationGemma')),
-                         tabPanel("A possible interpretation (by LlaMA powered by a PubMed-based RAG):", uiOutput('chat_output_interpretationRAG2')),
-                         tabPanel("A possible interpretation (by Gemma powered by a PubMed-based RAG):", uiOutput('chat_output_interpretationRAG'))
+                         tabPanel("A possible interpretation (by LlaMA powered by a PubMed-based RAG):", uiOutput('chat_output_interpretationRAGLlaMA')),
+                         tabPanel("A possible interpretation (by Gemma powered by a PubMed-based RAG):", uiOutput('chat_output_interpretationRAGGemma'))
                        ),
                        downloadButton("download_results3", "Download Enrichment Results"),
                        helpText(" "),
