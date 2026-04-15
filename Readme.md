@@ -1,4 +1,4 @@
-REDAC (version: 2.3.9)
+REDAC (version: 2.4.2)
 
 Author: Francesco Russo 
 
