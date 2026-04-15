@@ -38,7 +38,6 @@ library(tinytex)
 library(readxl)
 library(janitor)
 library(rmdHelpers)
-source("definitions.R")
 library(markdown)
 library(reactome.db)
 library(GO.db)
@@ -50,7 +49,7 @@ library(msigdbr)
 library(rWikiPathways)
 library(stopwords)
 library(stringi)
-
+source("definitions.R")
 options(shiny.maxRequestSize=100*2048^2)
 options(repos = BiocManager::repositories())
 
@@ -83,7 +82,7 @@ shinyUI(fluidPage(theme = shinytheme("united"),
                 #trend-readme:hover {background-color: #e36a0075;}')
                   ), # end of style block
   titlePanel("REDAC: RNA-seq Expression Data Analysis Chatbot"),
-  navbarPage("A Web App for analysing bulk RNA-seq data by asking questions written in English language (version: 2.3.9 released the 20/November/2025)", 
+  navbarPage("A Web App for analysing bulk RNA-seq data by asking questions written in English language (version: 2.4.2 released the 30/March/2026)", 
        tabPanel("Perform a Complete Analysis",
           sidebarLayout(
             sidebarPanel(
@@ -102,8 +101,9 @@ shinyUI(fluidPage(theme = shinytheme("united"),
               helpText(" "),
               helpText("If you need help using REDAC or if there is an error with the data you entered, please send an email to: francesco.russo AT cnr.it"),
               helpText(" "),
-              helpText("Please note that errors are sometimes caused by the Shiny server (connection issues, temporarily unavailable server resources, etc.) on which REDAC is running, or by problems requesting LMMs via an API, which takes several seconds to execute and 
+              helpText("Please, note that errors are sometimes caused by the Shiny server (connection issues, temporarily unavailable server resources, etc.) on which REDAC is running, or by problems requesting LMMs via an API, which takes several seconds to execute and 
                        return to REDAC. In these cases, please retry the request and wait for a response."),
+              helpText("The authors disclaim any liability for errors or omissions in the analyses performed using REDAC, as well as for any consequences arising from the use or interpretation of the results. Users are solely responsible for verifying the accuracy and validity of the outputs."),
               helpText("---------------------------------------------------------------------------------- "),
               helpText(" "),
               helpText("YOU CAN TRY THIS SAMPLE FILE !!!"),
@@ -202,8 +202,9 @@ shinyUI(fluidPage(theme = shinytheme("united"),
                        helpText("If you need help using REDAC or if there is an error with the data you entered, please send an email to: francesco.russo AT cnr.it"),
                        helpText(" "),
                        helpText(" "),
-                       helpText("Please note that errors are sometimes caused by the Shiny server (connection issues, temporarily unavailable server resources, etc.) on which REDAC is running, or by problems requesting LMMs via an API, which takes several seconds to execute and 
+                       helpText("Please, note that errors are sometimes caused by the Shiny server (connection issues, temporarily unavailable server resources, etc.) on which REDAC is running, or by problems requesting LMMs via an API, which takes several seconds to execute and 
                        return to REDAC. In these cases, please retry the request and wait for a response."),
+                       helpText("The authors disclaim any liability for errors or omissions in the analyses performed using REDAC, as well as for any consequences arising from the use or interpretation of the results. Users are solely responsible for verifying the accuracy and validity of the outputs."),
                        helpText("---------------------------------------------------------------------------------- "),
                        helpText(" "),
                        helpText("YOU CAN TRY THIS EDGER RESULT SAMPLE FILE !!!"),
@@ -286,8 +287,9 @@ shinyUI(fluidPage(theme = shinytheme("united"),
                    helpText("If you need help using REDAC or if there is an error with the data you entered, please send an email to: francesco.russo AT cnr.it"),
                    helpText(" "),
                    helpText(" "),
-                   helpText("Please note that errors are sometimes caused by the Shiny server (connection issues, temporarily unavailable server resources, etc.) on which REDAC is running, or by problems requesting LMMs via an API, which takes several seconds to execute and 
+                   helpText("Please, note that errors are sometimes caused by the Shiny server (connection issues, temporarily unavailable server resources, etc.) on which REDAC is running, or by problems requesting LMMs via an API, which takes several seconds to execute and 
                        return to REDAC. In these cases, please retry the request and wait for a response."),
+                   helpText("The authors disclaim any liability for errors or omissions in the analyses performed using REDAC, as well as for any consequences arising from the use or interpretation of the results. Users are solely responsible for verifying the accuracy and validity of the outputs."),
                    helpText("---------------------------------------------------------------------------------- "),
                    helpText(" "),
                    helpText("YOU CAN EITHER TRY THIS COUNT SAMPLE FILE... "),
