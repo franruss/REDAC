@@ -1524,7 +1524,7 @@ shinyServer(function(input, output, session) {
     hoverinfo = "text"
   ) %>%
     layout(
-      title = "KEGG Pathway Enrichment",
+      title = "Enrichment Dot Plot",
       xaxis = list(title = "Gene Ratio"),
       yaxis = list(title = ""),
       margin = list(l = 150)  # for long pathway names
