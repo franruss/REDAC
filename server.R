@@ -112,7 +112,7 @@ shinyServer(function(input, output, session) {
         
         body <- list(
           #model = "google/gemma-3n-E4B-it",
-          model = "meta-llama/Llama-3.3-70B-Instruct-Turbo",
+          model = "Prism-ML/Ternary-Bonsai-27B",
           messages = list(
             list(role = "system", content = "Respond only in JSON format. The JSON must have this structure: 
                {\"functiontoberun\":[\"box\",\"violin\",\"heat\",\"corr heat\",\"volcano\",\"pca\",\"cluster\",
@@ -424,15 +424,23 @@ shinyServer(function(input, output, session) {
       
       body <- list(
         #model = "google/gemma-3n-E4B-it", 
-        model = "meta-llama/Llama-3.3-70B-Instruct-Turbo",
+        #model = "meta-llama/Llama-3.3-70B-Instruct-Turbo",
+        model = "Prism-ML/Ternary-Bonsai-27B",
+        
         messages = list(
-          list(role = "system", content = "Respond only in JSON format. The JSON must have this structure: 
-               {\"functiontoberun\":[\"analysis\"],
-                \"treated\":[[\"col1\"],[\"col2\"]],\"wt\":[[\"col3\"],[\"col4\"]],
-                \"regulated\":[\"de\",\"down\",\"up\"]}. Do not add explanations or other text."),
+          list(
+            role = "system",
+            content = 'Return ONLY a valid JSON object.
+            No explanations.
+            Required keys:
+            functiontoberun, treated, wt, regulated.'
+          ),
           list(role = "user", content = prompt)
         ),
-        max_tokens = 500
+        
+        max_tokens = 500,
+        temperature = 0.1,
+        response_format = list(type = "json_object")
       )
       response <- POST(
         url,
@@ -443,8 +451,16 @@ shinyServer(function(input, output, session) {
         body = toJSON(body, auto_unbox = TRUE),
         encode = "json"
       )
-      content <- httr::content(response, as = "text")
-      #print(content)
+      
+      status <- status_code(response)
+      content <- httr::content(response, as = "text", encoding = "UTF-8")
+      
+      if (status != 200) {
+        stop(
+          paste("Together API error:", status, content)
+        )
+      }
+      
       parsed <- fromJSON(content)
       #parsed <- tryCatch(fromJSON(content), error = function(e) NULL)
       #print(parsed$choices$message$content)
@@ -454,7 +470,7 @@ shinyServer(function(input, output, session) {
       # parsed$choices$message$content = '{\"function to be run\": [\"violin\"], \"columns to use\": [[\"col1\"], [\"col2\"], [\"col3\"]]}'
       #content = strsplit(parsed$choices$message$content,"\n" )[[1]][2] ## questa linea solo se usi Gemma LLM
       content = parsed$choices$message$content
-      #print(content)
+      print(content)
       #[1] "{\"function to be run\": [\"violin\"], \"columns\": [[\"1\"], [\"2\"], [\"3\"]]}"
       parsed <- fromJSON(content)
       print(parsed)
@@ -522,14 +538,15 @@ shinyServer(function(input, output, session) {
       url <- "https://api.together.xyz/v1/chat/completions"
       body <- list(
         #model = "google/gemma-3n-E4B-it",
-        model = "meta-llama/Llama-3.3-70B-Instruct-Turbo",
+        #model = "meta-llama/Llama-3.3-70B-Instruct-Turbo",
+        model = "Prism-ML/Ternary-Bonsai-27B",
         messages = list(
           list(role = "system", content = "use a Chain of Thought and Act as an expert data analyst in R programming language"),
           list(role = "user", content = paste(prompt," on a dataset that have: ", dim(my_data)[1]," rows, and ",dim(my_data)[2]," columns. 
                                               Here are the first 3 rows:\n", data_text)
           )
         ),
-        max_tokens = 1500
+        max_tokens = 9000
       )
       response <- POST(
         url,
@@ -542,7 +559,7 @@ shinyServer(function(input, output, session) {
       )
       content <- httr::content(response, as = "text")
       parsed <- fromJSON(content)
-      HTML(markdown::markdownToHTML(parsed$choices$message[2]$content))
+      HTML(markdown::markdownToHTML(parsed$choices$message$content))
     }
   })
   
@@ -560,14 +577,14 @@ shinyServer(function(input, output, session) {
       url <- "https://api.together.xyz/v1/chat/completions"
       body <- list(
         #model = "google/gemma-3n-E4B-it",
-        model = "meta-llama/Llama-3.3-70B-Instruct-Turbo",
+        model = "Prism-ML/Ternary-Bonsai-27B",
         messages = list(
           list(role = "system", content = "use a Chain of Thought and Act as an expert data analyst in Python programming language"),
           list(role = "user", content = paste(prompt," on a dataset that have: ", dim(my_data)[1]," rows, and ",dim(my_data)[2]," columns. 
                                               Here are the first 3 rows:\n", data_text)
           )
         ),
-        max_tokens = 1500
+        max_tokens = 9000
       )
       response <- POST(
         url,
@@ -580,7 +597,7 @@ shinyServer(function(input, output, session) {
       )
       content <- httr::content(response, as = "text")
       parsed <- fromJSON(content)
-      HTML(markdown::markdownToHTML(parsed$choices$message[2]$content))
+      HTML(markdown::markdownToHTML(parsed$choices$message$content))
     }
   })
   
@@ -596,7 +613,7 @@ shinyServer(function(input, output, session) {
       #api_key <-   # Replace with your API key
       url <- "https://api.together.xyz/v1/chat/completions"
       body <- list(
-        model = "google/gemma-3n-E4B-it",
+        model = "Prism-ML/Ternary-Bonsai-27B",
         #model = "meta-llama/Llama-3.3-70B-Instruct-Turbo",
         messages = list(
           list(role = "system", content = "Act as an expert data analyst suggesting a general way to perform the request. Do not write code."),
@@ -604,7 +621,7 @@ shinyServer(function(input, output, session) {
                                               Here are the first 3 rows:\n", data_text)
           )
         ),
-        max_tokens = 1700
+        max_tokens = 9000
       )
       response <- POST(
         url,
@@ -617,7 +634,7 @@ shinyServer(function(input, output, session) {
       )
       content <- httr::content(response, as = "text")
       parsed <- fromJSON(content)
-      HTML(markdown::markdownToHTML(parsed$choices$message[2]$content))
+      HTML(markdown::markdownToHTML(parsed$choices$message$content))
     }
   })
   
@@ -639,7 +656,7 @@ shinyServer(function(input, output, session) {
           list(role = "user", content = paste("Suggest some plausible cellular mechanistic explanations for these pathways by grouping them for category. At the end suggest future investigations.", data_text)
           )
         ),
-        max_tokens = 4500
+        max_tokens = 9000
       )
       response <- POST(
         url,
@@ -652,7 +669,7 @@ shinyServer(function(input, output, session) {
       )
       content <- httr::content(response, as = "text")
       parsed <- fromJSON(content)
-      HTML(markdown::markdownToHTML(parsed$choices$message[2]$content))
+      HTML(markdown::markdownToHTML(parsed$choices$message$content))
   })
   
   # context-aware RAG module for biology
@@ -819,7 +836,7 @@ shinyServer(function(input, output, session) {
             describing plausible mechanisms, and suggesting future experiments. Cite only the papers found in Relevant PubMed findings and show the Most Significant Genes."),
         list(role = "user", content = data_text)
       ),
-      max_tokens = 4500
+      max_tokens = 9000
     )
     
     response <- POST(
@@ -833,7 +850,7 @@ shinyServer(function(input, output, session) {
     )
     
     parsed <- fromJSON(httr::content(response, as = "text"))
-    HTML(markdown::markdownToHTML(parsed$choices$message[2]$content))
+    HTML(markdown::markdownToHTML(parsed$choices$message$content))
   })  
   
   # context-aware RAG module for biology
@@ -992,7 +1009,7 @@ shinyServer(function(input, output, session) {
     
     url <- "https://api.together.xyz/v1/chat/completions"
     body <- list(
-      model = "meta-llama/Llama-3.3-70B-Instruct-Turbo",
+      model = "Prism-ML/Ternary-Bonsai-27B",
       messages = list(
         list(role = "system", content =
                "You are a molecular biologist interpreting transcriptomic pathway enrichment results.
@@ -1001,7 +1018,7 @@ shinyServer(function(input, output, session) {
             describing plausible mechanisms, and suggesting future experiments. Cite only the papers in Relevant PubMed findings and show the Most Significant Genes."),
         list(role = "user", content = data_text)
       ),
-      max_tokens = 4500
+      max_tokens = 16000
     )
     
     response <- POST(
@@ -1015,7 +1032,7 @@ shinyServer(function(input, output, session) {
     )
     
     parsed <- fromJSON(httr::content(response, as = "text"))
-    HTML(markdown::markdownToHTML(parsed$choices$message[2]$content))
+    HTML(markdown::markdownToHTML(parsed$choices$message$content))
   })  
   
   output$chat_output_interpretationLlama_old2 <- renderUI({ 
@@ -1122,7 +1139,7 @@ shinyServer(function(input, output, session) {
             describing plausible mechanisms, and suggesting future experiments."),
       list(role = "user", content = data_text)
     ),
-    max_tokens = 4500
+    max_tokens = 9000
   )
   
   response <- POST(
@@ -1136,7 +1153,7 @@ shinyServer(function(input, output, session) {
   )
   
   parsed <- fromJSON(httr::content(response, as = "text"))
-  HTML(markdown::markdownToHTML(parsed$choices$message[2]$content))
+  HTML(markdown::markdownToHTML(parsed$choices$message$content))
 })  
   
   output$chat_output_interpretationLlama_old <- renderUI({
@@ -1151,13 +1168,13 @@ shinyServer(function(input, output, session) {
       #api_key <-   # Replace with your API key
       url <- "https://api.together.xyz/v1/chat/completions"
       body <- list(
-        model = "meta-llama/Llama-3.3-70B-Instruct-Turbo",
+        model = "Prism-ML/Ternary-Bonsai-27B",
         messages = list(
           list(role = "system", content = "Interpret data by giving possible explanations of the biological processes involved as an expert biologist"),
           list(role = "user", content = paste("Suggest some plausible cellular mechanistic explanations for these pathways as an expert biologist. At the end suggest future investigations.", data_text)
           )
         ),
-        max_tokens = 5000
+        max_tokens = 9000
       )
       response <- POST(
         url,
@@ -1170,7 +1187,7 @@ shinyServer(function(input, output, session) {
       )
       content <- httr::content(response, as = "text")
       parsed <- fromJSON(content)
-      HTML(markdown::markdownToHTML(parsed$choices$message[2]$content))
+      HTML(markdown::markdownToHTML(parsed$choices$message$content))
   })
   
   output$show_input_fun <- DT::renderDT({  
@@ -1661,14 +1678,14 @@ shinyServer(function(input, output, session) {
       url <- "https://api.together.xyz/v1/chat/completions"
       body <- list(
         #model = "google/gemma-3n-E4B-it",
-        model = "meta-llama/Llama-3.3-70B-Instruct-Turbo",
+        model = "Prism-ML/Ternary-Bonsai-27B",
         messages = list(
           list(role = "system", content = "use a Chain of Thought and Act as an expert data analyst in R programming language that uses DESEQ2 package"),
           list(role = "user", content = paste(prompt," on a dataset that have: ", dim(my_data)[1]," rows, and ",dim(my_data)[2]," columns. 
                                               Here are the sample names:\n", data_text, " use DESEQ2 package for this request",prompt)
           )
         ),
-        max_tokens = 1500
+        max_tokens = 9500
       )
       response <- POST(
         url,
@@ -1681,7 +1698,7 @@ shinyServer(function(input, output, session) {
       )
       content <- httr::content(response, as = "text")
       parsed <- fromJSON(content)
-      HTML(markdown::markdownToHTML(parsed$choices$message[2]$content))
+      HTML(markdown::markdownToHTML(parsed$choices$message$content))
     #}
   })
   
@@ -1701,14 +1718,14 @@ shinyServer(function(input, output, session) {
     url <- "https://api.together.xyz/v1/chat/completions"
     body <- list(
       #model = "google/gemma-3n-E4B-it",
-      model = "meta-llama/Llama-3.3-70B-Instruct-Turbo",
+      model = "Prism-ML/Ternary-Bonsai-27B",
       messages = list(
         list(role = "system", content = "use a Chain of Thought and Act as an expert data analyst in Python programming language"),
         list(role = "user", content = paste(prompt," on a dataset that have: ", dim(my_data)[1]," rows, and ",dim(my_data)[2]," columns. 
                                               Here are the sample names:\n", data_text, " use the PyDESeq2 Python package for this request",prompt)
         )
       ),
-      max_tokens = 1500
+      max_tokens = 9500
     )
     response <- POST(
       url,
@@ -1721,7 +1738,7 @@ shinyServer(function(input, output, session) {
     )
     content <- httr::content(response, as = "text")
     parsed <- fromJSON(content)
-    HTML(markdown::markdownToHTML(parsed$choices$message[2]$content))
+    HTML(markdown::markdownToHTML(parsed$choices$message$content))
     #}
   })
   
@@ -1733,22 +1750,21 @@ shinyServer(function(input, output, session) {
     my_data <- dea_results2()$counts
     prompt <- dea_results2()$text
       #   prompt = "Can you perform a de analysis of treated 1,2,5 against wt 3,7,8 ?"
-      data_text <- paste(capture.output(head(my_data, 3)), collapse = "\n")  # Only show top 20 rows
+      data_text <- paste(capture.output(colnames(my_data)), collapse = "\n")  # Only show top 20 rows
       api_key <- Sys.getenv("API_KEY")
       if (api_key == "") stop("NO API key found!")
       #api_key <-   # Replace with your API key
       url <- "https://api.together.xyz/v1/chat/completions"
       body <- list(
-        model = "google/gemma-3n-E4B-it",
+        model = "Prism-ML/Ternary-Bonsai-27B",
         #model = "meta-llama/Llama-3.3-70B-Instruct-Turbo",
         messages = list(
-          list(role = "system", content = "Act as an expert rnaseq data analyst suggesting a general way to perform the request (suggesting the use of DESEQ2, EdgeR, limma, for de genes identification) 
-                    and the generation of several plots such as PCA, densities, heatmap, dendrogram, violin, et cetera to explore input data and MAplot, volcano plot, et cetera to explore results. Do not write code."),
+          list(role = "system", content = "Act as an expert rnaseq data analyst suggesting a general way to perform a RNASeq bulk analysis in general terms by pointing out the main usual steps. Don not write code!"),
           list(role = "user", content = paste(prompt," on a dataset that have ", dim(my_data)[1]," rows, and ",dim(my_data)[2]," columns. 
-                                              Here are the first 3 rows:\n", data_text)
+                                              Here are the sample names:\n", data_text)
           )
         ),
-        max_tokens = 1700
+        max_tokens = 5000
       )
       response <- POST(
         url,
@@ -1761,7 +1777,7 @@ shinyServer(function(input, output, session) {
       )
       content <- httr::content(response, as = "text")
       parsed <- fromJSON(content)
-      HTML(markdown::markdownToHTML(parsed$choices$message[2]$content))
+      HTML(markdown::markdownToHTML(parsed$choices$message$content))
     #}
   })
   output$volcanoPlot2 <- renderPlotly({
@@ -2450,7 +2466,7 @@ shinyServer(function(input, output, session) {
         
         body <- list(
           #model = "google/gemma-3n-E4B-it", 
-          model = "meta-llama/Llama-3.3-70B-Instruct-Turbo",
+          model = "Prism-ML/Ternary-Bonsai-27B",
           messages = list(
             list(role = "system", content = "Respond only in JSON format. The JSON must have this structure: 
                {\"functiontoberun\"::[\"box\",\"surface\",\"density\",\"violin\",\"heat\",\"corrheat\",\"volcano\",\"pca\",\"cluster\",\"dendro\",\"integration\",\"pcacomp\",\"MAplot\",\"dot\",\"KEGG\",\"net\",\"3Dpca\"],
@@ -3219,7 +3235,7 @@ shinyServer(function(input, output, session) {
       
       body <- list(
         #model = "google/gemma-3n-E4B-it", 
-        model = "meta-llama/Llama-3.3-70B-Instruct-Turbo",
+        model = "Prism-ML/Ternary-Bonsai-27B",
         messages = list(
           list(role = "system", content = "Respond only in JSON format. The JSON must have this structure: 
                {\"functiontoberun\"::[\"box\",\"surface\",\"density\",\"violin\",\"heat\",\"corrheat\",\"volcano\",\"pca\",\"cluster\",\"dendro\",\"integration\",\"pcacomp\",\"MAplot\",\"dot\",\"KEGG\",\"net\",\"3Dpca\"],
@@ -3950,7 +3966,7 @@ shinyServer(function(input, output, session) {
   
   output$download_html_report <- downloadHandler(
     filename = function() {
-      paste("DE_Report", Sys.Date(), ".html", sep = "")
+      paste("Report_of_the_analysis_made_in_", Sys.Date(), ".html", sep = "")
     },
     content = function(file) {
       tempReport <- file.path("report.Rmd")
@@ -3972,15 +3988,15 @@ shinyServer(function(input, output, session) {
         "library(ggplot2)",
         "```",
         "",
-        "## Design and Dispersion",
+        "## Design, Filtering, Normalization, Dispersion Estimate and Calculations of significant genes",
         "```{r}",
         "Sys.time()",
         "",
         "counts <- params$counts",
         "res <- params$res",
-        "#treated_samples <- colnames(counts)[as.numeric(params$treated_samples)]",
-        "#wt_samples <-      colnames(counts)[as.numeric(params$wt_samples)]",
-        "#which_results <- params$which_results",
+        "treated_samples <- colnames(counts)[as.numeric(params$treated_samples)]",
+        "wt_samples <-      colnames(counts)[as.numeric(params$wt_samples)]",
+        "which_results <- params$which_results",
         "",
         "# Build metadata",
         "#treated_condition <- data.frame(patients = treated_samples, condition = 'treated')",
@@ -4024,8 +4040,11 @@ shinyServer(function(input, output, session) {
         "#plotBCV(dge)",
         "```",
         "",
-        "## Top 100 Differentially Expressed Genes",
-        "```{r}",
+        "```{r}", 
+        "print(paste('You compared ', printList(params$treated_samples),' vs ', printList(params$wt_samples),' to search for ',params$which_results,' genes!',collapse=''))",
+        "",
+        "print(paste('You found ',dim(res)[1], ' significant genes!',sep=''))",
+        "",
         "knitr::kable(head(res, 100), caption = 'Top 100 Differentially Expressed Genes')",
         "",
         "# Plot Dendrogram",
@@ -4275,7 +4294,7 @@ shinyServer(function(input, output, session) {
   
   output$download_word_report <- downloadHandler(
     filename = function() {
-      paste("DE_Report", Sys.Date(), ".docx", sep = "")
+      paste("Report_of_the_analysis_made_in_", Sys.Date(), ".docx", sep = "")
     },
     content = function(file) {
       tempReport <- file.path("report.Rmd")
@@ -4299,15 +4318,15 @@ shinyServer(function(input, output, session) {
         "library(ggplot2)",
         "```",
         "",
-        "## Design and Dispersion",
+        "## Design, Filtering, Normalization, Dispersion Estimate and Calculations of significant genes",
         "```{r}",
         "Sys.time()",
         "",
         "counts <- params$counts",
         "res <- params$res",
-        "#treated_samples <- colnames(counts)[as.numeric(params$treated_samples)]",
-        "#wt_samples <-      colnames(counts)[as.numeric(params$wt_samples)]",
-        "#which_results <- params$which_results",
+        "treated_samples <- colnames(counts)[as.numeric(params$treated_samples)]",
+        "wt_samples <- colnames(counts)[as.numeric(params$wt_samples)]",
+        "which_results <- params$which_results",
         "",
         "# Build metadata",
         "#treated_condition <- data.frame(patients = treated_samples, condition = 'treated')",
@@ -4351,8 +4370,11 @@ shinyServer(function(input, output, session) {
         "#plotBCV(dge)",
         "```",
         "",
-        "## Top 100 Differentially Expressed Genes",
         "```{r}",
+        "print(paste('You compared ', printList(params$treated_samples),' vs ', printList(params$wt_samples),' to search for ',params$which_results,' genes!',collapse=''))",
+        "",
+        "print(paste('You found ',dim(res)[1], ' significant genes!',sep=''))",
+        "",
         "knitr::kable(head(res, 100), caption = 'Top 100 Differentially Expressed Genes')",
         "",
         "# Plot Dendrogram",
@@ -4493,11 +4515,14 @@ shinyServer(function(input, output, session) {
      result = dea_results2()$results
      # counts <- read.table("C:/Users/f.russo.ENGIBBC/Desktop/REDAC_submission/count_pippo.txt", header = TRUE, sep = "\t", row.names = 1)
      counts <- read_and_clean_colnames(input$file2$datapath, header = TRUE, sep = "\t", rownames = 1)
+     treated_samples = dea_results2()$ids_treated
+     wt_samples = dea_results2()$ids_wt
+     which_results = dea_results2()$regulated
      #res = get_response_param(input$text2, input$file2)
      #treated_samples = res$treated_samples ##scrivere qui una funzione più snella
      #wt_samples      = res$wt_samples
      #which_results   = res$which_results
-     list(res = result, counts = counts)
+     list(res = result, counts = counts, treated_samples = treated_samples, wt_samples = wt_samples, which_results = which_results)
   })
    
    
@@ -4540,6 +4565,21 @@ shinyServer(function(input, output, session) {
      res = list(treated_samples = treated_samples, wt_samples = wt_samples, which_results = regulated)
      res
    }
+   
+   output$generate_barplotly <- renderPlotly({  
+     x <- enrichment_function()$results
+     # Convert to data frame
+   x_df <- as.data.frame(x)
+   x_df <- x_df[order(-log10(x_df$qvalue)), ]
+   
+   x_df$logq <- -log10(x_df$qvalue)
+   p <- plot_ly(data = x_df,x = ~logq,y = ~reorder(Description, logq),type = "bar",
+                orientation = "h",text = ~paste("Pathway:", Description,"<br>-log10(qvalue):", round(logq, 3),"<br>Gene count:", Count),hoverinfo = "text",
+                marker = list(color = ~Count,colorscale = "Blues",showscale = TRUE,colorbar = list(title = "Gene count"),line = list(color = "black", width = 1))
+   ) %>%
+     layout(title = "Pathway Analysis Overview",xaxis = list(title = "-log10(qvalue)"),yaxis = list(title = "", automargin = TRUE),margin = list(l = 300))
+   p
+   })
 
 })
 
