@@ -143,7 +143,7 @@ shinyUI(fluidPage(theme = shinytheme("united"),
               helpText("__________________________________________________________________________________________________________________________"),
               helpText(tags$span(style = "font-size:24px;",tags$b("   ANSWER   "))),
               tabsetPanel(
-                tabPanel("Please, before running the analysis, check the Ternary-Bonsai-27B LLM's interpretation below!", verbatimTextOutput("resultsTable6"))
+                tabPanel("Please, check the Ternary-Bonsai-27B LLM's interpretation below!", verbatimTextOutput("resultsTable6"))
               ),
               helpText(" "),
               helpText("__________________________________________________________________________________________________________________________"),

@@ -407,6 +407,12 @@ shinyServer(function(input, output, session) {
     })
   
   get_response_table <- function(prompt,inDataFile) {
+    final_result <- NULL
+    treated_samples <- NULL
+    wt_samples <- NULL
+    regulated <- NULL
+    ids_treated <- NULL
+    ids_wt <- NULL
     if ((prompt=="")){return(NULL)}else{
      if (is.atomic(inDataFile)){
        my_data <- read_and_clean_colnames(inDataFile, sep = "\t", header = TRUE, rownames = 1 )
@@ -414,7 +420,7 @@ shinyServer(function(input, output, session) {
        my_data <- read_and_clean_colnames(inDataFile$datapath, sep = "\t", header = TRUE, rownames = 1 )
      }
       #   my_data <- read.table("C:/Users/f.russo.ENGIBBC/Desktop/REDAC_submission/expression_file.txt", header = TRUE, sep = "\t", row.names = 1)
-      #   prompt = "Example: perform an rnaseq analysis between treated 3,4 and wt 1,2 samples, up regulated"
+      #   prompt = "Example: perform an rnaseq analysis between treated 3,4 and wt 1,2 samples, de regulated"
       #   prompt = " compare treated_1, treated_2 vs control_1, control_2, up-regulated genes”
       #   prompt = " analize the first two treated against the second two wild type, only genes down regulated”
       api_key <- Sys.getenv("API_KEY")
@@ -432,8 +438,12 @@ shinyServer(function(input, output, session) {
             role = "system",
             content = 'Return ONLY a valid JSON object.
             No explanations.
-            Required keys:
-            functiontoberun, treated, wt, regulated.'
+            The required keys are:
+            functiontoberun, treated, wt, regulated.
+            functiontoberun MUST be exactly rnaseq_analysis
+            when the user requests differential expression analysis.
+            Never put the user prompt or a description in functiontoberun.
+            treated and wt MUST be arrays of sample indices.'
           ),
           list(role = "user", content = prompt)
         ),
@@ -483,7 +493,17 @@ shinyServer(function(input, output, session) {
        withProgress(message = 'Running, Please Wait!', detail = 'This may take a while...', value = 0, {     
         # Supponiamo che il dataframe sia chiamato df
         counts <- my_data  # Sostituiscilo con il dataframe effettivo
+        cat("\nLLM functiontoberun:\n")
+        print(parsed$functiontoberun)
         
+        cat("\nLLM treated:\n")
+        print(parsed$treated)
+        
+        cat("\nLLM wt:\n")
+        print(parsed$wt)
+        
+        cat("\nLLM regulated:\n")
+        print(parsed$regulated)
         # Eseguire le funzioni sui dati specificati
         for (i in seq_along(parsed$functiontoberun)) {
           func_name       <- parsed$functiontoberun[i]
@@ -491,7 +511,12 @@ shinyServer(function(input, output, session) {
           wt_samples      <- unlist(str_replace_all(parsed$wt, c("col" = "")))
           regulated       <- parsed$regulated[i]
           #scegli qui le funzioni da usare
-          if ((func_name == "rnaseq_analysis") || (func_name == " de_analysis") || (func_name == "differential_expression_analysis") || func_name == "analysis"){
+         if (func_name %in% c(
+              "rnaseq_analysis",
+              "de_analysis",
+              "differential_expression_analysis",
+              "analysis"
+          )) {
             print("HERE!")
             print(func_name)
             final_result  = de_analysis(counts,treated_samples,wt_samples,regulated)
@@ -516,6 +541,8 @@ shinyServer(function(input, output, session) {
         (paste("Error: Unexpected response format -", content))
       }
     }
+    print("final_result")
+    print(head(final_result))
     list(result = final_result, treated_samples = treated_samples, wt_samples = wt_samples, which_results = regulated, parsed = parsed, ids_treated = ids_treated, ids_wt = ids_wt) #Here I added parsed
   }
   
@@ -1566,7 +1593,7 @@ shinyServer(function(input, output, session) {
       print(parsed)
       res_df <- as.data.frame(res) #%>% rownames_to_column("Gene")
       # Save locally
-      print("write locally the test file") #write it otherwise the downloadHandler does not work
+      #print("write locally the test file") #write it otherwise the downloadHandler does not work
       write.table(res_df, paste("result_of_",input$text2,"_on_the_test_file.txt",sep=""), row.names = TRUE, sep="\t",quote=FALSE, col.names = TRUE)
       counts <- read_and_clean_colnames(file_path, header=T,rownames = 1, sep="\t")
     }else{
