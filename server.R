@@ -1,6 +1,6 @@
 source("definitions.R")
 # Ricarica il file .Renviron
-source(".Renviron")
+
 readRenviron(".Renviron")
 library(BiocManager)
 options(repos = BiocManager::repositories())
